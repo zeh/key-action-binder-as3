@@ -653,7 +653,7 @@ package com.zehfernando.input.binding {
 		 * Add an action bound to a keyboard key. When a key with the given <code>keyCode</code> is pressed, the
 		 * desired action is activated. Optionally, keys can be restricted to a specific <code>keyLocation</code>.
 		 *
-		 * @param action		An arbritrary String id identifying the action that should be dispatched once this
+		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
 		 *						key combination is detected.
 		 * @param keyCode		The code of a key, as expressed in AS3's Keyboard constants.
 		 * @param keyLocation	The code of a key's location, as expressed in AS3's KeyLocation constants. If a
@@ -664,16 +664,16 @@ package com.zehfernando.input.binding {
 		 *
 		 * <pre>
 		 * // Left arrow key to move left
-		 * addKeyboardActionBinding("move-left", Keyboard.LEFT);
+		 * myBinder.addKeyboardActionBinding("move-left", Keyboard.LEFT);
 		 *
 		 * // SPACE key to jump
-		 * addKeyboardActionBinding("jump", Keyboard.SPACE);
+		 * myBinder.addKeyboardActionBinding("jump", Keyboard.SPACE);
 		 *
 		 * // Any SHIFT key to shoot
-		 * addKeyboardActionBinding("shoot", Keyboard.SHIFT);
+		 * myBinder.addKeyboardActionBinding("shoot", Keyboard.SHIFT);
 		 *
 		 * // Left SHIFT key to boost
-		 * addKeyboardActionBinding("boost", Keyboard.SHIFT, KeyLocation.LEFT);
+		 * myBinder.addKeyboardActionBinding("boost", Keyboard.SHIFT, KeyLocation.LEFT);
 		 * </pre>
 		 *
 		 * @see flash.ui.Keyboard
@@ -691,7 +691,7 @@ package com.zehfernando.input.binding {
 		 * <code>controlId</code> is pressed, the desired action is activated. Optionally, keys can be restricted
 		 * to a specific game controller location.
 		 *
-		 * @param action		An arbritrary String id identifying the action that should be dispatched once this
+		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
 		 *						input combination is detected.
 		 * @param controlId		The id code of a GameInput contol, as an String. Use one of the constants from
 		 *						<code>GamepadControls</code>.
@@ -704,19 +704,23 @@ package com.zehfernando.input.binding {
 		 *
 		 * <pre>
 		 * // Direction pad left to move left
-		 * addGamepadActionBinding("move-left", GamepadControls.DPAD_LEFT);
+		 * myBinder.addGamepadActionBinding("move-left", GamepadControls.DPAD_LEFT);
 		 *
 		 * // Action button "down" (O in the OUYA, Cross in the PS3, A in the XBox 360) to jump
-		 * addGamepadActionBinding("jump", GamepadControls.BUTTON_ACTION_DOWN);
+		 * myBinder.addGamepadActionBinding("jump", GamepadControls.ACTION_DOWN);
 		 *
-		 * // L1 to shoot, on any controller
-		 * addGamepadActionBinding("shoot", GamepadControls.L1);
+		 * // L1/LB to shoot, on any controller
+		 * myBinder.addGamepadActionBinding("shoot", GamepadControls.LB);
 		 *
-		 * // L1 to shoot, on the first controller only
-		 * addGamepadActionBinding("shoot-player-1", GamepadControls.L1, 0);
+		 * // L1/LB to shoot, on the first controller only
+		 * myBinder.addGamepadActionBinding("shoot-player-1", GamepadControls.LB, 0);
+		 *
+		 * // L2/LT to shoot, regardless of whether it is sensitive or not
+		 * myBinder.addGamepadActionBinding("shoot", GamepadControls.LT);
 		 * </pre>
 		 *
 		 * @see GamepadControls
+		 * @see #isActionActivated()
 		 */
 		public function addGamepadActionBinding(__action:String, __controlId:String, __gamepadIndex:int = -1):void {
 			// Create a binding to be verified later
@@ -724,36 +728,91 @@ package com.zehfernando.input.binding {
 			prepareAction(__action);
 		}
 
+		/**
+		 * Add a sensitive action bound to a game controller button, trigger, or axis. When a control of id
+		 * <code>controlId</code> is pressed, the desired action receives a value. Optionally, keys can be
+		 * restricted to a specific game controller location.
+		 *
+		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
+		 *						input combination is detected.
+		 * @param controlId		The id code of a GameInput contol, as an String. Use one of the constants from
+		 *						<code>GamepadControls</code>.
+		 * @param gamepadIndex	The int of the gamepad that you want to restrict this action to. Use 0 for the
+		 *						first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or
+		 *						<code>NaN</code> is passed, the gamepad index is never taken into consideration
+		 *						when detecting whether the passed action should be fired.
+		 *
+		 * <p>Examples:</p>
+		 *
+		 * <pre>
+		 * // Direction pad left to move left or right
+		 * myBinder.addGamepadSensitiveActionBinding("move-sides", GamepadControls.STICK_LEFT_X);
+		 *
+		 * // L2/LT to accelerate, depending on how much it is pressed
+		 * myBinder.addGamepadSensitiveActionBinding("accelerate", GamepadControls.LT);
+		 * </pre>
+		 *
+		 * @see GamepadControls
+		 * @see #getActionValue()
+		 */
 		public function addGamepadSensitiveActionBinding(__action:String, __controlId:String, __gamepadIndex:int = -1):void {
 			// Create a binding to be verified later
 			bindings.push(new BindingInfo(__action, new GamepadSensitiveBinding(__controlId, __gamepadIndex >= 0 ? __gamepadIndex : GamepadBinding.GAMEPAD_INDEX_ANY)));
 			prepareAction(__action);
 		}
 
+		/**
+		 * Reads the current value of an action.
+		 *
+		 * @param action		The id of the action you want to read the value of.
+		 * @param controlId		The id code of a GameInput contol, as an String. Use one of the constants from
+		 *						<code>GamepadControls</code>.
+		 * @param gamepadIndex	The int of the gamepad that you want to restrict this action to. Use 0 for the
+		 *						first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or
+		 *						<code>NaN</code> is passed, the gamepad index is never taken into consideration
+		 *						when detecting whether the passed action should be fired.
+		 * @return				A numeric value based on the bindings that might have activated this action.
+		 *						The maximum and minimum values returned depend on the kind of control passed
+		 *						via <code>addGamepadSensitiveActionBinding()</code>.
+		 *
+		 * <p>Examples:</p>
+		 *
+		 * <pre>
+		 * // Direction pad left to move left or right
+		 * var speedX:Number = myBinder.getActionValue("move-sides"); // Generally between -1 and 1
+		 *
+		 * // L2/LT to accelerate, depending on how much it is pressed
+		 * var acceleration:Number = myBinder.getActionValue("accelerate"); // Generally between 0 and 1
+		 * </pre>
+		 *
+		 * @see GamepadControls
+		 * @see #addGamepadSensitiveActionBinding()
+		 */
 		public function getActionValue(__action:String):Number {
 			return actionsActivations.hasOwnProperty(__action) ? (actionsActivations[__action] as ActivationInfo).getValue() : 0;
 		}
 
 		/**
-		 * Checks whether an action is currently activated (in practice, a button is pressed).
+		 * Checks whether an action is currently activated.
 		 *
-		 * @param action				An arbritrary String id identifying the action that should be checked.
-		 * @param timeToleranceSeconds	Time tolerance, in seconds, before the action is assumed to be expired. If < 0, no time is checked.
+		 * @param action				An arbitrary String id identifying the action that should be checked.
+		 * @param timeToleranceSeconds	Time tolerance, in seconds, before the action is assumed to be expired. If &lt; 0, no time is checked.
+		 * @return						True if the action is currently activated (i.e., its button is pressed), false if otherwise.
 		 *
 		 * <p>Examples:</p>
 		 *
 		 * <pre>
 		 * // Moves player right when right is pressed
 		 * // Setup:
-		 * addGamepadActionBinding("move-right", GamepadControls.DPAD_RIGHT);
+		 * myBinder.addGamepadActionBinding("move-right", GamepadControls.DPAD_RIGHT);
 		 * // In the game loop:
-		 * if (isActionActivated("move-right")) {
+		 * if (myBinder.isActionActivated("move-right")) {
 		 *     player.moveRight();
 		 * }
 		 *
 		 * // Check if a jump was activated (includes just before falling, for a more user-friendly control):
-		 * if (isTouchingSurface && isActionActivated("jump"), 0.1) {
-		 *     player.moveRight();
+		 * if (isTouchingSurface && myBinder.isActionActivated("jump"), 0.1) {
+		 *     player.performJump();
 		 * }
 		 * </pre>
 		 *
@@ -777,6 +836,27 @@ package com.zehfernando.input.binding {
 			return false;
 		}
 
+		/**
+		 * Consumes an action, causing all current activations and values attached to it to be reset. This is
+		 * the same as simulating the player releasing the button that activates an action. It is useful to
+		 * force players to re-activate some actions, such as a jump action (otherwise keeping the jump button
+		 * pressed would allow the player to jump nonstop).
+		 *
+		 * @param action		The id of the action you want to consume.
+		 *
+		 * <p>Examples:</p>
+		 *
+		 * <pre>
+		 * // On jump, consume the jump
+		 * if (isTouchingSurface && myBinder.isActionActivated("jump")) {
+		 *     myBinder.consumeAction("jump");
+		 *     player.performJump();
+		 * }
+		 * </pre>
+		 *
+		 * @see GamepadControls
+		 * @see #isActionActivated()
+		 */
 		public function consumeAction(__action:String):void {
 			// Deactivates all current actions of an action (forcing a button to be pressed again)
 			if (actionsActivations.hasOwnProperty(__action)) (actionsActivations[__action] as ActivationInfo).activations.length = 0;
