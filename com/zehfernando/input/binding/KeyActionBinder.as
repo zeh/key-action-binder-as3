@@ -537,6 +537,7 @@ package com.zehfernando.input.binding {
 				var filteredControls:Vector.<BindingInfo> = filterGamepadControls(deviceControlInfo.id, deviceIndex);
 				var idx:int;
 				var activations:Vector.<BindingInfo>;
+				// Considers activated if past the middle threshold between min/max values (allows analog controls to be treated as digital)
 				var isActivated:Boolean = control.value > control.minValue + (control.maxValue - control.minValue) / 2;
 
 				for (var i:int = 0; i < filteredControls.length; i++) {
@@ -546,7 +547,7 @@ package com.zehfernando.input.binding {
 
 						// Dispatches signal
 						(actionsActivations[filteredControls[i].action] as ActivationInfo).sensitiveValues[filteredControls[i].action] = map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true);
-						_onSensitiveActionChanged.dispatch(filteredControls[i].action, (actionsActivations[filteredControls[i].action] as ActivationInfo).value);
+						_onSensitiveActionChanged.dispatch(filteredControls[i].action, (actionsActivations[filteredControls[i].action] as ActivationInfo).getValue());
 					} else {
 						// A standard action binding, send activated/deactivated signals
 
@@ -729,7 +730,7 @@ package com.zehfernando.input.binding {
 		}
 
 		public function getActionValue(__action:String):Number {
-			return actionsActivations.hasOwnProperty(__action) ? (actionsActivations[__action] as ActivationInfo).value : 0;
+			return actionsActivations.hasOwnProperty(__action) ? (actionsActivations[__action] as ActivationInfo).getValue() : 0;
 		}
 
 		/**
@@ -825,12 +826,13 @@ class ActivationInfo {
 	// ================================================================================================================
 	// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-	public function get value():Number {
+	public function getValue():Number {
 		val = NaN;
 		for (iis in sensitiveValues) {
 			// NOTE: this will be a problem if two axis control the same action, since +1 is not necessarily better than -1
 			if (isNaN(val) || sensitiveValues[iis] > val) val = sensitiveValues[iis];
 		}
+		if (isNaN(val)) return activations.length == 0 ? 0 : 1;
 		return val;
 	}
 }
