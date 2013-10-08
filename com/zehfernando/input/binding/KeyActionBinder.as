@@ -19,15 +19,23 @@ package com.zehfernando.input.binding {
 		// http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/
 
 		// TODO:
-		// * Allow sensitive controls to be treated as normal controls
-		// * think of a way to avoid axis injecting button pressed
-		// * Add gamepad index to return signals
+		// * Allow sensitive controls to be treated as normal controls (with a threshold)
+		// * Think of a way to avoid axis injecting button pressed
+		// * Add gamepad index to return signals, and rethink whether gamepad index should be part of isActionActivated() and getActionValue() instead
 		// * Use caching samples?
-		// * Allow "any" gamepad key?
-		// * Allow sensitive control activation with threshold?
-		// * Some missing asdocs
-		// * Error on initialization, devices missing - try workaround with static initializer: http://forums.adobe.com/message/5618821#5618821
+		// * Allow "any" gamepad key (for "press any key")
+		// * Add missing asdocs
+		// * Better multi-platform setup... re-think GamepadControls
 
+		// * Auto controls
+		// * Gamepad on isActivated()
+		// * Thresholds
+
+		// Versions:
+		// 2013-10-08	1.0.0	First version to have a version number
+
+		// Constants
+		public static const VERSION:String = "1.0.0";
 		// Properties
 		private var _isRunning:Boolean;
 		private var alwaysPreventDefault:Boolean;						// If true, prevent action by other keys all the time (e.g. menu key)
@@ -443,7 +451,7 @@ package com.zehfernando.input.binding {
 		 *     player.moveRight();
 		 * }
 		 * </pre>
-		 * 
+		 *
 		 * @see http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/
 		 */
 		public function isActionActivated(__action:String, __timeToleranceSeconds:Number = 0):Boolean {
