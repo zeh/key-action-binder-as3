@@ -127,7 +127,6 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 ### Other notes
 
- * This class uses (and requires) the [`SimpleSignals`](https://github.com/zeh/as3/blob/master/com/zehfernando/signals/SimpleSignal.as) class.
  * If your GameInput controls suddenly stop working on OUYA or Android, this is likely due to a bug on Adobe AIR’s implementation. See [this post](http://zehfernando.com/2013/adobe-air-gameinput-pitfalls/) for reference and a workaround.
 
 ## Read more
