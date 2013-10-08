@@ -430,7 +430,7 @@ package com.zehfernando.input.binding {
 					device.enabled = true;
 					for (j = 0; j < device.numControls; j++) {
 //						debug("    Control id = " + device.getControlAt(j).id + ", val = " + device.getControlAt(j).minValue + " => " + device.getControlAt(j).maxValue);
-						device.getControlAt(j).addEventListener(Event.CHANGE, onGameInputDeviceChanged, false, 0, true);
+						device.getControlAt(j).addEventListener(Event.CHANGE, onGameInputControlChanged, false, 0, true);
 					}
 				}
 			}
@@ -446,7 +446,7 @@ package com.zehfernando.input.binding {
 				device = GameInput.getDeviceAt(i);
 				if (device != null) {
 					for (j = 0; j < device.numControls; j++) {
-						device.getControlAt(j).removeEventListener(Event.CHANGE, onGameInputDeviceChanged);
+						device.getControlAt(j).removeEventListener(Event.CHANGE, onGameInputControlChanged);
 					}
 				}
 			}
@@ -523,7 +523,7 @@ package com.zehfernando.input.binding {
 			refreshGameInputDeviceList();
 		}
 
-		private function onGameInputDeviceChanged(__e:Event):void {
+		private function onGameInputControlChanged(__e:Event):void {
 			var control:GameInputControl = __e.target as GameInputControl;
 
 			// Find the re-mapped control id
