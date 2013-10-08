@@ -8,6 +8,8 @@ package com.zehfernando.input.binding {
 	import flash.ui.GameInput;
 	import flash.ui.GameInputControl;
 	import flash.ui.GameInputDevice;
+	import flash.ui.KeyLocation;
+	import flash.ui.Keyboard;
 	import flash.utils.getTimer;
 	/**
 	 * @author zeh fernando
@@ -65,6 +67,198 @@ package com.zehfernando.input.binding {
 			stage = __stage;
 
 			if (GameInput.isSupported) gameInput = new GameInput();
+
+			// Creates a list of all known gamepads via a more readable/editable initializer
+			var platformsObj:Object = {
+				"windows7" : {
+					"filters" : {
+						"manufacturer"		: "Adobe Windows",
+						"os"				: "Windows 7",
+						"version"			: "WIN"
+					},
+					"gamepads" : {
+						"xbox360" : {
+							"filters" : {
+								"name"			: "Xbox 360 Controller"
+							},
+							"controls" : {
+								"AXIS_0"		: [GamepadControls.STICK_LEFT_X,			-1,	1],
+								"AXIS_1"		: [GamepadControls.STICK_LEFT_Y,			 1,	-1],
+								"AXIS_2"		: [GamepadControls.STICK_RIGHT_X,			-1,	1],
+								"AXIS_3"		: [GamepadControls.STICK_RIGHT_Y,			 1,	-1],
+								"BUTTON_4"		: [GamepadControls.ACTION_DOWN,				 0,	1],
+								"BUTTON_5"		: [GamepadControls.ACTION_RIGHT,			 0,	1],
+								"BUTTON_6"		: [GamepadControls.ACTION_LEFT,				 0,	1],
+								"BUTTON_7"		: [GamepadControls.ACTION_UP,				 0,	1],
+								"BUTTON_4"		: [GamepadControls.DPAD_UP,					 0,	1],
+								"BUTTON_8"		: [GamepadControls.LB,						 0,	1],
+								"BUTTON_9"		: [GamepadControls.RB,						 0,	1],
+								"BUTTON_10"		: [GamepadControls.LT,						 0,	1],
+								"BUTTON_11"		: [GamepadControls.RT,						 0,	1],
+								"BUTTON_12"		: [GamepadControls.BACK,					 0,	1],
+								"BUTTON_13"		: [GamepadControls.START,					 0,	1],
+								"BUTTON_14"		: [GamepadControls.STICK_LEFT_PRESS,		 0,	1],
+								"BUTTON_15"		: [GamepadControls.STICK_RIGHT_PRESS,		 0,	1],
+								"BUTTON_16"		: [GamepadControls.DPAD_UP,					 0,	1],
+								"BUTTON_17"		: [GamepadControls.DPAD_DOWN,				 0,	1],
+								"BUTTON_18"		: [GamepadControls.DPAD_LEFT,				 0,	1],
+								"BUTTON_19"		: [GamepadControls.DPAD_RIGHT,				 0,	1]
+							},
+							"keys" : [
+							]
+						}
+					}
+				},
+				"ouya" : {
+					"filters" : {
+						"manufacturer"		: "Android Linux",
+						"os"				: "Linux",
+						"version"			: "AND"
+					},
+					"gamepads" : {
+						"native" : {
+							"filters" : {
+								"name"			: "OUYA Game Controller"
+							},
+							"controls" : {
+								"AXIS_0"		: [GamepadControls.STICK_LEFT_X,			-1,	1],
+								"AXIS_1"		: [GamepadControls.STICK_LEFT_Y,			-1,	1],
+								"AXIS_11"		: [GamepadControls.STICK_RIGHT_X,			-1,	1],
+								"AXIS_14"		: [GamepadControls.STICK_RIGHT_Y,			-1,	1],
+								"AXIS_17"		: [GamepadControls.LT,						 0,	1],
+								"AXIS_18"		: [GamepadControls.RT,						 0,	1],
+								"BUTTON_19"		: [GamepadControls.DPAD_UP,					 0,	1],
+								"BUTTON_20"		: [GamepadControls.DPAD_DOWN,				 0,	1],
+								"BUTTON_21"		: [GamepadControls.DPAD_LEFT,				 0,	1],
+								"BUTTON_22"		: [GamepadControls.DPAD_RIGHT,				 0,	1],
+								"BUTTON_96"		: [GamepadControls.ACTION_DOWN,				 0,	1],
+								"BUTTON_97"		: [GamepadControls.ACTION_RIGHT,			 0,	1],
+								"BUTTON_99"		: [GamepadControls.ACTION_LEFT,				 0,	1],
+								"BUTTON_100"	: [GamepadControls.ACTION_UP,				 0,	1],
+								"BUTTON_102"	: [GamepadControls.LB,						 0,	1],
+								"BUTTON_103"	: [GamepadControls.RB,						 0,	1],
+								"BUTTON_106"	: [GamepadControls.STICK_LEFT_PRESS,		 0,	1],
+								"BUTTON_107"	: [GamepadControls.STICK_RIGHT_PRESS,		 0,	1]
+
+								// Ignored:
+								// "BUTTON_104"	: [GamepadControls.CONTROL_L2_DIGITAL,				 0,	1],
+								// "BUTTON_105"	: [GamepadControls.CONTROL_R2_DIGITAL,				 0,	1],
+
+								// Missing:
+								// CONTROL_START (via keyboard though)
+								// CONTROL_MENU
+								// CONTROL_BACK
+							},
+							"keys" : [
+								{
+									// OUYA button
+									"code"			: Keyboard.MENU,
+									"location"		: KeyLocation.STANDARD,
+									"id"			: GamepadControls.START
+								}
+							]
+						},
+						"ps3" : {
+							"filters" : {
+								"name"			: "Sony PLAYSTATION(R)3 Controller"
+							},
+							"controls" : {
+								"AXIS_0"		: [GamepadControls.STICK_LEFT_X,			-1,	1],
+								"AXIS_1"		: [GamepadControls.STICK_LEFT_Y,			-1,	1],
+								"AXIS_11"		: [GamepadControls.STICK_RIGHT_X,			-1,	1],
+								"AXIS_14"		: [GamepadControls.STICK_RIGHT_Y,			-1,	1],
+								"AXIS_17"		: [GamepadControls.LT,						 0,	1],
+								"AXIS_18"		: [GamepadControls.RT,						 0,	1],
+								"AXIS_36"		: [GamepadControls.DPAD_UP,					 0,	1],
+								"AXIS_37"		: [GamepadControls.DPAD_RIGHT,				 0,	1],
+								"AXIS_38"		: [GamepadControls.DPAD_DOWN,				 0,	1],
+								"AXIS_39"		: [GamepadControls.DPAD_LEFT,				 0,	1],
+								"BUTTON_96"		: [GamepadControls.ACTION_DOWN,				 0,	1],
+								"BUTTON_97"		: [GamepadControls.ACTION_RIGHT,			 0,	1],
+								"BUTTON_99"		: [GamepadControls.ACTION_LEFT,				 0,	1],
+								"BUTTON_100"	: [GamepadControls.ACTION_UP,				 0,	1],
+								"BUTTON_102"	: [GamepadControls.LB,						 0,	1],
+								"BUTTON_103"	: [GamepadControls.RB,						 0,	1],
+								"BUTTON_106"	: [GamepadControls.STICK_LEFT_PRESS,		 0,	1],
+								"BUTTON_107"	: [GamepadControls.STICK_RIGHT_PRESS,		 0,	1],
+								"BUTTON_108"	: [GamepadControls.START,					 0,	1]
+
+								// Ignored:
+								// "BUTTON_19"		: [GamepadControls.CONTROL_DPAD_UP,					 0,	1],
+								// "BUTTON_20"		: [GamepadControls.CONTROL_DPAD_DOWN,				 0,	1],
+								// "BUTTON_21"		: [GamepadControls.CONTROL_DPAD_LEFT,				 0,	1],
+								// "BUTTON_22"		: [GamepadControls.CONTROL_DPAD_RIGHT,				 0,	1],
+
+								// Missing:
+								// CONTROL_MENU (via keyboard though)
+								// CONTROL_BACK (via keyboard though)
+							},
+							"keys" : [
+								{
+									// SELECT button
+									"code"			: Keyboard.BACK,
+									"location"		: KeyLocation.STANDARD,
+									"id"			: GamepadControls.BACK
+								},
+								{
+									// PS button
+									"code"			: Keyboard.MENU,
+									"location"		: KeyLocation.STANDARD,
+									"id"			: GamepadControls.MENU
+								}
+							]
+						},
+						"xbox360" : {
+							"filters" : {
+								"name"			: "Microsoft X-Box 360 pad"
+							},
+							"controls" : {
+								"AXIS_0"		: [GamepadControls.STICK_LEFT_X,			-1,	1],
+								"AXIS_1"		: [GamepadControls.STICK_LEFT_Y,			-1,	1],
+								"AXIS_11"		: [GamepadControls.STICK_RIGHT_X,			-1,	1],
+								"AXIS_14"		: [GamepadControls.STICK_RIGHT_Y,			-1,	1],
+								"AXIS_15"		: [[GamepadControls.DPAD_LEFT, 0, -1],	[GamepadControls.DPAD_RIGHT, 0, 1], 				 0,	1],
+								"AXIS_16"		: [[GamepadControls.DPAD_UP, 0, -1],	[GamepadControls.DPAD_DOWN, 0, 1], 					 0,	1],
+								"AXIS_17"		: [GamepadControls.LT,						 0,	1],
+								"AXIS_18"		: [GamepadControls.RT,						 0,	1],
+								"BUTTON_96"		: [GamepadControls.ACTION_DOWN,				 0,	1],
+								"BUTTON_97"		: [GamepadControls.ACTION_RIGHT,			 0,	1],
+								"BUTTON_99"		: [GamepadControls.ACTION_LEFT,				 0,	1],
+								"BUTTON_100"	: [GamepadControls.ACTION_UP,				 0,	1],
+								"BUTTON_102"	: [GamepadControls.LB,						 0,	1],
+								"BUTTON_103"	: [GamepadControls.RB,						 0,	1],
+								"BUTTON_106"	: [GamepadControls.STICK_LEFT_PRESS,		 0,	1],
+								"BUTTON_107"	: [GamepadControls.STICK_RIGHT_PRESS,		 0,	1],
+								"BUTTON_108"	: [GamepadControls.START,					 0,	1]
+
+								// Ignored:
+								// "BUTTON_19"		: [GamepadControls.CONTROL_DPAD_UP,					 0,	1],
+								// "BUTTON_20"		: [GamepadControls.CONTROL_DPAD_DOWN,				 0,	1],
+								// "BUTTON_21"		: [GamepadControls.CONTROL_DPAD_LEFT,				 0,	1],
+								// "BUTTON_22"		: [GamepadControls.CONTROL_DPAD_RIGHT,				 0,	1],
+
+								// Missing:
+								// CONTROL_MENU (via keyboard though)
+								// CONTROL_BACK (via keyboard though)
+							},
+							"keys" : [
+								{
+									// BACK button
+									"code"			: Keyboard.BACK,
+									"location"		: KeyLocation.STANDARD,
+									"id"			: GamepadControls.BACK
+								},
+								{
+									// XBOX button
+									"code"			: Keyboard.MENU,
+									"location"		: KeyLocation.STANDARD,
+									"id"			: GamepadControls.MENU
+								}
+							]
+						}
+					}
+				}
+			};
 		}
 
 		// ================================================================================================================
