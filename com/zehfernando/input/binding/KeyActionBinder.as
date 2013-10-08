@@ -5,6 +5,7 @@ package com.zehfernando.input.binding {
 	import flash.events.Event;
 	import flash.events.GameInputEvent;
 	import flash.events.KeyboardEvent;
+	import flash.system.Capabilities;
 	import flash.ui.GameInput;
 	import flash.ui.GameInputControl;
 	import flash.ui.GameInputDevice;
@@ -39,6 +40,9 @@ package com.zehfernando.input.binding {
 		// Constants
 		public static const VERSION:String = "1.0.0";
 
+		// List of all auto-configurable gamepads
+		private static var knownGamepadPlatforms:Vector.<AutoPlatformInfo>;
+
 		private static var stage:Stage;
 
 		// Properties
@@ -54,11 +58,15 @@ package com.zehfernando.input.binding {
 		private var _onSensitiveActionChanged:SimpleSignal;				// Receives: action:String, value:Number (0-1)
 
 		private var gameInputDevices:Vector.<GameInputDevice>;
+		private var gameInputDeviceDefinitions:Vector.<AutoGamepadInfo>;
 
 		private static var gameInput:GameInput;
 
 		private var ii:int;												// Internal i, for speed
 		private var it:int;												// Internal t, for speed
+
+		// Properties to avoid allocations
+		private var mi:Number;											// Used in map()
 
 		// ================================================================================================================
 		// STATIC CONSTRUCTOR ---------------------------------------------------------------------------------------------
@@ -259,6 +267,62 @@ package com.zehfernando.input.binding {
 					}
 				}
 			};
+
+			// Parse the platformObj into a proper AutoPlatformInfo list
+
+			knownGamepadPlatforms = new Vector.<AutoPlatformInfo>();
+
+			var platformInfo:AutoPlatformInfo, gamepadInfo:AutoGamepadInfo, controlInfo:AutoGamepadControlInfo;
+			var iis:String, jjs:String, kks:String;
+			var platformObj:Object, gamepadObj:Object, controlObj:Object;
+			var manufacturerFilter:String, osFilter:String, versionFilter:String;
+
+			for (iis in platformsObj) {
+				platformObj = platformsObj[iis];
+
+				manufacturerFilter	= platformObj["filters"]["manufacturer"];
+				osFilter			= platformObj["filters"]["os"];
+				versionFilter		= platformObj["filters"]["version"];
+
+				// Only keep items in memory if the version passes the filters
+				if ((manufacturerFilter == null	|| Capabilities.manufacturer.indexOf(manufacturerFilter) > -1) &&
+					(osFilter == null 			|| Capabilities.os.indexOf(osFilter) > -1) &&
+					(versionFilter == null		|| Capabilities.version.indexOf(versionFilter) > -1)) {
+					// Add this platform (same as currentl platform)
+
+					platformInfo = new AutoPlatformInfo();
+					platformInfo.id					= iis;
+					platformInfo.manufacturerFilter	= manufacturerFilter;
+					platformInfo.osFilter			= osFilter;
+					platformInfo.versionFilter		= versionFilter;
+
+					knownGamepadPlatforms.push(platformInfo);
+
+					// Add possible gamepads
+					for (jjs in platformObj["gamepads"]) {
+						gamepadObj = platformObj["gamepads"][jjs];
+
+						gamepadInfo = new AutoGamepadInfo();
+						gamepadInfo.id			= jjs;
+						gamepadInfo.nameFilter	= gamepadObj["filters"]["name"];
+
+						platformInfo.gamepads.push(gamepadInfo);
+
+						// Add possible controls
+						for (kks in gamepadObj["controls"]) {
+							controlObj = gamepadObj["controls"][kks];
+
+							// TODO: parse complex split items
+							controlInfo = new AutoGamepadControlInfo();
+							controlInfo.id	= controlObj[0];
+							controlInfo.min	= controlObj[1];
+							controlInfo.max	= controlObj[2];
+
+							gamepadInfo.controls[kks] = controlInfo;
+						}
+					}
+				}
+			}
 		}
 
 		// ================================================================================================================
@@ -317,10 +381,33 @@ package com.zehfernando.input.binding {
 			addGameInputDeviceEvents();
 
 			// Create a list of devices for easy identification
+			var i:int;
+
 			gameInputDevices = new Vector.<GameInputDevice>();
-			for (var i:int = 0; i < GameInput.numDevices; i++) {
+			gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>();
+			for (i = 0; i < GameInput.numDevices; i++) {
 				gameInputDevices.push(GameInput.getDeviceAt(i));
+				gameInputDeviceDefinitions.push(findGamepadInfo(gameInputDevices[i]));
 			}
+
+//			log("Game input devices changed; new list:");
+//			for (i = 0; i < gameInputDevices.length; i++) {
+//				log("  " + i + " => device.name is [" + gameInputDevices[i].name + "], identified as [" + gameInputDeviceDefinitions[i].id + "]");
+//			}
+		}
+
+		private function findGamepadInfo(__gameInputDevice:GameInputDevice):AutoGamepadInfo {
+			// Based on a Game InputDevice, find the internal GamepadInfo that describes this Gamepad
+			var i:int, j:int;
+			for (i = 0; i < knownGamepadPlatforms.length; i++) {
+				for (j = 0; j < knownGamepadPlatforms[i].gamepads.length; j++) {
+					if (knownGamepadPlatforms[i].gamepads[j].nameFilter == null || gameInputDevices[i].name.indexOf(knownGamepadPlatforms[i].gamepads[j].nameFilter) > -1) {
+						return knownGamepadPlatforms[i].gamepads[j];
+					}
+				}
+			}
+			trace("Error! Gamepad definition not found for GameInputDevice " + __gameInputDevice.name + "!!");
+			return null;
 		}
 
 		private function addGameInputDeviceEvents():void {
@@ -365,6 +452,17 @@ package com.zehfernando.input.binding {
 			}
 		}
 
+		private function map(__value:Number, __oldMin:Number, __oldMax:Number, __newMin:Number = 0, __newMax:Number = 1, __clamp:Boolean = false):Number {
+			// Same as map, but without allocations
+			if (__oldMin == __oldMax) return __newMin;
+			mi = ((__value-__oldMin) / (__oldMax-__oldMin) * (__newMax-__newMin)) + __newMin;
+			if (__clamp) mi = __newMin < __newMax ? clamp(mi, __newMin, __newMax) : clamp(mi, __newMax, __newMin);
+			return mi;
+		}
+
+		private function clamp(__value:Number, __min:Number = 0, __max:Number = 1):Number {
+			return __value < __min ? __min : __value > __max ? __max : __value;
+		}
 
 		// ================================================================================================================
 		// EVENT INTERFACE ------------------------------------------------------------------------------------------------
@@ -428,46 +526,53 @@ package com.zehfernando.input.binding {
 		private function onGameInputDeviceChanged(__e:Event):void {
 			var control:GameInputControl = __e.target as GameInputControl;
 
-//			debug("onGameInputDeviceChanged: " + control.id + " = " + control.value + " (of " + control.minValue + " => " + control.maxValue + ")");
+			// Find the re-mapped control id
+			var deviceIndex:int = gameInputDevices.indexOf(control.device);
+			var deviceControlInfo:AutoGamepadControlInfo = gameInputDeviceDefinitions[deviceIndex].controls.hasOwnProperty(control.id) ? gameInputDeviceDefinitions[deviceIndex].controls[control.id] as AutoGamepadControlInfo : null;
 
-			var filteredControls:Vector.<BindingInfo> = filterGamepadControls(control.id, gameInputDevices.indexOf(control.device));
-			var idx:int;
-			var activations:Vector.<BindingInfo>;
-			var isActivated:Boolean = control.value > control.minValue + (control.maxValue - control.minValue) / 2;
+			if (deviceControlInfo != null) {
 
-			for (var i:int = 0; i < filteredControls.length; i++) {
+				//debug("onGameInputControlChanged: " + control.id + " [" + metaControlId + "] = " + control.value + " (of " + control.minValue + " => " + control.maxValue + ")");
 
-				if (filteredControls[i].binding is GamepadSensitiveBinding) {
-					// A sensitive binding, send changed value signals instead
+				var filteredControls:Vector.<BindingInfo> = filterGamepadControls(deviceControlInfo.id, deviceIndex);
+				var idx:int;
+				var activations:Vector.<BindingInfo>;
+				var isActivated:Boolean = control.value > control.minValue + (control.maxValue - control.minValue) / 2;
 
-					// Dispatches signal
-					(actionsActivations[filteredControls[i].action] as ActivationInfo).sensitiveValues[filteredControls[i].action] = (control.value - control.minValue) / (control.maxValue - control.minValue) * ((filteredControls[i].binding as GamepadSensitiveBinding).maxValue - (filteredControls[i].binding as GamepadSensitiveBinding).minValue) + (filteredControls[i].binding as GamepadSensitiveBinding).minValue;
-					_onSensitiveActionChanged.dispatch(filteredControls[i].action, (actionsActivations[filteredControls[i].action] as ActivationInfo).value);
-				} else {
-					// A standard action binding, send activated/deactivated signals
+				for (var i:int = 0; i < filteredControls.length; i++) {
 
-					if (filteredControls[i].isActivated != isActivated) {
-						// Value changed
-						filteredControls[i].isActivated = isActivated;
-						if (isActivated) {
-							// Marks as pressed
-							filteredControls[i].lastActivatedTime = getTimer();
+					if (filteredControls[i].binding is GamepadSensitiveBinding) {
+						// A sensitive binding, send changed value signals instead
 
-							// Add this activation to the list of current activations
-							(actionsActivations[filteredControls[i].action] as ActivationInfo).activations.push(filteredControls[i]);
+						// Dispatches signal
+						(actionsActivations[filteredControls[i].action] as ActivationInfo).sensitiveValues[filteredControls[i].action] = map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true);
+						_onSensitiveActionChanged.dispatch(filteredControls[i].action, (actionsActivations[filteredControls[i].action] as ActivationInfo).value);
+					} else {
+						// A standard action binding, send activated/deactivated signals
 
-							// Dispatches signal
-							if ((actionsActivations[filteredControls[i].action] as ActivationInfo).activations.length == 1) _onActionActivated.dispatch(filteredControls[i].action);
-						} else {
-							// Marks as released
+						if (filteredControls[i].isActivated != isActivated) {
+							// Value changed
+							filteredControls[i].isActivated = isActivated;
+							if (isActivated) {
+								// Marks as pressed
+								filteredControls[i].lastActivatedTime = getTimer();
 
-							// Removes this activation from the list of current activations
-							activations = (actionsActivations[filteredControls[i].action] as ActivationInfo).activations;
-							idx = activations.indexOf(filteredControls[i]);
-							if (idx > -1) activations.splice(idx, 1);
+								// Add this activation to the list of current activations
+								(actionsActivations[filteredControls[i].action] as ActivationInfo).activations.push(filteredControls[i]);
 
-							// Dispatches signal
-							if (activations.length == 0) _onActionDeactivated.dispatch(filteredControls[i].action);
+								// Dispatches signal
+								if ((actionsActivations[filteredControls[i].action] as ActivationInfo).activations.length == 1) _onActionActivated.dispatch(filteredControls[i].action);
+							} else {
+								// Marks as released
+
+								// Removes this activation from the list of current activations
+								activations = (actionsActivations[filteredControls[i].action] as ActivationInfo).activations;
+								idx = activations.indexOf(filteredControls[i]);
+								if (idx > -1) activations.splice(idx, 1);
+
+								// Dispatches signal
+								if (activations.length == 0) _onActionDeactivated.dispatch(filteredControls[i].action);
+							}
 						}
 					}
 				}
@@ -535,6 +640,7 @@ package com.zehfernando.input.binding {
 				}
 
 				gameInputDevices = null;
+				gameInputDeviceDefinitions = null;
 				removeGameInputDeviceEvents();
 
 				_isRunning = false;
@@ -586,7 +692,7 @@ package com.zehfernando.input.binding {
 		 * @param action		An arbritrary String id identifying the action that should be dispatched once this
 		 *						input combination is detected.
 		 * @param controlId		The id code of a GameInput contol, as an String. Use one of the constants from
-		 *						<code>GamepadControls</code>, or a string related to the control you're expecting.
+		 *						<code>GamepadControls</code>.
 		 * @param gamepadIndex	The int of the gamepad that you want to restrict this action to. Use 0 for the
 		 *						first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or
 		 *						<code>NaN</code> is passed, the gamepad index is never taken into consideration
@@ -616,9 +722,9 @@ package com.zehfernando.input.binding {
 			prepareAction(__action);
 		}
 
-		public function addGamepadSensitiveActionBinding(__action:String, __controlId:String, __gamepadIndex:int = -1, __minValue:Number = 0, __maxValue:Number = 1):void {
+		public function addGamepadSensitiveActionBinding(__action:String, __controlId:String, __gamepadIndex:int = -1):void {
 			// Create a binding to be verified later
-			bindings.push(new BindingInfo(__action, new GamepadSensitiveBinding(__controlId, __gamepadIndex >= 0 ? __gamepadIndex : GamepadBinding.GAMEPAD_INDEX_ANY, __minValue, __maxValue)));
+			bindings.push(new BindingInfo(__action, new GamepadSensitiveBinding(__controlId, __gamepadIndex >= 0 ? __gamepadIndex : GamepadBinding.GAMEPAD_INDEX_ANY)));
 			prepareAction(__action);
 		}
 
@@ -834,17 +940,73 @@ class GamepadBinding implements IBinding {
  */
 class GamepadSensitiveBinding extends GamepadBinding {
 
+	// ================================================================================================================
+	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
+
+	public function GamepadSensitiveBinding(__controlId:String, __gamepadIndex:uint) {
+		super(__controlId, __gamepadIndex);
+	}
+}
+
+/**
+ * Information on platforms that are automatically mapped
+ */
+class AutoPlatformInfo {
+
 	// Properties
-	public var minValue:Number;
-	public var maxValue:Number;
+	public var id:String;
+
+	public var manufacturerFilter:String;		// Filter for Capabilities.manufacturer
+	public var osFilter:String;					// Filter for Capabilities.os
+	public var versionFilter:String;			// Filter for Capabilities.version
+
+	public var gamepads:Vector.<AutoGamepadInfo>;
+
 
 	// ================================================================================================================
 	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
-	public function GamepadSensitiveBinding(__controlId:String, __gamepadIndex:uint, __minValue:Number, __maxValue:Number) {
-		super(__controlId, __gamepadIndex);
-
-		minValue = __minValue;
-		maxValue = __maxValue;
+	public function AutoPlatformInfo() {
+		gamepads = new Vector.<AutoGamepadInfo>();
 	}
 }
+
+/**
+ * Information on gamepads that are automatically mapped
+ */
+class AutoGamepadInfo {
+
+	// Properties
+	public var id:String;
+
+	public var nameFilter:String;				// Filter for device.name
+
+	public var controls:Object;					// AutoGamepadControlInfo, key is the control.id
+
+
+	// ================================================================================================================
+	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
+
+	public function AutoGamepadInfo() {
+		controls = {};
+	}
+}
+
+/**
+ * Information on gamepads controls that are automatically mapped
+ */
+class AutoGamepadControlInfo {
+
+	// Properties
+	public var id:String;
+	public var min:Number;
+	public var max:Number;
+
+
+	// ================================================================================================================
+	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
+
+	public function AutoGamepadControlInfo() {
+	}
+}
+
