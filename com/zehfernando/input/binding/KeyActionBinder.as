@@ -36,6 +36,9 @@ package com.zehfernando.input.binding {
 
 		// Constants
 		public static const VERSION:String = "1.0.0";
+
+		private static var stage:Stage;
+
 		// Properties
 		private var _isRunning:Boolean;
 		private var alwaysPreventDefault:Boolean;						// If true, prevent action by other keys all the time (e.g. menu key)
@@ -48,7 +51,6 @@ package com.zehfernando.input.binding {
 		private var _onActionDeactivated:SimpleSignal;					// Receives: action:String
 		private var _onSensitiveActionChanged:SimpleSignal;				// Receives: action:String, value:Number (0-1)
 
-		private var stage:Stage;
 		private var gameInputDevices:Vector.<GameInputDevice>;
 
 		private static var gameInput:GameInput;
@@ -59,15 +61,16 @@ package com.zehfernando.input.binding {
 		// ================================================================================================================
 		// STATIC CONSTRUCTOR ---------------------------------------------------------------------------------------------
 
-		{
+		public static function init(__stage:Stage):void  {
+			stage = __stage;
+
 			if (GameInput.isSupported) gameInput = new GameInput();
 		}
 
 		// ================================================================================================================
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
-		public function KeyActionBinder(__stage:Stage) {
-			stage = __stage;
+		public function KeyActionBinder() {
 			alwaysPreventDefault = true;
 			bindings = new Vector.<BindingInfo>();
 			actionsActivations = {};
