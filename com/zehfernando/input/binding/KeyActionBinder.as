@@ -30,15 +30,16 @@ package com.zehfernando.input.binding {
 		// * Add missing asdocs
 		// * Better multi-platform setup... re-think GamepadControls
 
-		// * Auto controls
 		// * Gamepad on isActivated()
 		// * Thresholds
 
 		// Versions:
+		// 2013-10-08	1.1.1	Removed max/min from addGamepadSensitiveActionBinding() (always use hardcoded values)
+		// 2013-10-08	1.1.0	Completely revamped the control scheme by using "auto" controls for cross-platform operation
 		// 2013-10-08	1.0.0	First version to have a version number
 
 		// Constants
-		public static const VERSION:String = "1.0.0";
+		public static const VERSION:String = "1.1.1";
 
 		// List of all auto-configurable gamepads
 		private static var knownGamepadPlatforms:Vector.<AutoPlatformInfo>;
