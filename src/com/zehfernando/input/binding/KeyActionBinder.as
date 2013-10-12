@@ -63,7 +63,6 @@ package com.zehfernando.input.binding {
 
 		private static var gameInput:GameInput;
 
-
 		// Properties to avoid allocations
 		private var mi:Number;											// Used in map()
 
@@ -543,7 +542,7 @@ package com.zehfernando.input.binding {
 						// A sensitive binding, send changed value signals instead
 
 						// Dispatches signal
-						activationInfo.addSensitiveValue(filteredControls[i].action, map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true));
+						activationInfo.addSensitiveValue(filteredControls[i].action, map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true), deviceIndex);
 						_onSensitiveActionChanged.dispatch(filteredControls[i].action, activationInfo.getValue());
 					} else {
 						// A standard action binding, send activated/deactivated signals
@@ -556,7 +555,7 @@ package com.zehfernando.input.binding {
 								filteredControls[i].lastActivatedTime = getTimer();
 
 								// Add this activation to the list of current activations
-								activationInfo.addActivation(filteredControls[i]);
+								activationInfo.addActivation(filteredControls[i], deviceIndex);
 
 								// Dispatches signal
 								if (activationInfo.getNumActivations() == 1) _onActionActivated.dispatch(filteredControls[i].action);
@@ -783,8 +782,8 @@ package com.zehfernando.input.binding {
 		 * @see #addGamepadSensitiveActionBinding()
 		 * @see #isActionActivated()
 		 */
-		public function getActionValue(__action:String):Number {
-			return actionsActivations.hasOwnProperty(__action) ? (actionsActivations[__action] as ActivationInfo).getValue() : 0;
+		public function getActionValue(__action:String, __gamepadIndex:int = -1):Number {
+			return actionsActivations.hasOwnProperty(__action) ? (actionsActivations[__action] as ActivationInfo).getValue(__gamepadIndex) : 0;
 		}
 
 		/**
@@ -817,7 +816,7 @@ package com.zehfernando.input.binding {
 		 * @see #getActionValue()
 		 */
 		public function isActionActivated(__action:String, __timeToleranceSeconds:Number = 0, __gamepadIndex:int = -1):Boolean {
-			return actionsActivations.hasOwnProperty(__action) && (actionsActivations[__action] as ActivationInfo).getNumActivations(__timeToleranceSeconds) > 0;
+			return actionsActivations.hasOwnProperty(__action) && (actionsActivations[__action] as ActivationInfo).getNumActivations(__timeToleranceSeconds, __gamepadIndex) > 0;
 		}
 
 		/**
@@ -875,7 +874,9 @@ import flash.utils.getTimer;
 class ActivationInfo {
 
 	private var activations:Vector.<BindingInfo>;			// All activated bindings
+	private var activationGamepadIndexes:Vector.<int>;		// Gamepad that activated that binding
 	private var sensitiveValues:Dictionary;					// Dictionary with IBinding
+	private var sensitiveValuesGamepadIndexes:Dictionary;	// Gamepad int that activated that sensitive value
 
 	// Temp vars to avoid garbage collection
 	private var iiv:Number;									// Value buffer
@@ -890,7 +891,9 @@ class ActivationInfo {
 
 	public function ActivationInfo() {
 		activations = new Vector.<BindingInfo>();
+		activationGamepadIndexes = new Vector.<int>();
 		sensitiveValues = new Dictionary();
+		sensitiveValuesGamepadIndexes = new Dictionary();
 	}
 
 	// ================================================================================================================
@@ -898,42 +901,46 @@ class ActivationInfo {
 
 	public function addActivation(__bindingInfo:BindingInfo, __gamepadIndex:int = -1):void {
 		activations.push(__bindingInfo);
+		activationGamepadIndexes.push(__gamepadIndex);
 	}
 
 	public function removeActivation(__bindingInfo:BindingInfo):void {
 		iix = activations.indexOf(__bindingInfo);
 		if (iix > -1) {
 			activations.splice(iix, 1);
+			activationGamepadIndexes.splice(iix, 1);
 		}
 	}
 
-	public function getNumActivations(__timeToleranceSeconds:Number = 0):int {
+	public function getNumActivations(__timeToleranceSeconds:Number = 0, __gamepadIndex:int = -1):int {
 		// If not time-sensitive, just return it
-		if (__timeToleranceSeconds <= 0 || activations.length == 0) return activations.length;
-		// Otherwise, actually check for activation time
+		if ((__timeToleranceSeconds <= 0 && __gamepadIndex < 0) || activations.length == 0) return activations.length;
+		// Otherwise, actually check for activation time and gamepad index
 		iit = getTimer() - __timeToleranceSeconds * 1000;
 		iic = 0;
 		for (iii = 0; iii < activations.length; iii++) {
-			if (activations[iii].lastActivatedTime >= iit) iic++;
+			if ((__timeToleranceSeconds <= 0 || activations[iii].lastActivatedTime >= iit) && (__gamepadIndex < 0 || activationGamepadIndexes[iii] == __gamepadIndex)) iic++;
 		}
 		return iic;
 	}
 
 	public function resetActivations():void {
 		activations.length = 0;
+		activationGamepadIndexes.length = 0;
 	}
 
-	public function addSensitiveValue(__actionId:String, __value:Number):void {
+	public function addSensitiveValue(__actionId:String, __value:Number, __gamepadIndex:int = -1):void {
 		sensitiveValues[__actionId] = __value;
+		sensitiveValuesGamepadIndexes[__actionId] = __gamepadIndex;
 	}
 
-	public function getValue():Number {
+	public function getValue(__gamepadIndex:int = -1):Number {
 		iiv = NaN;
 		for (iis in sensitiveValues) {
-			// NOTE: this will be a problem if two axis control the same action, since +1 is not necessarily better than -1
-			if (isNaN(iiv) || sensitiveValues[iis] > iiv) iiv = sensitiveValues[iis];
+			// NOTE: this may be a problem if two different axis control the same action, since -1 is not necessarily better than +0.5
+			if ((__gamepadIndex < 0 || sensitiveValuesGamepadIndexes[iis] == __gamepadIndex) && (isNaN(iiv) || Math.abs(sensitiveValues[iis]) > Math.abs(iiv))) iiv = sensitiveValues[iis];
 		}
-		if (isNaN(iiv)) return activations.length == 0 ? 0 : 1;
+		if (isNaN(iiv)) return getNumActivations(0, __gamepadIndex) == 0 ? 0 : 1;
 		return iiv;
 	}
 }
