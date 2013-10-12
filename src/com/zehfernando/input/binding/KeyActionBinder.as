@@ -63,8 +63,6 @@ package com.zehfernando.input.binding {
 
 		private static var gameInput:GameInput;
 
-		private var ii:int;												// Internal i, for speed
-		private var it:int;												// Internal t, for speed
 
 		// Properties to avoid allocations
 		private var mi:Number;											// Used in map()
@@ -478,10 +476,10 @@ package com.zehfernando.input.binding {
 					filteredKeys[i].lastActivatedTime = getTimer();
 
 					// Add this activation to the list of current activations
-					(actionsActivations[filteredKeys[i].action] as ActivationInfo).activations.push(filteredKeys[i]);
+					(actionsActivations[filteredKeys[i].action] as ActivationInfo).addActivation(filteredKeys[i]);
 
 					// Dispatches signal
-					if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).activations.length == 1) _onActionActivated.dispatch(filteredKeys[i].action);
+					if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 1) _onActionActivated.dispatch(filteredKeys[i].action);
 				}
 			}
 
@@ -491,19 +489,15 @@ package com.zehfernando.input.binding {
 		private function onKeyUp(__e:KeyboardEvent):void {
 //			debug("key up: " + __e);
 			var filteredKeys:Vector.<BindingInfo> = filterKeyboardKeys(__e.keyCode, __e.keyLocation);
-			var idx:int;
-			var activations:Vector.<BindingInfo>;
 			for (var i:int = 0; i < filteredKeys.length; i++) {
 				// Marks as released
 				filteredKeys[i].isActivated = false;
 
 				// Removes this activation from the list of current activations
-				activations = (actionsActivations[filteredKeys[i].action] as ActivationInfo).activations;
-				idx = activations.indexOf(filteredKeys[i]);
-				if (idx > -1) activations.splice(idx, 1);
+				(actionsActivations[filteredKeys[i].action] as ActivationInfo).removeActivation(filteredKeys[i]);
 
 				// Dispatches signal
-				if (activations.length == 0) _onActionDeactivated.dispatch(filteredKeys[i].action);
+				if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 0) _onActionDeactivated.dispatch(filteredKeys[i].action);
 			}
 
 			if (alwaysPreventDefault) __e.preventDefault();
@@ -536,19 +530,20 @@ package com.zehfernando.input.binding {
 				//debug("onGameInputControlChanged: " + control.id + " [" + metaControlId + "] = " + control.value + " (of " + control.minValue + " => " + control.maxValue + ")");
 
 				var filteredControls:Vector.<BindingInfo> = filterGamepadControls(deviceControlInfo.id, deviceIndex);
-				var idx:int;
-				var activations:Vector.<BindingInfo>;
+				var activationInfo:ActivationInfo;
+
 				// Considers activated if past the middle threshold between min/max values (allows analog controls to be treated as digital)
 				var isActivated:Boolean = control.value > control.minValue + (control.maxValue - control.minValue) / 2;
 
 				for (var i:int = 0; i < filteredControls.length; i++) {
+					activationInfo = actionsActivations[filteredControls[i].action] as ActivationInfo;
 
 					if (filteredControls[i].binding is GamepadSensitiveBinding) {
 						// A sensitive binding, send changed value signals instead
 
 						// Dispatches signal
-						(actionsActivations[filteredControls[i].action] as ActivationInfo).sensitiveValues[filteredControls[i].action] = map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true);
-						_onSensitiveActionChanged.dispatch(filteredControls[i].action, (actionsActivations[filteredControls[i].action] as ActivationInfo).getValue());
+						activationInfo.addSensitiveValue(filteredControls[i].action, map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true));
+						_onSensitiveActionChanged.dispatch(filteredControls[i].action, activationInfo.getValue());
 					} else {
 						// A standard action binding, send activated/deactivated signals
 
@@ -560,20 +555,18 @@ package com.zehfernando.input.binding {
 								filteredControls[i].lastActivatedTime = getTimer();
 
 								// Add this activation to the list of current activations
-								(actionsActivations[filteredControls[i].action] as ActivationInfo).activations.push(filteredControls[i]);
+								activationInfo.addActivation(filteredControls[i]);
 
 								// Dispatches signal
-								if ((actionsActivations[filteredControls[i].action] as ActivationInfo).activations.length == 1) _onActionActivated.dispatch(filteredControls[i].action);
+								if (activationInfo.getNumActivations() == 1) _onActionActivated.dispatch(filteredControls[i].action);
 							} else {
 								// Marks as released
 
 								// Removes this activation from the list of current activations
-								activations = (actionsActivations[filteredControls[i].action] as ActivationInfo).activations;
-								idx = activations.indexOf(filteredControls[i]);
-								if (idx > -1) activations.splice(idx, 1);
+								activationInfo.removeActivation(filteredControls[i]);
 
 								// Dispatches signal
-								if (activations.length == 0) _onActionDeactivated.dispatch(filteredControls[i].action);
+								if (activationInfo.getNumActivations() == 0) _onActionDeactivated.dispatch(filteredControls[i].action);
 							}
 						}
 					}
@@ -816,24 +809,13 @@ package com.zehfernando.input.binding {
 		 * }
 		 * </pre>
 		 *
+		 * @see GamepadControls
+		 * @see #addGamepadActionBinding()
 		 * @see http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/
+		 * @see #getActionValue()
 		 */
-		public function isActionActivated(__action:String, __timeToleranceSeconds:Number = 0):Boolean {
-			if (actionsActivations.hasOwnProperty(__action) && (actionsActivations[__action] as ActivationInfo).activations.length > 0) {
-				if (__timeToleranceSeconds <= 0) {
-					// No need for time tolerance check
-					return true;
-				} else {
-					// Needs to check the time
-					var actionActivations:Vector.<BindingInfo> = (actionsActivations[__action] as ActivationInfo).activations;
-					it = getTimer() - __timeToleranceSeconds * 1000;
-					for (ii = 0; ii < actionActivations.length; ii++) {
-						if (actionActivations[ii].lastActivatedTime >= it) return true;
-					}
-				}
-			}
-
-			return false;
+		public function isActionActivated(__action:String, __timeToleranceSeconds:Number = 0, __gamepadIndex:int = -1):Boolean {
+			return actionsActivations.hasOwnProperty(__action) && (actionsActivations[__action] as ActivationInfo).getNumActivations(__timeToleranceSeconds) > 0;
 		}
 
 		/**
@@ -859,7 +841,7 @@ package com.zehfernando.input.binding {
 		 */
 		public function consumeAction(__action:String):void {
 			// Deactivates all current actions of an action (forcing a button to be pressed again)
-			if (actionsActivations.hasOwnProperty(__action)) (actionsActivations[__action] as ActivationInfo).activations.length = 0;
+			if (actionsActivations.hasOwnProperty(__action)) (actionsActivations[__action] as ActivationInfo).resetActivations();
 		}
 
 
@@ -884,17 +866,22 @@ package com.zehfernando.input.binding {
 	}
 }
 import flash.utils.Dictionary;
+import flash.utils.getTimer;
 /**
  * Information listing all activated bindings of a given action
  */
 class ActivationInfo {
 
-	public var activations:Vector.<BindingInfo>;			// All activated bindings
-	public var sensitiveValues:Dictionary;					// Dictionary with IBinding
+	private var activations:Vector.<BindingInfo>;			// All activated bindings
+	private var sensitiveValues:Dictionary;					// Dictionary with IBinding
 
-	// Temp
-	private var val:Number;
-	private var iis:Object;
+	// Temp vars to avoid garbage collection
+	private var iiv:Number;									// Value buffer
+	private var iix:int;									// Search index
+	private var iis:Object;									// Object iterator
+	private var iit:int;									// Time
+	private var iii:int;									// Iterator
+	private var iic:int;									// Count
 
 	// ================================================================================================================
 	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
@@ -907,14 +894,45 @@ class ActivationInfo {
 	// ================================================================================================================
 	// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
+	public function addActivation(__bindingInfo:BindingInfo, __gamepadIndex:int = -1):void {
+		activations.push(__bindingInfo);
+	}
+
+	public function removeActivation(__bindingInfo:BindingInfo):void {
+		iix = activations.indexOf(__bindingInfo);
+		if (iix > -1) {
+			activations.splice(iix, 1);
+		}
+	}
+
+	public function getNumActivations(__timeToleranceSeconds:Number = 0):int {
+		// If not time-sensitive, just return it
+		if (__timeToleranceSeconds <= 0 || activations.length == 0) return activations.length;
+		// Otherwise, actually check for activation time
+		iit = getTimer() - __timeToleranceSeconds * 1000;
+		iic = 0;
+		for (iii = 0; iii < activations.length; iii++) {
+			if (activations[iii].lastActivatedTime >= iit) iic++;
+		}
+		return iic;
+	}
+
+	public function resetActivations():void {
+		activations.length = 0;
+	}
+
+	public function addSensitiveValue(__actionId:String, __value:Number):void {
+		sensitiveValues[__actionId] = __value;
+	}
+
 	public function getValue():Number {
-		val = NaN;
+		iiv = NaN;
 		for (iis in sensitiveValues) {
 			// NOTE: this will be a problem if two axis control the same action, since +1 is not necessarily better than -1
-			if (isNaN(val) || sensitiveValues[iis] > val) val = sensitiveValues[iis];
+			if (isNaN(iiv) || sensitiveValues[iis] > iiv) iiv = sensitiveValues[iis];
 		}
-		if (isNaN(val)) return activations.length == 0 ? 0 : 1;
-		return val;
+		if (isNaN(iiv)) return activations.length == 0 ? 0 : 1;
+		return iiv;
 	}
 }
 
