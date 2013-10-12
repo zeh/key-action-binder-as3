@@ -45,7 +45,7 @@ To filter actions by player, you pass one additional parameter when adding the a
 
 	binder.addGamepadActionBinding("move-left-player-1", GamepadControls.DPAD_LEFT, 0); // 0 = player 1
 
-You can also check for the index of the player that activated an action (see below).
+Alternatively, you can also check for the index of the player that activated an action during the game loop (examples below).
 
 ### Evaluating actions
 
@@ -164,11 +164,11 @@ Check [the commit history](https://github.com/zeh/key-action-binder/commits) for
 
  * Allow sensitive controls to be treated as normal controls (with a user-defined threshold)
  * Think of a way to avoid axis injecting button pressed
- * Add gamepad index to return signals, and rethink whether gamepad index should be part of isActionActivated() and getActionValue() instead
+ * Add gamepad index to return signals parameters
  * Use caching samples?
  * Allow "any" gamepad key (for "press any key")
- * Add missing asdocs
- * Better multi-platform setup... re-think GamepadControls (finish)
+ * Add missing asdocs (any?)
+ * Finish auto Gamepad control ids
  * Still allow platform-specific control ids
  * Support re-mapping of specific keys to action injected events (menu, back, home)
  * Allow multiple action events from the same gameinput events
