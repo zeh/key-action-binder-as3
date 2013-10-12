@@ -147,7 +147,7 @@ package com.zehfernando.input.binding {
 								"BUTTON_106"	: [GamepadControls.STICK_LEFT_PRESS,		 0,	1],
 								"BUTTON_107"	: [GamepadControls.STICK_RIGHT_PRESS,		 0,	1]
 
-								// Ignored:
+								// Ignored (using analog instead):
 								// "BUTTON_104"	: [GamepadControls.CONTROL_L2_DIGITAL,				 0,	1],
 								// "BUTTON_105"	: [GamepadControls.CONTROL_R2_DIGITAL,				 0,	1],
 
@@ -780,6 +780,7 @@ package com.zehfernando.input.binding {
 		 *
 		 * @see GamepadControls
 		 * @see #addGamepadSensitiveActionBinding()
+		 * @see #isActionActivated()
 		 */
 		public function getActionValue(__action:String):Number {
 			return actionsActivations.hasOwnProperty(__action) ? (actionsActivations[__action] as ActivationInfo).getValue() : 0;
