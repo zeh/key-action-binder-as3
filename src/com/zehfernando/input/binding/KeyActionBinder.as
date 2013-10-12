@@ -18,28 +18,17 @@ package com.zehfernando.input.binding {
 	public class KeyActionBinder {
 
 		// Provides universal input control for game controllers and keyboard
-		// http://zehfernando.com/2013/abstracting-key-and-game-controller-inputs-in-adobe-air/
-		// http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/
 
-		// TODO:
-		// * Allow sensitive controls to be treated as normal controls (with a threshold)
-		// * Think of a way to avoid axis injecting button pressed
-		// * Add gamepad index to return signals, and rethink whether gamepad index should be part of isActionActivated() and getActionValue() instead
-		// * Use caching samples?
-		// * Allow "any" gamepad key (for "press any key")
-		// * Add missing asdocs
-		// * Better multi-platform setup... re-think GamepadControls
-
-		// * Gamepad on isActivated()
-		// * Thresholds
+		// More info: https://github.com/zeh/key-action-binder
 
 		// Versions:
+		// 2013-10-12	1.2.1	Added gamepad index filter support for isActionActivated() and getActionValue()
 		// 2013-10-08	1.1.1	Removed max/min from addGamepadSensitiveActionBinding() (always use hardcoded values)
 		// 2013-10-08	1.1.0	Completely revamped the control scheme by using "auto" controls for cross-platform operation
 		// 2013-10-08	1.0.0	First version to have a version number
 
 		// Constants
-		public static const VERSION:String = "1.1.1";
+		public static const VERSION:String = "1.2.1";
 
 		// List of all auto-configurable gamepads
 		private static var knownGamepadPlatforms:Vector.<AutoPlatformInfo>;
@@ -397,6 +386,7 @@ package com.zehfernando.input.binding {
 		private function findGamepadInfo(__gameInputDevice:GameInputDevice):AutoGamepadInfo {
 			// Based on a Game InputDevice, find the internal GamepadInfo that describes this Gamepad
 			if (__gameInputDevice == null) return null;
+
 			var i:int, j:int;
 			for (i = 0; i < knownGamepadPlatforms.length; i++) {
 				for (j = 0; j < knownGamepadPlatforms[i].gamepads.length; j++) {

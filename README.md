@@ -10,9 +10,15 @@ While Adobe Flash already provides all the means for using keyboard and game inp
 
 In KeyActionBinder, you evaluate your own arbitrary "actions" instead of specific keys or controls.
 
-In your game setup block, create a `KeyActionBinder` instance.
+First, initialize the class *in the first frame/class of your application*. This is necessary due to a [bug in the GameInput API](http://zehfernando.com/2013/adobe-air-gameinput-pitfalls/); if you don't initialize the class properly, your GameInput controls will stop working on OUYA or Android the second time you run your game.
 
-	binder = new KeyActionBinder(stage);
+	KeyActionBinder.init(stage);
+
+Then, anywhere in your game setup block, create a `KeyActionBinder` instance.
+
+	binder = new KeyActionBinder();
+
+You can create as many instances as you need.
 
 ### Keyboard bindings
 
@@ -38,6 +44,8 @@ To add a gamepad binding, you use a similar syntax:
 To filter actions by player, you pass one additional parameter when adding the action.
 
 	binder.addGamepadActionBinding("move-left-player-1", GamepadControls.DPAD_LEFT, 0); // 0 = player 1
+
+You can also check for the index of the player that activated an action (see below).
 
 ### Evaluating actions
 
@@ -71,6 +79,13 @@ You can also check actions based on the time they were activated. This is especi
 		// Perform jump...
 	}
 
+You can also check for the player/gamepad index during activation.
+
+	// Action, time sensititivy = 0 (default), gamepad index = 0 (first)
+	if (binder.isActionActivated("move-left", 0, 0)) {
+		// Player 1 moved to the left
+	}
+
 ### Gamepad bindings (analog)
 
 To handle sensitive gamepad controls, like axis or triggers, you create sensitive actions. Setup it first:
@@ -84,6 +99,10 @@ Then use it on your loop:
 	var runSpeed:Number = binder.getActionValue("run-speed"); // Value will be between 0 and 
 	var speedX:Number = binder.getActionValue("axis-x"); // Value will be between -1 and 1
 	var speedY:Number = binder.getActionValue("axis-y");
+
+You can also restrict the value to specific players:
+
+	var speedX:Number = binder.getActionValue("axis-x", 0); // Only check player 1 (gamepad index 0)
 
 ### Stopping and resuming
 
@@ -105,7 +124,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 	// Create input bindings
 	binder.addKeyboardActionBinding("continue", Keyboard.ENTER);
-	binder.addGamepadSensitiveActionBinding("trigger-press", GamepadControls.WINDOWS_L2_SENSITIVE);
+	binder.addGamepadSensitiveActionBinding("trigger-press", GamepadControls.LT);
 
 	// Add callbacks to the event signals
 	binder.onActionActivated.add(onActionActivated);
@@ -125,19 +144,25 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 	}
 
 
-## Other notes
+## Changelog
 
- * If your GameInput controls suddenly stop working on OUYA or Android, this is likely due to a bug on Adobe AIR’s implementation. See [this post](http://zehfernando.com/2013/adobe-air-gameinput-pitfalls/) for reference and a workaround.
+ * 2013-10-12 - 1.2.1 - Added gamepad index filter support for isActionActivated() and getActionValue()
+ * 2013-10-08 - 1.1.1 - Removed max/min from addGamepadSensitiveActionBinding() (always use hardcoded values)
+ * 2013-10-08 - 1.1.0 - Completely revamped the control scheme by using "auto" controls for cross-platform operation
+ * 2013-10-08 - 1.0.0 - First version to have a version number
+
+Check [the commit history](https://github.com/zeh/key-action-binder/commits) for a more in-depth list.
 
 ## Read more
 
  * Blog post: [Known OUYA GameInput controls on Adobe AIR](http://zehfernando.com/2013/known-ouya-gameinput-controls-on-adobe-air/) (July 2013)
  * Blog post: [Abstracting key and game controller inputs in Adobe AIR](http://zehfernando.com/2013/abstracting-key-and-game-controller-inputs-in-adobe-air/) (July 2013)
  * Blog post: [KeyActionBinder updates: time sensitive activations, new constants](http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/) (September 2013)
+ * Blog post: [Big changes to KeyActionBinder: automatic game control ids, new repository](http://zehfernando.com/2013/big-changes-to-keyactionbinder-automatic-game-control-ids-new-repository/) (October 2013)
 
 ## To-do
 
- * Allow sensitive controls to be treated as normal controls (with a threshold)
+ * Allow sensitive controls to be treated as normal controls (with a user-defined threshold)
  * Think of a way to avoid axis injecting button pressed
  * Add gamepad index to return signals, and rethink whether gamepad index should be part of isActionActivated() and getActionValue() instead
  * Use caching samples?
@@ -147,3 +172,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
  * Still allow platform-specific control ids
  * Support re-mapping of specific keys to action injected events (menu, back, home)
  * Allow multiple action events from the same gameinput events
+ * Profile and test performance/bottlenecks/memory allocations
+ * Demos
+ * Binary SWC
+ * Tester SWFs/APKs
