@@ -397,6 +397,7 @@ package com.zehfernando.input.binding {
 
 		private function findGamepadInfo(__gameInputDevice:GameInputDevice):AutoGamepadInfo {
 			// Based on a Game InputDevice, find the internal GamepadInfo that describes this Gamepad
+			if (__gameInputDevice == null) return null;
 			var i:int, j:int;
 			for (i = 0; i < knownGamepadPlatforms.length; i++) {
 				for (j = 0; j < knownGamepadPlatforms[i].gamepads.length; j++) {
