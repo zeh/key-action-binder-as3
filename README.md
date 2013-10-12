@@ -32,12 +32,12 @@ You can add as many bindings to the same action as you'd like.
 	
 To add a gamepad binding, you use a similar syntax:
 
-	binder.addGamepadActionBinding("move-left", GamepadControls.WINDOWS_DPAD_LEFT);
-	binder.addGamepadActionBinding("move-right", GamepadControls.WINDOWS_DPAD_RIGHT);
+	binder.addGamepadActionBinding("move-left", GamepadControls.DPAD_LEFT);
+	binder.addGamepadActionBinding("move-right", GamepadControls.DPAD_RIGHT);
 
 To filter actions by player, you pass one additional parameter when adding the action.
 
-	binder.addGamepadActionBinding("move-left-player-1", GamepadControls.WINDOWS_DPAD_LEFT, 0); // 0 = player 1
+	binder.addGamepadActionBinding("move-left-player-1", GamepadControls.DPAD_LEFT, 0); // 0 = player 1
 
 ### Evaluating actions
 
@@ -52,7 +52,7 @@ Then, on your game loop block, you simply check whether any action is activated 
 For actions that are not repeated, like a player jump, you can "consume" them via `consumeAction()`. This forces the player to activate the button again if they want to perform the action again.
 
 	// During setup
-	binder.addGamepadActionBinding("jump", GamepadControls.WINDOWS_BUTTON_ACTION_A);
+	binder.addGamepadActionBinding("jump", GamepadControls.BUTTON_ACTION_DOWN);
 
 	// During the loop
 	if (isPlayerOnTheGround && binder.isActionActivated("jump")) {
@@ -63,7 +63,7 @@ For actions that are not repeated, like a player jump, you can "consume" them vi
 You can also check actions based on the time they were activated. This is especially useful for time-sensitive actions that are not verified all the time; otherwise, they could press the button way before an action was allowed to be performed - for example, a player pressing a button for "jump" while he/she is still in the air would jump immediately when touching the ground. To verify whether the player pressed jump in the past 0.3 seconds instead:
 
 	// During setup
-	binder.addGamepadActionBinding("jump", GamepadControls.WINDOWS_BUTTON_ACTION_A);
+	binder.addGamepadActionBinding("jump", GamepadControls.BUTTON_ACTION_DOWN);
 
 	// During the loop
 	if (isPlayerOnTheGround && binder.isActionActivated("jump"), 0.03) {
@@ -75,9 +75,9 @@ You can also check actions based on the time they were activated. This is especi
 
 To handle sensitive gamepad controls, like axis or triggers, you create sensitive actions. Setup it first:
 
-	binder.addGamepadSensitiveActionBinding("run-speed", GamepadControls.WINDOWS_L2_SENSITIVE); // L2/LT
-	binder.addGamepadSensitiveActionBinding("axis-x", GamepadControls.WINDOWS_STICK_LEFT_X, NaN, -1, 1); // Any player, min value, max value
-	binder.addGamepadSensitiveActionBinding("axis-y", GamepadControls.WINDOWS_STICK_LEFT_Y, NaN, -1, 1);
+	binder.addGamepadSensitiveActionBinding("run-speed", GamepadControls.LT); // L2/LT
+	binder.addGamepadSensitiveActionBinding("axis-x", GamepadControls.STICK_LEFT_X); // Any player, min value, max value
+	binder.addGamepadSensitiveActionBinding("axis-y", GamepadControls.STICK_LEFT_Y);
 
 Then use it on your loop:
 
@@ -97,7 +97,7 @@ By default, KeyActionBinder starts reading input events as soon as the instance 
 
 ### Different controls
 
-As of now, `GamepadControls` has a list of known gamepad controls that you can add as action bindings to your game code. Notice that these controls are platform-dependent (e.g., `WINDOWS_DPAD_LEFT`, `OSX_DPAD_LEFT`, etc), This is likely to change in the future to allow an easier cross-platform setup via certain global controls.
+As of now, `GamepadControls` has a list of known gamepad controls that you can add as action bindings to your game code.
 
 ### Events
 
@@ -143,4 +143,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
  * Use caching samples?
  * Allow "any" gamepad key (for "press any key")
  * Add missing asdocs
- * Better multi-platform setup... re-think GamepadControls
+ * Better multi-platform setup... re-think GamepadControls (finish)
+ * Still allow platform-specific control ids
+ * Support re-mapping of specific keys to action injected events (menu, back, home)
+ * Allow multiple action events from the same gameinput events
