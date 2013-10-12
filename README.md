@@ -146,6 +146,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 ## Changelog
 
+ * 2013-10-12 - 1.3.1 - Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
  * 2013-10-12 - 1.2.1 - Added gamepad index filter support for isActionActivated() and getActionValue()
  * 2013-10-08 - 1.1.1 - Removed max/min from addGamepadSensitiveActionBinding() (always use hardcoded values)
  * 2013-10-08 - 1.1.0 - Completely revamped the control scheme by using "auto" controls for cross-platform operation

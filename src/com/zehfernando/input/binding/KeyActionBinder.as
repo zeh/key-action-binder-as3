@@ -22,13 +22,14 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Versions:
+		// 2013-10-12	1.3.1	Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
 		// 2013-10-12	1.2.1	Added gamepad index filter support for isActionActivated() and getActionValue()
 		// 2013-10-08	1.1.1	Removed max/min from addGamepadSensitiveActionBinding() (always use hardcoded values)
 		// 2013-10-08	1.1.0	Completely revamped the control scheme by using "auto" controls for cross-platform operation
 		// 2013-10-08	1.0.0	First version to have a version number
 
 		// Constants
-		public static const VERSION:String = "1.2.1";
+		public static const VERSION:String = "1.3.1";
 
 		// List of all auto-configurable gamepads
 		private static var knownGamepadPlatforms:Vector.<AutoPlatformInfo>;
@@ -145,12 +146,8 @@ package com.zehfernando.input.binding {
 								// CONTROL_BACK
 							},
 							"keys" : [
-								{
-									// OUYA button
-									"code"			: Keyboard.MENU,
-									"location"		: KeyLocation.STANDARD,
-									"id"			: GamepadControls.START
-								}
+								// OUYA button
+								[Keyboard.MENU, KeyLocation.STANDARD, GamepadControls.START, 0, 1]
 							]
 						},
 						"ps3" : {
@@ -189,18 +186,10 @@ package com.zehfernando.input.binding {
 								// CONTROL_BACK (via keyboard though)
 							},
 							"keys" : [
-								{
-									// SELECT button
-									"code"			: Keyboard.BACK,
-									"location"		: KeyLocation.STANDARD,
-									"id"			: GamepadControls.BACK
-								},
-								{
-									// PS button
-									"code"			: Keyboard.MENU,
-									"location"		: KeyLocation.STANDARD,
-									"id"			: GamepadControls.MENU
-								}
+								// SELECT button
+								[Keyboard.BACK, KeyLocation.STANDARD, GamepadControls.BACK, 0, 1],
+								// PS button
+								[Keyboard.MENU, KeyLocation.STANDARD, GamepadControls.MENU, 0, 1]
 							]
 						},
 						"xbox360" : {
@@ -237,18 +226,10 @@ package com.zehfernando.input.binding {
 								// CONTROL_BACK (via keyboard though)
 							},
 							"keys" : [
-								{
-									// BACK button
-									"code"			: Keyboard.BACK,
-									"location"		: KeyLocation.STANDARD,
-									"id"			: GamepadControls.BACK
-								},
-								{
-									// XBOX button
-									"code"			: Keyboard.MENU,
-									"location"		: KeyLocation.STANDARD,
-									"id"			: GamepadControls.MENU
-								}
+								// BACK button
+								[Keyboard.BACK, KeyLocation.STANDARD, GamepadControls.BACK, 0, 1],
+								// XBOX button
+								[Keyboard.MENU, KeyLocation.STANDARD, GamepadControls.MENU, 0, 1]
 							]
 						}
 					}
@@ -259,9 +240,9 @@ package com.zehfernando.input.binding {
 
 			knownGamepadPlatforms = new Vector.<AutoPlatformInfo>();
 
-			var platformInfo:AutoPlatformInfo, gamepadInfo:AutoGamepadInfo, controlInfo:AutoGamepadControlInfo;
+			var platformInfo:AutoPlatformInfo, gamepadInfo:AutoGamepadInfo, controlInfo:AutoGamepadControlInfo, controlKeyInfo:AutoGamepadControlKeyInfo;
 			var iis:String, jjs:String, kks:String;
-			var platformObj:Object, gamepadObj:Object, controlObj:Object;
+			var platformObj:Object, gamepadObj:Object, controlObj:Object, keyObj:Object;
 			var manufacturerFilter:String, osFilter:String, versionFilter:String;
 
 			for (iis in platformsObj) {
@@ -275,7 +256,7 @@ package com.zehfernando.input.binding {
 				if ((manufacturerFilter == null	|| Capabilities.manufacturer.indexOf(manufacturerFilter) > -1) &&
 					(osFilter == null 			|| Capabilities.os.indexOf(osFilter) > -1) &&
 					(versionFilter == null		|| Capabilities.version.indexOf(versionFilter) > -1)) {
-					// Add this platform (same as currentl platform)
+					// Add this platform (same as current platform)
 
 					platformInfo = new AutoPlatformInfo();
 					platformInfo.id					= iis;
@@ -306,6 +287,20 @@ package com.zehfernando.input.binding {
 							controlInfo.max	= controlObj[2];
 
 							gamepadInfo.controls[kks] = controlInfo;
+						}
+
+						// Add keyboard injections (keys that double as gamepad controls)
+						for (kks in gamepadObj["keys"]) {
+							keyObj = gamepadObj["keys"][kks];
+
+							controlKeyInfo = new AutoGamepadControlKeyInfo();
+							controlKeyInfo.keyCode		= keyObj[0];
+							controlKeyInfo.keyLocation	= keyObj[1];
+							controlKeyInfo.id			= keyObj[2];
+							controlKeyInfo.min			= keyObj[3];
+							controlKeyInfo.max			= keyObj[4];
+
+							gamepadInfo.keys.push(controlKeyInfo);
 						}
 					}
 				}
@@ -441,6 +436,53 @@ package com.zehfernando.input.binding {
 			}
 		}
 
+		private function interpretGameInputControlChanges(__mappedId:String, __mappedValue:Number, __mappedMin:Number, __mappedMax:Number, __gamepadIndex:int):void {
+			// Decides what to do once the value of a game input device control has changed
+
+			var filteredControls:Vector.<BindingInfo> = filterGamepadControls(__mappedId, __gamepadIndex);
+			var activationInfo:ActivationInfo;
+
+			// Considers activated if past the middle threshold between min/max values (allows analog controls to be treated as digital)
+			var isActivated:Boolean = __mappedValue > __mappedMin + (__mappedMax - __mappedMin) / 2;
+
+			for (var i:int = 0; i < filteredControls.length; i++) {
+				activationInfo = actionsActivations[filteredControls[i].action] as ActivationInfo;
+
+				if (filteredControls[i].binding is GamepadSensitiveBinding) {
+					// A sensitive binding, send changed value signals instead
+
+					// Dispatches signal
+					activationInfo.addSensitiveValue(filteredControls[i].action, __mappedValue, __gamepadIndex);
+					_onSensitiveActionChanged.dispatch(filteredControls[i].action, activationInfo.getValue());
+				} else {
+					// A standard action binding, send activated/deactivated signals
+
+					if (filteredControls[i].isActivated != isActivated) {
+						// Value changed
+						filteredControls[i].isActivated = isActivated;
+						if (isActivated) {
+							// Marks as pressed
+							filteredControls[i].lastActivatedTime = getTimer();
+
+							// Add this activation to the list of current activations
+							activationInfo.addActivation(filteredControls[i], __gamepadIndex);
+
+							// Dispatches signal
+							if (activationInfo.getNumActivations() == 1) _onActionActivated.dispatch(filteredControls[i].action);
+						} else {
+							// Marks as released
+
+							// Removes this activation from the list of current activations
+							activationInfo.removeActivation(filteredControls[i]);
+
+							// Dispatches signal
+							if (activationInfo.getNumActivations() == 0) _onActionDeactivated.dispatch(filteredControls[i].action);
+						}
+					}
+				}
+			}
+		}
+
 		private function map(__value:Number, __oldMin:Number, __oldMax:Number, __newMin:Number = 0, __newMax:Number = 1, __clamp:Boolean = false):Number {
 			// Same as map, but without allocations
 			if (__oldMin == __oldMax) return __newMin;
@@ -458,8 +500,9 @@ package com.zehfernando.input.binding {
 
 		private function onKeyDown(__e:KeyboardEvent):void {
 //			debug("key down: " + __e);
+			var i:int, j:int;
 			var filteredKeys:Vector.<BindingInfo> = filterKeyboardKeys(__e.keyCode, __e.keyLocation);
-			for (var i:int = 0; i < filteredKeys.length; i++) {
+			for (i = 0; i < filteredKeys.length; i++) {
 				if (!filteredKeys[i].isActivated) {
 					// Marks as pressed
 					filteredKeys[i].isActivated = true;
@@ -474,12 +517,24 @@ package com.zehfernando.input.binding {
 			}
 
 			if (alwaysPreventDefault) __e.preventDefault();
+
+			// Check all current game input devices for a key injection definition that matches
+			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
+				for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
+					if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
+						// This key's code and location matches the pressed key, inject the press event
+						interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].max, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
+						return;
+					}
+				}
+			}
 		}
 
 		private function onKeyUp(__e:KeyboardEvent):void {
 //			debug("key up: " + __e);
+			var i:int, j:int;
 			var filteredKeys:Vector.<BindingInfo> = filterKeyboardKeys(__e.keyCode, __e.keyLocation);
-			for (var i:int = 0; i < filteredKeys.length; i++) {
+			for (i = 0; i < filteredKeys.length; i++) {
 				// Marks as released
 				filteredKeys[i].isActivated = false;
 
@@ -491,6 +546,17 @@ package com.zehfernando.input.binding {
 			}
 
 			if (alwaysPreventDefault) __e.preventDefault();
+
+			// Check all current game input devices for a key injection definition that matches
+			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
+				for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
+					if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
+						// This key's code and location matches the pressed key, inject the release event
+						interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
+						return;
+					}
+				}
+			}
 		}
 
 		private function onGameInputDeviceAdded(__e:GameInputEvent):void {
@@ -516,51 +582,7 @@ package com.zehfernando.input.binding {
 			var deviceControlInfo:AutoGamepadControlInfo = gameInputDeviceDefinitions[deviceIndex].controls.hasOwnProperty(control.id) ? gameInputDeviceDefinitions[deviceIndex].controls[control.id] as AutoGamepadControlInfo : null;
 
 			if (deviceControlInfo != null) {
-
-				//debug("onGameInputControlChanged: " + control.id + " [" + metaControlId + "] = " + control.value + " (of " + control.minValue + " => " + control.maxValue + ")");
-
-				var filteredControls:Vector.<BindingInfo> = filterGamepadControls(deviceControlInfo.id, deviceIndex);
-				var activationInfo:ActivationInfo;
-
-				// Considers activated if past the middle threshold between min/max values (allows analog controls to be treated as digital)
-				var isActivated:Boolean = control.value > control.minValue + (control.maxValue - control.minValue) / 2;
-
-				for (var i:int = 0; i < filteredControls.length; i++) {
-					activationInfo = actionsActivations[filteredControls[i].action] as ActivationInfo;
-
-					if (filteredControls[i].binding is GamepadSensitiveBinding) {
-						// A sensitive binding, send changed value signals instead
-
-						// Dispatches signal
-						activationInfo.addSensitiveValue(filteredControls[i].action, map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true), deviceIndex);
-						_onSensitiveActionChanged.dispatch(filteredControls[i].action, activationInfo.getValue());
-					} else {
-						// A standard action binding, send activated/deactivated signals
-
-						if (filteredControls[i].isActivated != isActivated) {
-							// Value changed
-							filteredControls[i].isActivated = isActivated;
-							if (isActivated) {
-								// Marks as pressed
-								filteredControls[i].lastActivatedTime = getTimer();
-
-								// Add this activation to the list of current activations
-								activationInfo.addActivation(filteredControls[i], deviceIndex);
-
-								// Dispatches signal
-								if (activationInfo.getNumActivations() == 1) _onActionActivated.dispatch(filteredControls[i].action);
-							} else {
-								// Marks as released
-
-								// Removes this activation from the list of current activations
-								activationInfo.removeActivation(filteredControls[i]);
-
-								// Dispatches signal
-								if (activationInfo.getNumActivations() == 0) _onActionDeactivated.dispatch(filteredControls[i].action);
-							}
-						}
-					}
-				}
+				interpretGameInputControlChanges(deviceControlInfo.id, map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true), deviceControlInfo.min, deviceControlInfo.max, deviceIndex);
 			}
 		}
 
@@ -1031,8 +1053,6 @@ class GamepadBinding implements IBinding {
 	public function matchesKeyboardKey(__keyCode:uint, __keyLocation:uint):Boolean {
 		return false;
 	}
-
-	// TODO: add option to restrict to a given gamepad based on name? (e.g. OUYA)
 }
 
 /**
@@ -1079,9 +1099,10 @@ class AutoGamepadInfo {
 	// Properties
 	public var id:String;
 
-	public var nameFilter:String;				// Filter for device.name
+	public var nameFilter:String;							// Filter for device.name
 
-	public var controls:Object;					// AutoGamepadControlInfo, key is the control.id
+	public var controls:Object;								// AutoGamepadControlInfo, key is the control.id
+	public var keys:Vector.<AutoGamepadControlKeyInfo>;		// List of keys that double as controls
 
 
 	// ================================================================================================================
@@ -1089,6 +1110,7 @@ class AutoGamepadInfo {
 
 	public function AutoGamepadInfo() {
 		controls = {};
+		keys = new Vector.<AutoGamepadControlKeyInfo>();
 	}
 }
 
@@ -1107,6 +1129,26 @@ class AutoGamepadControlInfo {
 	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
 	public function AutoGamepadControlInfo() {
+	}
+}
+
+/**
+ * Information on keyboard keys that get mapped to gamepad controls
+ */
+class AutoGamepadControlKeyInfo {
+
+	// Properties
+	public var id:String;
+	public var keyCode:int;
+	public var keyLocation:int;
+	public var min:Number;
+	public var max:Number;
+
+
+	// ================================================================================================================
+	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
+
+	public function AutoGamepadControlKeyInfo() {
 	}
 }
 
