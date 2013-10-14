@@ -86,6 +86,8 @@ You can also check for the player/gamepad index during activation.
 		// Player 1 moved to the left
 	}
 
+You can check for the activation of actions regardless of whether they're bound to a pressure-sensitive/analog control, or a digital control. In the case of a simple digital control (like most buttons), the action will be considered activated when the button is considered pressed by the device and the driver. In the case of a pressure-sensitive button, it will be considered activated when it is past a middle threshold. For example, on most controllers, the value reported by the left trigger will range from 0 to 1; thus, when the reported value is higher than 0.5, an action bound to that button will be considered *activated*.
+
 ### Gamepad bindings (analog)
 
 To handle sensitive gamepad controls, like axis or triggers, you create sensitive actions. Setup it first:
@@ -103,6 +105,8 @@ Then use it on your loop:
 You can also restrict the value to specific players:
 
 	var speedX:Number = binder.getActionValue("axis-x", 0); // Only check player 1 (gamepad index 0)
+
+Also notice that, technically, *every* control supports sensitive actions. You can read the sensitive value of an action bound to the action button "A", for example. However, the values returned will be restricted to what the hardware, and the device driver, permit -- if that same action button "A" only provides digital (non-sensitive) input, the values returned will always be either 0 or 1.
 
 ### Stopping and resuming
 
