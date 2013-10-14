@@ -167,7 +167,7 @@ Check [the commit history](https://github.com/zeh/key-action-binder/commits) for
 
 ## License
 
-KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/). You can use this code in any project, whether of commercial nature. If you redistribute the code, the license (LICENSE.txt) must be present with it .
+KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/). You can use this code in any project, whether of commercial nature or not. If you redistribute the code, the license (LICENSE.txt) must be present with it .
 
 ## To-do
 
