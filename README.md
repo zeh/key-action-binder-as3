@@ -161,6 +161,10 @@ Check [the commit history](https://github.com/zeh/key-action-binder/commits) for
  * Blog post: [KeyActionBinder updates: time sensitive activations, new constants](http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/) (September 2013)
  * Blog post: [Big changes to KeyActionBinder: automatic game control ids, new repository](http://zehfernando.com/2013/big-changes-to-keyactionbinder-automatic-game-control-ids-new-repository/) (October 2013)
 
+## License
+
+KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/). You can use this code in any project, whether of commercial nature. If you redistribute the code, the license (LICENSE.txt) must be present with it .
+
 ## To-do
 
  * Allow sensitive controls to be treated as normal controls (with a user-defined threshold)
