@@ -4,6 +4,13 @@ KeyActionBinder tries to provide universal game input control for both keyboard 
 
 While Adobe Flash already provides all the means for using keyboard and game input (via [KeyboardEvent](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/events/KeyboardEvent.html) and [GameInput](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/ui/GameInput.html)), KeyActionBinder tries to abstract those classes behind a straightforward, higher-level interface. It is meant to be simple but powerful, while solving some of the most common pitfalls involved with player input in AS3 games.
 
+## Advantages
+
+ * Unified interface for keyboard and game controller input
+ * Made to be fast: memory allocation is kept to a minimum
+ * Abstract actual controls in favor of action ids: easier to configure key bindings through variables
+ * Automatic bindings on any platform by hiding away platform-specific controls over unified ids
+
 ## Using KeyActionBinder
 
 ### Basic setup
@@ -158,6 +165,25 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 Check [the commit history](https://github.com/zeh/key-action-binder/commits) for a more in-depth list.
 
+
+## Supportted platforms/devices
+
+Because KeyActionBinder tries to automatically support whatever platform and devices one is using, it depends on having code that targets each specific platform/device combination. These are the platforms currently supported, and their respective supported devices:
+
+ * Windows 7
+  * XBox 360 controller
+ * OUYA
+  * Native controller
+  * PlayStation 3 controller
+  * XBox 360 controller
+
+More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself:
+
+ * [Online tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/) (requires Flash Player)
+ * [Android/OUYA APK test app](hosted.zehfernando.com/key-action-binder/game-input-tester/GameInputTester.apk)
+
+A pure AS3 source of the tester app can be found on /tests/GameInputTester/src.
+
 ## Read more
 
  * Blog post: [Known OUYA GameInput controls on Adobe AIR](http://zehfernando.com/2013/known-ouya-gameinput-controls-on-adobe-air/) (July 2013)
@@ -165,9 +191,11 @@ Check [the commit history](https://github.com/zeh/key-action-binder/commits) for
  * Blog post: [KeyActionBinder updates: time sensitive activations, new constants](http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/) (September 2013)
  * Blog post: [Big changes to KeyActionBinder: automatic game control ids, new repository](http://zehfernando.com/2013/big-changes-to-keyactionbinder-automatic-game-control-ids-new-repository/) (October 2013)
 
+ 
 ## License
 
 KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/). You can use this code in any project, whether of commercial nature or not. If you redistribute the code, the license (LICENSE.txt) must be present with it .
+
 
 ## To-do
 
@@ -178,10 +206,9 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Allow "any" gamepad key (for "press any key")
  * Add missing asdocs (any?)
  * Finish auto Gamepad control ids
- * Still allow platform-specific control ids
+ * Still allow platform-specific control ids?
  * Support re-mapping of specific keys to action injected events (menu, back, home)
  * Allow multiple action events from the same gameinput events
  * Profile and test performance/bottlenecks/memory allocations
  * Demos
  * Binary SWC
- * Tester SWFs/APKs
