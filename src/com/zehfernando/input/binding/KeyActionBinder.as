@@ -420,9 +420,8 @@ package com.zehfernando.input.binding {
 
 			// Find the re-mapped control id
 			var deviceIndex:int = gameInputDevices.indexOf(control.device);
-			var deviceControlInfo:AutoGamepadControlInfo = gameInputDeviceDefinitions[deviceIndex].controls.hasOwnProperty(control.id) ? gameInputDeviceDefinitions[deviceIndex].controls[control.id] as AutoGamepadControlInfo : null;
-
-			if (deviceControlInfo != null) {
+			if (deviceIndex > -1 && gameInputDeviceDefinitions[deviceIndex].controls.hasOwnProperty(control.id)) {
+				var deviceControlInfo:AutoGamepadControlInfo = gameInputDeviceDefinitions[deviceIndex].controls[control.id];
 				interpretGameInputControlChanges(deviceControlInfo.id, map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true), deviceControlInfo.min, deviceControlInfo.max, deviceIndex);
 			}
 		}
