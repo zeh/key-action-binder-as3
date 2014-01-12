@@ -68,7 +68,7 @@ package com.zehfernando.input.binding {
 			var platformsObj:Object = {
 				"windows7" : {
 					"filters" : {
-						"manufacturer"		: "Adobe Windows",
+						"manufacturer"		: null, // "Adobe Windows" or "Google Pepper"
 						"os"				: "Windows 7",
 						"version"			: "WIN"
 					},
@@ -107,7 +107,7 @@ package com.zehfernando.input.binding {
 				},
 				"ouya" : {
 					"filters" : {
-						"manufacturer"		: "Android Linux",
+						"manufacturer"		: null, // "Android Linux"
 						"os"				: "Linux",
 						"version"			: "AND"
 					},
