@@ -249,11 +249,11 @@ package com.zehfernando.gameinputtester.display {
 		private function onDeactivate(__e:Event):void {
 			log("Deactivating");
 
-			if (gameInput != null) {
-				gameInput.removeEventListener(GameInputEvent.DEVICE_ADDED, reportDevices);
-				gameInput.removeEventListener(GameInputEvent.DEVICE_REMOVED, reportDevices);
-				gameInput = null;
-			}
+//			if (gameInput != null) {
+//				gameInput.removeEventListener(GameInputEvent.DEVICE_ADDED, reportDevices);
+//				gameInput.removeEventListener(GameInputEvent.DEVICE_REMOVED, reportDevices);
+//				gameInput = null;
+//			}
 		}
 
 		private function onEnterFrame(__e:Event):void {
@@ -273,7 +273,6 @@ package com.zehfernando.gameinputtester.display {
 			stage.addEventListener(Event.ACTIVATE, onActivate);
 			stage.addEventListener(Event.DEACTIVATE, onDeactivate);
 
-			//reportDevices();
 			gameInput = new GameInput();
 			gameInput.addEventListener(GameInputEvent.DEVICE_ADDED, reportDevices);
 			gameInput.addEventListener(GameInputEvent.DEVICE_REMOVED, reportDevices);

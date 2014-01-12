@@ -2,7 +2,7 @@
 <launchConfiguration type="com.powerflasher.fdt.ui.MobileApplicationGroup">
 <stringAttribute key="ADL_DESCRIPTOR_FILE" value="bin/GameInputTester-app.xml"/>
 <stringAttribute key="ADL_SCREENSIZE" value="960x540:960x540"/>
-<booleanAttribute key="ADVANCED_TELEMTRY" value="false"/>
+<booleanAttribute key="ADVANCED_TELEMTRY" value="true"/>
 <intAttribute key="AIR_VIEWER_CONF" value="2"/>
 <stringAttribute key="APP_ARGUMENTS" value=""/>
 <stringAttribute key="ARGUMENTS" value="--frames.frame=two,com.zehfernando.mind.kana.application.ApplicationFrame2&#10;--target-player={playerVersion}&#10;--library-path+=&quot;{flexSDK}/frameworks/locale/en_US&quot;&#10;--default-frame-rate=60&#10;--default-background-color=0x000000&#10;--default-size=320,480&#10;--swf-version=20&#10;--compress=false&#10;-inline"/>

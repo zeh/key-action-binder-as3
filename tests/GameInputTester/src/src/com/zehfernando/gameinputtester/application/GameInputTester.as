@@ -14,9 +14,6 @@ package com.zehfernando.gameinputtester.application {
 
 		public function GameInputTester() {
 			super();
-
-			// Anything that uses GameInput must be started on the first "frame" of the application
-			//KeyActionBinder.init(stage);
 		}
 
 		// ================================================================================================================
