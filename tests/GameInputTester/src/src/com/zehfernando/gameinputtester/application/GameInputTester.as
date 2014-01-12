@@ -1,7 +1,6 @@
 package com.zehfernando.gameinputtester.application {
 	import com.zehfernando.display.templates.application.SimpleApplication;
 	import com.zehfernando.gameinputtester.display.Main;
-	import com.zehfernando.input.binding.KeyActionBinder;
 	/**
 	 * @author zeh fernando
 	 */
@@ -17,7 +16,7 @@ package com.zehfernando.gameinputtester.application {
 			super();
 
 			// Anything that uses GameInput must be started on the first "frame" of the application
-			KeyActionBinder.init(stage);
+			//KeyActionBinder.init(stage);
 		}
 
 		// ================================================================================================================
