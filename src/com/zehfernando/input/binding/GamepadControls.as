@@ -60,7 +60,7 @@ package com.zehfernando.input.binding {
 		 * <p>Works in: OUYA (Native Controller; Playstation DS3; XBox 360 Controller)</p>
 		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
 		 */
-		public static const LB:String = "lb";
+		public static const LB:String = "left_button";
 
 		/* Left shoulder trigger (also known as LT or L2)
 		 *
@@ -68,7 +68,7 @@ package com.zehfernando.input.binding {
 		 * <p>Works in: OUYA (Native Controller; Playstation DS3; XBox 360 Controller)</p>
 		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
 		 */
-		public static const LT:String = "lt";
+		public static const LT:String = "left_trigger";
 
 		/* Right shoulder bumper (also known as RB or R1)
 		 *
@@ -76,7 +76,7 @@ package com.zehfernando.input.binding {
 		 * <p>Works in: OUYA (Native Controller; Playstation DS3; XBox 360 Controller)</p>
 		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
 		 */
-		public static const RB:String = "rb";
+		public static const RB:String = "right_button";
 
 		/* Right shoulder trigger (also known as RT or R2)
 		 *
@@ -84,7 +84,7 @@ package com.zehfernando.input.binding {
 		 * <p>Works in: OUYA (Native Controller; Playstation DS3; XBox 360 Controller)</p>
 		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
 		 */
-		public static const RT:String = "rt";
+		public static const RT:String = "right_trigger";
 
 		/* Directional pad up
 		 *
