@@ -22,6 +22,7 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Versions:
+		// 2014-01-12	1.4.2	Added support for PS4 controller and OPTIONS, SHARE and TRACKPAD meta controls)
 		// 2014-01-12	1.4.1	Moved gamepad data to an external JSON (cleaner maintenance)
 		// 2013-10-12	1.3.1	Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
 		// 2013-10-12	1.2.1	Added gamepad index filter support for isActionActivated() and getActionValue()
@@ -30,7 +31,7 @@ package com.zehfernando.input.binding {
 		// 2013-10-08	1.0.0	First version to have a version number
 
 		// Constants
-		public static const VERSION:String = "1.3.1";
+		public static const VERSION:String = "1.4.2";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
@@ -419,9 +420,8 @@ package com.zehfernando.input.binding {
 
 			// Find the re-mapped control id
 			var deviceIndex:int = gameInputDevices.indexOf(control.device);
-			var deviceControlInfo:AutoGamepadControlInfo = gameInputDeviceDefinitions[deviceIndex].controls.hasOwnProperty(control.id) ? gameInputDeviceDefinitions[deviceIndex].controls[control.id] as AutoGamepadControlInfo : null;
-
-			if (deviceControlInfo != null) {
+			if (deviceIndex > -1 && gameInputDeviceDefinitions[deviceIndex].controls.hasOwnProperty(control.id)) {
+				var deviceControlInfo:AutoGamepadControlInfo = gameInputDeviceDefinitions[deviceIndex].controls[control.id];
 				interpretGameInputControlChanges(deviceControlInfo.id, map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true), deviceControlInfo.min, deviceControlInfo.max, deviceIndex);
 			}
 		}
