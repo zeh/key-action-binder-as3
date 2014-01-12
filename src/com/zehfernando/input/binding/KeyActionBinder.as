@@ -22,6 +22,7 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Versions:
+		// 2014-01-12	1.4.1	Moved gamepad data to an external JSON (cleaner maintenance)
 		// 2013-10-12	1.3.1	Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
 		// 2013-10-12	1.2.1	Added gamepad index filter support for isActionActivated() and getActionValue()
 		// 2013-10-08	1.1.1	Removed max/min from addGamepadSensitiveActionBinding() (always use hardcoded values)
@@ -30,6 +31,9 @@ package com.zehfernando.input.binding {
 
 		// Constants
 		public static const VERSION:String = "1.3.1";
+
+		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
+		private static const JSON_CONTROLLERS:Class;
 
 		// List of all auto-configurable gamepads
 		private static var knownGamepadPlatforms:Vector.<AutoPlatformInfo>;
@@ -62,182 +66,15 @@ package com.zehfernando.input.binding {
 		public static function init(__stage:Stage):void  {
 			stage = __stage;
 
+//			var ti:int = getTimer();
+
 			if (GameInput.isSupported) gameInput = new GameInput();
 
-			// Creates a list of all known gamepads via a more readable/editable initializer
-			var platformsObj:Object = {
-				"windows7" : {
-					"filters" : {
-						"manufacturer"		: null, // "Adobe Windows" or "Google Pepper"
-						"os"				: "Windows 7",
-						"version"			: "WIN"
-					},
-					"gamepads" : {
-						"xbox360" : {
-							"filters" : {
-								"name"			: "Xbox 360 Controller"
-							},
-							"controls" : {
-								"AXIS_0"		: [GamepadControls.STICK_LEFT_X,			-1,	1],
-								"AXIS_1"		: [GamepadControls.STICK_LEFT_Y,			 1,	-1],
-								"AXIS_2"		: [GamepadControls.STICK_RIGHT_X,			-1,	1],
-								"AXIS_3"		: [GamepadControls.STICK_RIGHT_Y,			 1,	-1],
-								"BUTTON_4"		: [GamepadControls.ACTION_DOWN,				 0,	1],
-								"BUTTON_5"		: [GamepadControls.ACTION_RIGHT,			 0,	1],
-								"BUTTON_6"		: [GamepadControls.ACTION_LEFT,				 0,	1],
-								"BUTTON_7"		: [GamepadControls.ACTION_UP,				 0,	1],
-								"BUTTON_4"		: [GamepadControls.DPAD_UP,					 0,	1],
-								"BUTTON_8"		: [GamepadControls.LB,						 0,	1],
-								"BUTTON_9"		: [GamepadControls.RB,						 0,	1],
-								"BUTTON_10"		: [GamepadControls.LT,						 0,	1],
-								"BUTTON_11"		: [GamepadControls.RT,						 0,	1],
-								"BUTTON_12"		: [GamepadControls.BACK,					 0,	1],
-								"BUTTON_13"		: [GamepadControls.START,					 0,	1],
-								"BUTTON_14"		: [GamepadControls.STICK_LEFT_PRESS,		 0,	1],
-								"BUTTON_15"		: [GamepadControls.STICK_RIGHT_PRESS,		 0,	1],
-								"BUTTON_16"		: [GamepadControls.DPAD_UP,					 0,	1],
-								"BUTTON_17"		: [GamepadControls.DPAD_DOWN,				 0,	1],
-								"BUTTON_18"		: [GamepadControls.DPAD_LEFT,				 0,	1],
-								"BUTTON_19"		: [GamepadControls.DPAD_RIGHT,				 0,	1]
-							},
-							"keys" : [
-							]
-						}
-					}
-				},
-				"ouya" : {
-					"filters" : {
-						"manufacturer"		: null, // "Android Linux"
-						"os"				: "Linux",
-						"version"			: "AND"
-					},
-					"gamepads" : {
-						"native" : {
-							"filters" : {
-								"name"			: "OUYA Game Controller"
-							},
-							"controls" : {
-								"AXIS_0"		: [GamepadControls.STICK_LEFT_X,			-1,	1],
-								"AXIS_1"		: [GamepadControls.STICK_LEFT_Y,			-1,	1],
-								"AXIS_11"		: [GamepadControls.STICK_RIGHT_X,			-1,	1],
-								"AXIS_14"		: [GamepadControls.STICK_RIGHT_Y,			-1,	1],
-								"AXIS_17"		: [GamepadControls.LT,						 0,	1],
-								"AXIS_18"		: [GamepadControls.RT,						 0,	1],
-								"BUTTON_19"		: [GamepadControls.DPAD_UP,					 0,	1],
-								"BUTTON_20"		: [GamepadControls.DPAD_DOWN,				 0,	1],
-								"BUTTON_21"		: [GamepadControls.DPAD_LEFT,				 0,	1],
-								"BUTTON_22"		: [GamepadControls.DPAD_RIGHT,				 0,	1],
-								"BUTTON_96"		: [GamepadControls.ACTION_DOWN,				 0,	1],
-								"BUTTON_97"		: [GamepadControls.ACTION_RIGHT,			 0,	1],
-								"BUTTON_99"		: [GamepadControls.ACTION_LEFT,				 0,	1],
-								"BUTTON_100"	: [GamepadControls.ACTION_UP,				 0,	1],
-								"BUTTON_102"	: [GamepadControls.LB,						 0,	1],
-								"BUTTON_103"	: [GamepadControls.RB,						 0,	1],
-								"BUTTON_106"	: [GamepadControls.STICK_LEFT_PRESS,		 0,	1],
-								"BUTTON_107"	: [GamepadControls.STICK_RIGHT_PRESS,		 0,	1]
+			// Loads the list of all known gamepads via a more readable/editable initializer
+			var controllersData:Object = JSON.parse(String(new JSON_CONTROLLERS()).replace(/\/\*.*?\*\//sg, ""));
+			var allPlatforms:Object = controllersData["platforms"];
 
-								// Ignored (using analog instead):
-								// "BUTTON_104"	: [GamepadControls.CONTROL_L2_DIGITAL,				 0,	1],
-								// "BUTTON_105"	: [GamepadControls.CONTROL_R2_DIGITAL,				 0,	1],
-
-								// Missing:
-								// CONTROL_START (via keyboard though)
-								// CONTROL_MENU
-								// CONTROL_BACK
-							},
-							"keys" : [
-								// OUYA button
-								[Keyboard.MENU, KeyLocation.STANDARD, GamepadControls.START, 0, 1]
-							]
-						},
-						"ps3" : {
-							"filters" : {
-								"name"			: "Sony PLAYSTATION(R)3 Controller"
-							},
-							"controls" : {
-								"AXIS_0"		: [GamepadControls.STICK_LEFT_X,			-1,	1],
-								"AXIS_1"		: [GamepadControls.STICK_LEFT_Y,			-1,	1],
-								"AXIS_11"		: [GamepadControls.STICK_RIGHT_X,			-1,	1],
-								"AXIS_14"		: [GamepadControls.STICK_RIGHT_Y,			-1,	1],
-								"AXIS_17"		: [GamepadControls.LT,						 0,	1],
-								"AXIS_18"		: [GamepadControls.RT,						 0,	1],
-								"AXIS_36"		: [GamepadControls.DPAD_UP,					 0,	1],
-								"AXIS_37"		: [GamepadControls.DPAD_RIGHT,				 0,	1],
-								"AXIS_38"		: [GamepadControls.DPAD_DOWN,				 0,	1],
-								"AXIS_39"		: [GamepadControls.DPAD_LEFT,				 0,	1],
-								"BUTTON_96"		: [GamepadControls.ACTION_DOWN,				 0,	1],
-								"BUTTON_97"		: [GamepadControls.ACTION_RIGHT,			 0,	1],
-								"BUTTON_99"		: [GamepadControls.ACTION_LEFT,				 0,	1],
-								"BUTTON_100"	: [GamepadControls.ACTION_UP,				 0,	1],
-								"BUTTON_102"	: [GamepadControls.LB,						 0,	1],
-								"BUTTON_103"	: [GamepadControls.RB,						 0,	1],
-								"BUTTON_106"	: [GamepadControls.STICK_LEFT_PRESS,		 0,	1],
-								"BUTTON_107"	: [GamepadControls.STICK_RIGHT_PRESS,		 0,	1],
-								"BUTTON_108"	: [GamepadControls.START,					 0,	1]
-
-								// Ignored:
-								// "BUTTON_19"		: [GamepadControls.CONTROL_DPAD_UP,					 0,	1],
-								// "BUTTON_20"		: [GamepadControls.CONTROL_DPAD_DOWN,				 0,	1],
-								// "BUTTON_21"		: [GamepadControls.CONTROL_DPAD_LEFT,				 0,	1],
-								// "BUTTON_22"		: [GamepadControls.CONTROL_DPAD_RIGHT,				 0,	1],
-
-								// Missing:
-								// CONTROL_MENU (via keyboard though)
-								// CONTROL_BACK (via keyboard though)
-							},
-							"keys" : [
-								// SELECT button
-								[Keyboard.BACK, KeyLocation.STANDARD, GamepadControls.BACK, 0, 1],
-								// PS button
-								[Keyboard.MENU, KeyLocation.STANDARD, GamepadControls.MENU, 0, 1]
-							]
-						},
-						"xbox360" : {
-							"filters" : {
-								"name"			: "Microsoft X-Box 360 pad"
-							},
-							"controls" : {
-								"AXIS_0"		: [GamepadControls.STICK_LEFT_X,			-1,	1],
-								"AXIS_1"		: [GamepadControls.STICK_LEFT_Y,			-1,	1],
-								"AXIS_11"		: [GamepadControls.STICK_RIGHT_X,			-1,	1],
-								"AXIS_14"		: [GamepadControls.STICK_RIGHT_Y,			-1,	1],
-								"AXIS_15"		: [[GamepadControls.DPAD_LEFT, 0, -1],	[GamepadControls.DPAD_RIGHT, 0, 1], 				 0,	1],
-								"AXIS_16"		: [[GamepadControls.DPAD_UP, 0, -1],	[GamepadControls.DPAD_DOWN, 0, 1], 					 0,	1],
-								"AXIS_17"		: [GamepadControls.LT,						 0,	1],
-								"AXIS_18"		: [GamepadControls.RT,						 0,	1],
-								"BUTTON_96"		: [GamepadControls.ACTION_DOWN,				 0,	1],
-								"BUTTON_97"		: [GamepadControls.ACTION_RIGHT,			 0,	1],
-								"BUTTON_99"		: [GamepadControls.ACTION_LEFT,				 0,	1],
-								"BUTTON_100"	: [GamepadControls.ACTION_UP,				 0,	1],
-								"BUTTON_102"	: [GamepadControls.LB,						 0,	1],
-								"BUTTON_103"	: [GamepadControls.RB,						 0,	1],
-								"BUTTON_106"	: [GamepadControls.STICK_LEFT_PRESS,		 0,	1],
-								"BUTTON_107"	: [GamepadControls.STICK_RIGHT_PRESS,		 0,	1],
-								"BUTTON_108"	: [GamepadControls.START,					 0,	1]
-
-								// Ignored:
-								// "BUTTON_19"		: [GamepadControls.CONTROL_DPAD_UP,					 0,	1],
-								// "BUTTON_20"		: [GamepadControls.CONTROL_DPAD_DOWN,				 0,	1],
-								// "BUTTON_21"		: [GamepadControls.CONTROL_DPAD_LEFT,				 0,	1],
-								// "BUTTON_22"		: [GamepadControls.CONTROL_DPAD_RIGHT,				 0,	1],
-
-								// Missing:
-								// CONTROL_MENU (via keyboard though)
-								// CONTROL_BACK (via keyboard though)
-							},
-							"keys" : [
-								// BACK button
-								[Keyboard.BACK, KeyLocation.STANDARD, GamepadControls.BACK, 0, 1],
-								// XBOX button
-								[Keyboard.MENU, KeyLocation.STANDARD, GamepadControls.MENU, 0, 1]
-							]
-						}
-					}
-				}
-			};
-
-			// Parse the platformObj into a proper AutoPlatformInfo list
-
+			// Parse the platformObj into a proper, faster AutoPlatformInfo list
 			knownGamepadPlatforms = new Vector.<AutoPlatformInfo>();
 
 			var platformInfo:AutoPlatformInfo, gamepadInfo:AutoGamepadInfo, controlInfo:AutoGamepadControlInfo, controlKeyInfo:AutoGamepadControlKeyInfo;
@@ -245,17 +82,17 @@ package com.zehfernando.input.binding {
 			var platformObj:Object, gamepadObj:Object, controlObj:Object, keyObj:Object;
 			var manufacturerFilter:String, osFilter:String, versionFilter:String;
 
-			for (iis in platformsObj) {
-				platformObj = platformsObj[iis];
+			for (iis in allPlatforms) {
+				platformObj = allPlatforms[iis];
 
 				manufacturerFilter	= platformObj["filters"]["manufacturer"];
 				osFilter			= platformObj["filters"]["os"];
 				versionFilter		= platformObj["filters"]["version"];
 
 				// Only keep items in memory if the version passes the filters
-				if ((manufacturerFilter == null	|| Capabilities.manufacturer.indexOf(manufacturerFilter) > -1) &&
-					(osFilter == null 			|| Capabilities.os.indexOf(osFilter) > -1) &&
-					(versionFilter == null		|| Capabilities.version.indexOf(versionFilter) > -1)) {
+				if ((manufacturerFilter == null	|| manufacturerFilter.length == 0	|| Capabilities.manufacturer.indexOf(manufacturerFilter) > -1) &&
+					(osFilter == null 			|| osFilter.length == 0				|| Capabilities.os.indexOf(osFilter) > -1) &&
+					(versionFilter == null		|| versionFilter.length == 0		|| Capabilities.version.indexOf(versionFilter) > -1)) {
 					// Add this platform (same as current platform)
 
 					platformInfo = new AutoPlatformInfo();
@@ -282,9 +119,9 @@ package com.zehfernando.input.binding {
 
 							// TODO: parse complex split items
 							controlInfo = new AutoGamepadControlInfo();
-							controlInfo.id	= controlObj[0];
-							controlInfo.min	= controlObj[1];
-							controlInfo.max	= controlObj[2];
+							controlInfo.id	= controlObj["target"];
+							controlInfo.min	= controlObj["min"];
+							controlInfo.max	= controlObj["max"];
 
 							gamepadInfo.controls[kks] = controlInfo;
 						}
@@ -294,17 +131,19 @@ package com.zehfernando.input.binding {
 							keyObj = gamepadObj["keys"][kks];
 
 							controlKeyInfo = new AutoGamepadControlKeyInfo();
-							controlKeyInfo.keyCode		= keyObj[0];
-							controlKeyInfo.keyLocation	= keyObj[1];
-							controlKeyInfo.id			= keyObj[2];
-							controlKeyInfo.min			= keyObj[3];
-							controlKeyInfo.max			= keyObj[4];
+							controlKeyInfo.keyCode		= Keyboard[keyObj["code"]];
+							controlKeyInfo.keyLocation	= KeyLocation[keyObj["location"]];
+							controlKeyInfo.id			= keyObj["target"];
+							controlKeyInfo.min			= keyObj["min"];
+							controlKeyInfo.max			= keyObj["max"];
 
 							gamepadInfo.keys.push(controlKeyInfo);
 						}
 					}
 				}
 			}
+
+//			trace("Took " + (getTimer() - ti) + "ms to initialize.");
 		}
 
 		// ================================================================================================================
@@ -429,6 +268,7 @@ package com.zehfernando.input.binding {
 			for (i = 0; i < GameInput.numDevices; i++) {
 				device = GameInput.getDeviceAt(i);
 				if (device != null) {
+//					debug("  Removing events from device (" + i + "): name = " + device.name + ", controls = " + device.numControls + ", sampleInterval = " + device.sampleInterval);
 					for (j = 0; j < device.numControls; j++) {
 						device.getControlAt(j).removeEventListener(Event.CHANGE, onGameInputControlChanged);
 					}

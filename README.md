@@ -157,6 +157,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 ## Changelog
 
+ * 2014-01-12 - 1.4.1 - Moved gamepad data to an external JSON (cleaner maintenance)
  * 2013-10-12 - 1.3.1 - Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
  * 2013-10-12 - 1.2.1 - Added gamepad index filter support for isActionActivated() and getActionValue()
  * 2013-10-08 - 1.1.1 - Removed max/min from addGamepadSensitiveActionBinding() (always use hardcoded values)
@@ -200,6 +201,7 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 ## To-do
 
  * Allow sensitive controls to be treated as normal controls (with a user-defined threshold)
+ * Support "split" controls (e.g. 360 dpad on ouya)
  * Think of a way to avoid axis injecting button pressed
  * Add gamepad index to return signals parameters
  * Use caching samples?
@@ -207,7 +209,6 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Add missing asdocs (any?)
  * Finish auto Gamepad control ids
  * Still allow platform-specific control ids?
- * Support re-mapping of specific keys to action injected events (menu, back, home)
  * Allow multiple action events from the same gameinput events
  * Profile and test performance/bottlenecks/memory allocations
  * Demos

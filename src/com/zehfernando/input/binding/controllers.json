@@ -1,0 +1,199 @@
+/*
+This is the JSON file for KeyActionBinder configuration. It contains all platforms and controllers supported automatically.
+
+Normally, JSON files don't support comments. This file is pre-parsed and comments are removed prior to parsing as KeyActionBinder's configuration.
+
+You DO NOT need to load this document when using KeyActionBinder. The file is embedded automatically when compiling.
+It's used as an external file for convenience only.
+
+Supported auto controls:
+stick_left_x, stick_left_y, stick_left_press
+stick_right_x, stick_right_y, stick_right_press
+left_button, left_trigger
+right_button, right_trigger
+dpad_up, dpad_down, dpad_left, dpad_right
+action_up, action_down, action_left, action_right
+meta_back, meta_start, meta_menu
+
+"code" and "location" come from Keyboard.* and KeyLocation.*
+
+Filters don't take wildcards into account, but it's a simple case sensitive search. Eg. version "WIN" will match "WINDOWS".
+*/
+{
+	"platforms": {
+		"windows7" : {
+			"filters" : {
+				"manufacturer"		: "", /* On Windows, this can be "Adobe Windows" or "Google Pepper" */
+				"os"				: "Windows 7",
+				"version"			: "WIN"
+			},
+			"gamepads" : {
+				"xbox360" : {
+					"filters" : {
+						"name"			: "Xbox 360 Controller"
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : 1,		"max" : -1},
+						"AXIS_2"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
+						"AXIS_3"		: {"target" : "stick_right_y",			"min" : 1,		"max" : -1},
+						"BUTTON_4"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_5"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_6"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_7"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_4"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
+						"BUTTON_8"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_9"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_10"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_11"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_12"		: {"target" : "meta_back",				"min" : 0,		"max" : 1},
+						"BUTTON_13"		: {"target" : "meta_start",				"min" : 0,		"max" : 1},
+						"BUTTON_14"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_15"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
+						"BUTTON_16"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
+						"BUTTON_17"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
+						"BUTTON_18"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
+						"BUTTON_19"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1}
+					},
+					"keys" : [
+					]
+				}
+			}
+		},
+		"ouya" : {
+			"filters" : {
+				"manufacturer"		: "Android Linux",
+				"os"				: "Linux",
+				"version"			: "AND"
+			},
+			"gamepads" : {
+				"native" : {
+					"filters" : {
+						"name"			: "OUYA Game Controller"
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"AXIS_11"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
+						"AXIS_14"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
+						"AXIS_17"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"AXIS_18"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_19"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
+						"BUTTON_20"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
+						"BUTTON_21"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
+						"BUTTON_22"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1},
+						"BUTTON_96"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_97"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_99"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_100"	: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_102"	: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_103"	: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_106"	: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_107"	: {"target" : "stick_right_press",		"min" : 0,		"max" : 1}
+
+						/*
+						Ignored (using analog instead):
+						"BUTTON_104"	: [GamepadControls.CONTROL_L2_DIGITAL,				"min" : 0,	"max" : 1},
+						"BUTTON_105"	: [GamepadControls.CONTROL_R2_DIGITAL,				"min" : 0,	"max" : 1},
+
+						Missing:
+						CONTROL_START (via keyboard though)
+						CONTROL_MENU
+						CONTROL_BACK
+						*/
+					},
+					"keys" : [
+						/* OUYA button */
+						{"code" : "MENU", "location" : "STANDARD", "target" :  "meta_start", "min":0, "max" :1}
+					]
+				},
+				"ps3" : {
+					"filters" : {
+						"name"			: "Sony PLAYSTATION(R)3 Controller"
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"AXIS_11"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
+						"AXIS_14"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
+						"AXIS_17"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"AXIS_18"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"AXIS_36"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
+						"AXIS_37"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1},
+						"AXIS_38"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
+						"AXIS_39"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
+						"BUTTON_96"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_97"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_99"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_100"	: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_102"	: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_103"	: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_106"	: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_107"	: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
+						"BUTTON_108"	: {"target" : "meta_start",				"min" : 0,		"max" : 1}
+
+						/*
+						Ignored:
+						"BUTTON_19"		: [GamepadControls.CONTROL_DPAD_UP,					"min" : 0,	"max" : 1},
+						"BUTTON_20"		: [GamepadControls.CONTROL_DPAD_DOWN,				"min" : 0,	"max" : 1},
+						"BUTTON_21"		: [GamepadControls.CONTROL_DPAD_LEFT,				"min" : 0,	"max" : 1},
+						"BUTTON_22"		: [GamepadControls.CONTROL_DPAD_RIGHT,				"min" : 0,	"max" : 1},
+
+						Missing:
+						CONTROL_MENU (via keyboard though)
+						CONTROL_BACK (via keyboard though)
+						*/
+					},
+					"keys" : [
+						/* SELECT button */
+						{"code" : "BACK", "location" : "STANDARD", "target" :  "meta_back", "min":0, "max" :1},
+						/* PS button */
+						{"code" : "MENU", "location" : "STANDARD", "target" :  "meta_menu", "min":0, "max" :1}
+					]
+				},
+				"xbox360" : {
+					"filters" : {
+						"name"			: "Microsoft X-Box 360 pad"
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,	"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,	"max" : 1},
+						"AXIS_11"		: {"target" : "stick_right_x",			"min" : -1,	"max" : 1},
+						"AXIS_14"		: {"target" : "stick_right_y",			"min" : -1,	"max" : 1},
+						"AXIS_15"		: {"targets": [{"target" :"dpad_left", "min":0, "max" :-1},	{"target" :"dpad_right", "min":0, "max" :1}],					"min" : 0,	"max" : 1},
+						"AXIS_16"		: {"targets": [{"target" :"dpad_up", "min":0, "max" :-1},	{"target" :"dpad_down", "min":0, "max" :1}],					"min" : 0,	"max" : 1},
+						"AXIS_17"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"AXIS_18"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_96"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_97"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_99"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_100"	: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_102"	: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_103"	: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_106"	: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_107"	: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
+						"BUTTON_108"	: {"target" : "meta_start",				"min" : 0,		"max" : 1}
+
+						/*
+						Ignored:
+						"BUTTON_19"		: [GamepadControls.CONTROL_DPAD_UP,					"min" : 0,	"max" : 1},
+						"BUTTON_20"		: [GamepadControls.CONTROL_DPAD_DOWN,				"min" : 0,	"max" : 1},
+						"BUTTON_21"		: [GamepadControls.CONTROL_DPAD_LEFT,				"min" : 0,	"max" : 1},
+						"BUTTON_22"		: [GamepadControls.CONTROL_DPAD_RIGHT,				"min" : 0,	"max" : 1},
+
+						Missing:
+						CONTROL_MENU (via keyboard though)
+						CONTROL_BACK (via keyboard though)
+						*/
+					},
+					"keys" : [
+						/* BACK button */
+						{"code" : "BACK", "location" : "STANDARD", "target" :  "meta_back", "min":0, "max" :1},
+						/* XBox button */
+						{"code" : "MENU", "location" : "STANDARD", "target" :  "meta_menu", "min":0, "max" :1}
+					]
+				}
+			}
+		}
+	}
+}
