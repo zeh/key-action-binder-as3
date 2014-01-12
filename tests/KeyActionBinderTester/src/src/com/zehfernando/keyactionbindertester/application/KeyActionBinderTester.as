@@ -2,6 +2,7 @@ package com.zehfernando.keyactionbindertester.application {
 	import com.zehfernando.display.templates.application.SimpleApplication;
 	import com.zehfernando.input.binding.KeyActionBinder;
 	import com.zehfernando.keyactionbindertester.display.Main;
+	import com.zehfernando.utils.console.log;
 	/**
 	 * @author zeh fernando
 	 */
@@ -14,10 +15,10 @@ package com.zehfernando.keyactionbindertester.application {
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
 		public function KeyActionBinderTester() {
-			super();
-
 			// Anything that uses GameInput must be started on the first "frame" of the application
 			KeyActionBinder.init(stage);
+
+			super();
 		}
 
 		// ================================================================================================================

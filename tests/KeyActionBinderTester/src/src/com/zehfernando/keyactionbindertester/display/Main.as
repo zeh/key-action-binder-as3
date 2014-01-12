@@ -1,10 +1,11 @@
 package com.zehfernando.keyactionbindertester.display {
 	import com.zehfernando.display.abstracts.ResizableSprite;
 	import com.zehfernando.display.components.text.TextSprite;
+	import com.zehfernando.input.binding.GamepadControls;
+	import com.zehfernando.input.binding.KeyActionBinder;
 	import com.zehfernando.utils.console.log;
 
 	import flash.events.Event;
-	import flash.events.GameInputEvent;
 	import flash.events.KeyboardEvent;
 	import flash.system.Capabilities;
 	import flash.ui.GameInput;
@@ -16,6 +17,10 @@ package com.zehfernando.keyactionbindertester.display {
 	 */
 	public class Main extends ResizableSprite {
 
+		// Constants
+		private static const ACTION_PREFIX:String = "action-";		// Prefix just to be easy (normally those are arbritrary action names)
+		private static const VALUE_PREFIX:String = "value-";		// Prefix just to be easy (normally those are arbritrary value names)
+
 		// Instances
 		private var textDeviceState:TextSprite;			// Complete device state
 		private var textLog:TextSprite;					// Log of what happens, in order
@@ -23,10 +28,14 @@ package com.zehfernando.keyactionbindertester.display {
 		private var deviceStates:Vector.<Object>;		// List of devices (Objects with their state: key = control.id, value = control)
 		private var deviceSensitive:Vector.<Object>;	// Whether device controls are sensitive or not (key = control.id, value = false or true)
 		private var textLogLines:Vector.<String>;
-		private var gameInput:GameInput;
 		private var devicesWithEvents:Vector.<GameInputDevice>;
 		private var frame:uint;
 		private var pressedKeys:Object;
+
+		private var binder:KeyActionBinder;
+
+		private var actionsToTrack:Array;
+		private var valuesToTrack:Array;
 
 
 		// ================================================================================================================
@@ -38,6 +47,21 @@ package com.zehfernando.keyactionbindertester.display {
 			frame = 0;
 
 			pressedKeys = {};
+
+			actionsToTrack = [
+				GamepadControls.ACTION_LEFT, GamepadControls.ACTION_RIGHT, GamepadControls.ACTION_UP, GamepadControls.ACTION_DOWN,
+				GamepadControls.DPAD_LEFT, GamepadControls.DPAD_RIGHT, GamepadControls.DPAD_UP, GamepadControls.DPAD_DOWN,
+				GamepadControls.MENU, GamepadControls.BACK, GamepadControls.START,
+				GamepadControls.OPTIONS, GamepadControls.TRACKPAD,
+				GamepadControls.LB, GamepadControls.RB,
+				GamepadControls.LT, GamepadControls.RT,
+				GamepadControls.STICK_LEFT_PRESS, GamepadControls.STICK_RIGHT_PRESS
+			];
+
+			valuesToTrack = [
+				GamepadControls.LT, GamepadControls.RT,
+				GamepadControls.STICK_LEFT_X, GamepadControls.STICK_LEFT_Y, GamepadControls.STICK_RIGHT_X, GamepadControls.STICK_RIGHT_Y,
+			];
 
 			deviceStates = new Vector.<Object>();
 			deviceSensitive = new Vector.<Object>();
@@ -91,7 +115,7 @@ package com.zehfernando.keyactionbindertester.display {
 		}
 
 		private function updateTextLog():void {
-			if (textLogLines.length > 50) textLogLines.splice(0, log.length - 50);
+			if (textLogLines.length > 60) textLogLines.splice(0, log.length - 60);
 			textLog.text = textLogLines.join("\n");
 			textLog.y = _height - textLog.height;
 		}
@@ -124,6 +148,8 @@ package com.zehfernando.keyactionbindertester.display {
 			// Update the device text log with the current state of all devices
 			var text:String = "";
 			var i:int, j:int;
+
+			/*
 			var ids:Vector.<String>, iis:String;
 			var device:GameInputDevice;
 			var control:GameInputControl;
@@ -168,55 +194,18 @@ package com.zehfernando.keyactionbindertester.display {
 					text += "Device [" + i + "]: NULL!";
 				}
 			}
+			*/
+
+			// Update state
+			for (i = 0; i < actionsToTrack.length; i++) {
+				text += "Action " + actionsToTrack[i] + ": " + binder.isActionActivated(ACTION_PREFIX + actionsToTrack[i]) + "\n";
+			}
+			text += "\n";
+			for (i = 0; i < valuesToTrack.length; i++) {
+				text += "Value " + valuesToTrack[i] + ": " + binder.getActionValue(VALUE_PREFIX + valuesToTrack[i]) + "\n";
+			}
 
 			textDeviceState.text = text;
-		}
-
-		private function reportDevices(__e:Event = null):void {
-			// Create state for devices
-
-			var i:int, j:int;
-			var device:GameInputDevice;
-
-			// Remove events for all existing devices
-			removeGameInputDeviceEvents();
-
-			// Create events and state object for all controls
-			deviceStates = new Vector.<Object>(GameInput.numDevices, true);
-			deviceSensitive = new Vector.<Object>(GameInput.numDevices, true);
-			for (i = 0; i < GameInput.numDevices; i++) {
-				device = GameInput.getDeviceAt(i);
-				deviceStates[i] = {};
-				deviceSensitive[i] = {};
-
-				if (device != null) {
-					device.enabled = true;
-					for (j = 0; j < device.numControls; j++) {
-						// Create event
-						device.getControlAt(j).addEventListener(Event.CHANGE, onGameInputControlChanged, false, 0, true);
-
-						// Add device state
-						deviceStates[i][device.getControlAt(j).id] = device.getControlAt(j);
-					}
-					devicesWithEvents.push(device);
-				}
-			}
-
-			// Update the display with the list of devices
-			updateTextDeviceState();
-		}
-
-		private function removeGameInputDeviceEvents():void {
-			// Remove events of current all gameinput devices
-			var i:int;
-			while (devicesWithEvents.length > 0) {
-				if (devicesWithEvents[0] != null) {
-					for (i = 0; i < devicesWithEvents[0].numControls; i++) {
-						devicesWithEvents[0].getControlAt(i).removeEventListener(Event.CHANGE, onGameInputControlChanged, false);
-					}
-				}
-				devicesWithEvents.splice(0, 1);
-			}
 		}
 
 
@@ -248,16 +237,14 @@ package com.zehfernando.keyactionbindertester.display {
 
 		private function onDeactivate(__e:Event):void {
 			log("Deactivating");
-
-			if (gameInput != null) {
-				gameInput.removeEventListener(GameInputEvent.DEVICE_ADDED, reportDevices);
-				gameInput.removeEventListener(GameInputEvent.DEVICE_REMOVED, reportDevices);
-				gameInput = null;
-			}
 		}
 
 		private function onEnterFrame(__e:Event):void {
+			// Increase frame count
 			frame++;
+
+			// Update controller state
+			updateTextDeviceState();
 		}
 
 
@@ -265,18 +252,24 @@ package com.zehfernando.keyactionbindertester.display {
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
 		public function init():void {
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			var i:int;
 
-			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			binder = new KeyActionBinder();
+
+			// Track actions
+			for (i = 0; i < actionsToTrack.length; i++) {
+				binder.addGamepadActionBinding(ACTION_PREFIX + actionsToTrack[i], actionsToTrack[i]);
+			}
+
+			// Track values
+			for (i = 0; i < valuesToTrack.length; i++) {
+				binder.addGamepadSensitiveActionBinding(VALUE_PREFIX + valuesToTrack[i], valuesToTrack[i]);
+			}
+
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 
 			stage.addEventListener(Event.ACTIVATE, onActivate);
 			stage.addEventListener(Event.DEACTIVATE, onDeactivate);
-
-			//reportDevices();
-			gameInput = new GameInput();
-			gameInput.addEventListener(GameInputEvent.DEVICE_ADDED, reportDevices);
-			gameInput.addEventListener(GameInputEvent.DEVICE_REMOVED, reportDevices);
 
 			redrawWidth();
 			redrawHeight();
