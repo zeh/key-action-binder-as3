@@ -41,7 +41,6 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						"BUTTON_5"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
 						"BUTTON_6"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
 						"BUTTON_7"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
-						"BUTTON_4"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
 						"BUTTON_8"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
 						"BUTTON_9"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
 						"BUTTON_10"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
