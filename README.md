@@ -157,6 +157,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 ## Changelog
 
+ * 2014-01-12 - 1.4.2 - Added support for PS4 controller (and OPTIONS, SHARE and TRACKPAD meta controls)
  * 2014-01-12 - 1.4.1 - Moved gamepad data to an external JSON (cleaner maintenance)
  * 2013-10-12 - 1.3.1 - Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
  * 2013-10-12 - 1.2.1 - Added gamepad index filter support for isActionActivated() and getActionValue()
@@ -173,6 +174,10 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
 
  * Windows 7
   * XBox 360 controller
+  * PlayStation 4 DS4
+
+To confirm/re-test:
+
  * OUYA
   * Native controller
   * PlayStation 3 controller
@@ -212,4 +217,5 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Allow multiple action events from the same gameinput events
  * Profile and test performance/bottlenecks/memory allocations
  * Demos
+ * Add events for devices removal/listing?
  * Binary SWC

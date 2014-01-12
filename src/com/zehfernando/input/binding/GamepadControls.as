@@ -169,9 +169,33 @@ package com.zehfernando.input.binding {
 		/* Menu/home button (OUYA button in the OUYA controller, XBox Button in the XBox 360 controller, PS button in the Playstation controller)
 		 *
 		 * <p>Style: digital</p>
-		 * <p>Works in: OUYA (Native Controller; Playstation DS3; XBox 360 Controller)</p>
+		 * <p>Works in: OUYA (Native Controller; Playstation DS3; Playstation DS4; XBox 360 Controller)</p>
 		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
 		 */
 		public static const MENU:String = "meta_menu";
+
+		/* Options button
+		 *
+		 * <p>Style: digital</p>
+		 * <p>Works in: Windows (Playstation DS4)</p>
+		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
+		 */
+		public static const OPTIONS:String = "meta_options";
+
+		/* Trackpad press
+		 *
+		 * <p>Style: digital</p>
+		 * <p>Works in: Windows (Playstation DS4)</p>
+		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
+		 */
+		public static const TRACKPAD:String = "meta_trackpad";
+
+		/* Share button
+		 *
+		 * <p>Style: digital</p>
+		 * <p>Works in: Windows (Playstation DS4)</p>
+		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
+		 */
+		public static const SHARE:String = "meta_share";
 	}
 }
