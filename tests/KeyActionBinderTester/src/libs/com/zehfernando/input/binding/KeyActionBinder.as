@@ -22,7 +22,7 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Versions:
-		// 2014-01-12	1.4.2	Added support for PS4 controller and OPTIONS, SHARE and TRACKPAD meta controls)
+		// 2014-01-12	1.4.2	Added support for PS4 controller (and OPTIONS, SHARE and TRACKPAD meta controls)
 		// 2014-01-12	1.4.1	Moved gamepad data to an external JSON (cleaner maintenance)
 		// 2013-10-12	1.3.1	Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
 		// 2013-10-12	1.2.1	Added gamepad index filter support for isActionActivated() and getActionValue()
