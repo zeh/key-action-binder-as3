@@ -182,11 +182,12 @@ To confirm/re-test:
   * Native controller
   * PlayStation 3 controller
   * XBox 360 controller
+ * All other platforms
 
 More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself:
 
- * [Online tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/) (requires Flash Player)
- * [Android/OUYA APK test app](hosted.zehfernando.com/key-action-binder/game-input-tester/GameInputTester.apk)
+ * [Web-based GameInput tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/) (requires Flash Player)
+ * [Android/OUYA APK GameInput tester app](hosted.zehfernando.com/key-action-binder/game-input-tester/GameInputTester.apk)
 
 A pure AS3 source of the tester app can be found on /tests/GameInputTester/src.
 
@@ -196,6 +197,7 @@ A pure AS3 source of the tester app can be found on /tests/GameInputTester/src.
  * Blog post: [Abstracting key and game controller inputs in Adobe AIR](http://zehfernando.com/2013/abstracting-key-and-game-controller-inputs-in-adobe-air/) (July 2013)
  * Blog post: [KeyActionBinder updates: time sensitive activations, new constants](http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/) (September 2013)
  * Blog post: [Big changes to KeyActionBinder: automatic game control ids, new repository](http://zehfernando.com/2013/big-changes-to-keyactionbinder-automatic-game-control-ids-new-repository/) (October 2013)
+ * Blog post: [A GameInput testing interface](http://zehfernando.com/2014/a-gameinput-testing-interface/) (January 2014)
 
  
 ## License
@@ -205,17 +207,17 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 
 ## To-do
 
- * Allow sensitive controls to be treated as normal controls (with a user-defined threshold)
- * Support "split" controls (e.g. 360 dpad on ouya)
+ * Support "split" controls (e.g. 360 dpad on ouya - won't work on ouya at all until that's done)
+ * Allow sensitive controls to be treated as normal controls (with a user-defined threshold?)
  * Think of a way to avoid axis injecting button pressed
- * Add gamepad index to return signals parameters
+ * Add gamepad index to return signals parameters?
  * Use caching samples?
  * Allow "any" gamepad key (for "press any key")
  * Add missing asdocs (any?)
  * Finish auto Gamepad control ids
  * Still allow platform-specific control ids?
- * Allow multiple action events from the same gameinput events
  * Profile and test performance/bottlenecks/memory allocations
- * Demos
- * Add events for devices removal/listing?
+ * More demos
+ * Add events (signals) for devices removal/listing?
  * Binary SWC
+ * Better tests with 2 controllers
