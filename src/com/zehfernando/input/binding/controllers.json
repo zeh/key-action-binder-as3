@@ -53,6 +53,14 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						"BUTTON_17"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
 						"BUTTON_18"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
 						"BUTTON_19"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1}
+
+						/*
+						Missing or not supported:
+						"meta_menu"
+						"meta_share"
+						"meta_options"
+						"meta_trackpad"
+						*/
 					},
 					"keys" : [
 					]
@@ -86,9 +94,9 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						"BUTTON_23"		: {"target" : "meta_trackpad",			"min" : 0,		"max" : 1}
 
 						/*
-						Ignored (using analog instead):
-						"BUTTON_16"	(left_trigger, 0 -> 1)
-						"BUTTON_17"	(right_trigger, 0 -> 1)
+						Ignored:
+						"BUTTON_16"	(left_trigger, 0 -> 1) (using analog instead)
+						"BUTTON_17"	(right_trigger, 0 -> 1) (using analog instead)
 						*/
 					},
 					"keys" : [
@@ -129,8 +137,8 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 
 						/*
 						Ignored (using analog instead):
-						"BUTTON_104"	: [GamepadControls.CONTROL_L2_DIGITAL,				"min" : 0,	"max" : 1},
-						"BUTTON_105"	: [GamepadControls.CONTROL_R2_DIGITAL,				"min" : 0,	"max" : 1},
+						"BUTTON_104"	(left_trigger, 0 -> 1) (using analog instead)
+						"BUTTON_105"	(right_trigger, 0 -> 1) (using analog instead)
 
 						Missing:
 						CONTROL_START (via keyboard though)
@@ -196,6 +204,7 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,	"max" : 1},
 						"AXIS_11"		: {"target" : "stick_right_x",			"min" : -1,	"max" : 1},
 						"AXIS_14"		: {"target" : "stick_right_y",			"min" : -1,	"max" : 1},
+						/* TODO: this format is not supported yet */
 						"AXIS_15"		: {"targets": [{"target" :"dpad_left", "min":0, "max" :-1},	{"target" :"dpad_right", "min":0, "max" :1}],					"min" : 0,	"max" : 1},
 						"AXIS_16"		: {"targets": [{"target" :"dpad_up", "min":0, "max" :-1},	{"target" :"dpad_down", "min":0, "max" :1}],					"min" : 0,	"max" : 1},
 						"AXIS_17"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
