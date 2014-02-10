@@ -157,6 +157,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 ## Changelog
 
+ * 2014-02-09 - 1.5.2 - Added support for "split" controls, where the same GameInput control fires two distinct buttons (e.g. XBox 360 dpads on OUYA)
  * 2014-01-12 - 1.4.2 - Added support for PS4 controller (and OPTIONS, SHARE and TRACKPAD meta controls)
  * 2014-01-12 - 1.4.1 - Moved gamepad data to an external JSON (cleaner maintenance)
  * 2013-10-12 - 1.3.1 - Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
@@ -207,7 +208,6 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 
 ## To-do
 
- * Support "split" controls (e.g. 360 dpad on ouya - won't work on ouya at all until that's done)
  * Allow sensitive controls to be treated as normal controls (with a user-defined threshold?)
  * Think of a way to avoid axis injecting button pressed
  * Add gamepad index to return signals parameters?

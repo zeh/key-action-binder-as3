@@ -22,6 +22,7 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Versions:
+		// 2014-02-09	1.5.2	Added support for "split" controls, where the same GameInput control fires two distinct buttons (e.g. XBox 360 dpads on OUYA)
 		// 2014-01-12	1.4.2	Added support for PS4 controller (and OPTIONS, SHARE and TRACKPAD meta controls)
 		// 2014-01-12	1.4.1	Moved gamepad data to an external JSON (cleaner maintenance)
 		// 2013-10-12	1.3.1	Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
@@ -31,7 +32,7 @@ package com.zehfernando.input.binding {
 		// 2013-10-08	1.0.0	First version to have a version number
 
 		// Constants
-		public static const VERSION:String = "1.4.2";
+		public static const VERSION:String = "1.5.2";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
@@ -79,8 +80,8 @@ package com.zehfernando.input.binding {
 			knownGamepadPlatforms = new Vector.<AutoPlatformInfo>();
 
 			var platformInfo:AutoPlatformInfo, gamepadInfo:AutoGamepadInfo, controlInfo:AutoGamepadControlInfo, controlKeyInfo:AutoGamepadControlKeyInfo;
-			var iis:String, jjs:String, kks:String;
-			var platformObj:Object, gamepadObj:Object, controlObj:Object, keyObj:Object;
+			var iis:String, jjs:String, kks:String, kjs:String;
+			var platformObj:Object, gamepadObj:Object, controlObj:Object, keyObj:Object, controlObjSplit:Object;
 			var manufacturerFilter:String, osFilter:String, versionFilter:String;
 
 			for (iis in allPlatforms) {
@@ -118,13 +119,33 @@ package com.zehfernando.input.binding {
 						for (kks in gamepadObj["controls"]) {
 							controlObj = gamepadObj["controls"][kks];
 
-							// TODO: parse complex split items
-							controlInfo = new AutoGamepadControlInfo();
-							controlInfo.id	= controlObj["target"];
-							controlInfo.min	= controlObj["min"];
-							controlInfo.max	= controlObj["max"];
+							if (controlObj.hasOwnProperty("target")) {
+								// Single control: control min-max mapped to the target min-max
+								controlInfo = new AutoGamepadControlInfo();
+								controlInfo.id	= controlObj["target"];
+								controlInfo.minOutput	= controlObj["min"];
+								controlInfo.maxOutput	= controlObj["max"];
 
-							gamepadInfo.controls[kks] = controlInfo;
+								gamepadInfo.controls[kks] = controlInfo;
+							} else if (controlObj.hasOwnProperty("targets")) {
+								// Multiple targets: split control where min-max ranges get clampped and mapped to the target min-max
+
+								gamepadInfo.controlsSplit[kks] = new Vector.<AutoGamepadControlInfo>();
+
+								for (kjs in controlObj["targets"]) {
+									controlObjSplit = controlObj["targets"][kjs];
+
+									controlInfo = new AutoGamepadControlInfo();
+									controlInfo.id	= controlObjSplit["target"];
+									controlInfo.minInput	= controlObjSplit["min"];
+									controlInfo.maxInput	= controlObjSplit["max"];
+									controlInfo.minOutput	= controlObj["min"];
+									controlInfo.maxOutput	= controlObj["max"];
+
+									(gamepadInfo.controlsSplit[kks] as Vector.<AutoGamepadControlInfo>).push(controlInfo);
+								}
+							}
+
 						}
 
 						// Add keyboard injections (keys that double as gamepad controls)
@@ -420,9 +441,22 @@ package com.zehfernando.input.binding {
 
 			// Find the re-mapped control id
 			var deviceIndex:int = gameInputDevices.indexOf(control.device);
-			if (deviceIndex > -1 && gameInputDeviceDefinitions[deviceIndex].controls.hasOwnProperty(control.id)) {
-				var deviceControlInfo:AutoGamepadControlInfo = gameInputDeviceDefinitions[deviceIndex].controls[control.id];
-				interpretGameInputControlChanges(deviceControlInfo.id, map(control.value, control.minValue, control.maxValue, deviceControlInfo.min, deviceControlInfo.max, true), deviceControlInfo.min, deviceControlInfo.max, deviceIndex);
+
+			if (deviceIndex > -1) {
+				// Find single controls, where one control has one binding
+				if (gameInputDeviceDefinitions[deviceIndex].controls.hasOwnProperty(control.id)) {
+					var deviceControlInfo:AutoGamepadControlInfo = gameInputDeviceDefinitions[deviceIndex].controls[control.id];
+					interpretGameInputControlChanges(deviceControlInfo.id, map(control.value, isNaN(deviceControlInfo.minInput) ? control.minValue : deviceControlInfo.minInput, isNaN(deviceControlInfo.maxInput) ? control.maxValue : deviceControlInfo.maxInput, deviceControlInfo.minOutput, deviceControlInfo.maxOutput, true), deviceControlInfo.minOutput, deviceControlInfo.maxOutput, deviceIndex);
+				}
+
+				// Find "split" controls, where one control has more than one binding
+				if (gameInputDeviceDefinitions[deviceIndex].controlsSplit.hasOwnProperty(control.id)) {
+					var deviceControlInfos:Vector.<AutoGamepadControlInfo> = gameInputDeviceDefinitions[deviceIndex].controlsSplit[control.id];
+					var i:uint;
+					for (i = 0; i < deviceControlInfos.length; i++) {
+						interpretGameInputControlChanges(deviceControlInfos[i].id, map(control.value, isNaN(deviceControlInfos[i].minInput) ? control.minValue : deviceControlInfos[i].minInput, isNaN(deviceControlInfos[i].maxInput) ? control.maxValue : deviceControlInfos[i].maxInput, deviceControlInfos[i].minOutput, deviceControlInfos[i].maxOutput, true), deviceControlInfos[i].minOutput, deviceControlInfos[i].maxOutput, deviceIndex);
+					}
+				}
 			}
 		}
 
