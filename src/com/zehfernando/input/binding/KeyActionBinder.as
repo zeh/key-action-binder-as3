@@ -976,6 +976,7 @@ class AutoGamepadInfo {
 	public var nameFilter:String;							// Filter for device.name
 
 	public var controls:Object;								// AutoGamepadControlInfo, key is the control.id
+	public var controlsSplit:Object;						// Vector.<AutoGamepadControlInfo>, key is the control.id
 	public var keys:Vector.<AutoGamepadControlKeyInfo>;		// List of keys that double as controls
 
 
@@ -984,6 +985,7 @@ class AutoGamepadInfo {
 
 	public function AutoGamepadInfo() {
 		controls = {};
+		controlsSplit = {};
 		keys = new Vector.<AutoGamepadControlKeyInfo>();
 	}
 }
@@ -995,8 +997,10 @@ class AutoGamepadControlInfo {
 
 	// Properties
 	public var id:String;
-	public var min:Number;
-	public var max:Number;
+	public var minInput:Number;
+	public var maxInput:Number;
+	public var minOutput:Number;
+	public var maxOutput:Number;
 
 
 	// ================================================================================================================
