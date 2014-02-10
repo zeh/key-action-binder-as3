@@ -53,7 +53,7 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						"BUTTON_17"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
 						"BUTTON_18"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
 						"BUTTON_19"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1}
-						
+
 						/*
 						Missing or not supported:
 						"meta_menu"
@@ -204,8 +204,14 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,	"max" : 1},
 						"AXIS_11"		: {"target" : "stick_right_x",			"min" : -1,	"max" : 1},
 						"AXIS_14"		: {"target" : "stick_right_y",			"min" : -1,	"max" : 1},
-						/* TODO: this format is not supported yet */
-						"AXIS_15"		: {"targets": [{"target" :"dpad_left", "min":0, "max" :-1},	{"target" :"dpad_right", "min":0, "max" :1}],					"min" : 0,	"max" : 1},
+						"AXIS_15"		: {
+							"targets": [
+								{"target" :"dpad_left", "min":0, "max" :-1}, /* Max/min here are ranges from the original value reported (mapped then to min/max of the control) */
+								{"target" :"dpad_right", "min":0, "max" :1}
+							],
+							"min" : 0,
+							"max" : 1
+						},
 						"AXIS_16"		: {"targets": [{"target" :"dpad_up", "min":0, "max" :-1},	{"target" :"dpad_down", "min":0, "max" :1}],					"min" : 0,	"max" : 1},
 						"AXIS_17"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
 						"AXIS_18"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
