@@ -176,14 +176,15 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
  * Windows 7
   * XBox 360 controller
   * PlayStation 4 DS4
+ * OUYA
+  * XBox 360 controller
 
 To confirm/re-test:
 
  * OUYA
   * Native controller
   * PlayStation 3 controller
-  * XBox 360 controller
- * All other platforms
+ * All other platforms (Mac, Android, Windows 8, ...)
 
 More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself:
 
