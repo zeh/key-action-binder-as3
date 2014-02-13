@@ -164,6 +164,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 ## Changelog
 
+ * 2014-02-14 - 1.5.4 - Controllers data now use an array of strings for filters
  * 2014-02-13 - 1.5.3 - Added support for SELECT meta control
  * 2014-02-09 - 1.5.2 - Added support for "split" controls, where the same GameInput control fires two distinct buttons (e.g. XBox 360 dpads on OUYA)
  * 2014-01-12 - 1.4.2 - Added support for PS4 controller (and OPTIONS, SHARE and TRACKPAD meta controls)
@@ -184,6 +185,7 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
  * Windows 7
   * XBox 360 controller
   * PlayStation 4 DS4
+  * [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) (generic Gamepad)
  * OUYA
   * XBox 360 controller
 
@@ -230,3 +232,26 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Add events (signals) for devices removal/listing?
  * Binary SWC
  * Better tests with 2 controllers
+
+
+## Contributing
+
+There are everal ways to contribute to this project.
+
+To contribute with new key mappings (so more devices are supported by KeyActionBinder):
+
+ 1. Run the [Web-based GameInput tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/) with your desired device connected to the machine.
+ 2. Push all buttons.
+ 3. Take a screenshot.
+ 4. Take notes of all buttons, indicating which buttons and axis relate to what (e.g. "BUTTON_4" means "directional pad up"). Be sure to include which of the values (-1 or 1) mean "UP" on the gamepad's sticks.
+ 5. Send the screenshot and the list of controls to zeh at zehfernando dot com.
+ 6. If possible, test in additional browsers to see if you get different results. In some systems, the regular Flash Player (plugin on FireFox, Safari, etc) behaves differently from the built-in Flash Player (Pepper Flash on Chrome). In this case, we need screenshots and lists of mappings for both kinds of player.
+
+To contribute with code, fixes, additions, or even new key mappings added directly to the [controllers list file](https://github.com/zeh/key-action-binder/blob/master/src/com/zehfernando/input/binding/controllers.json), you can just edit the related file inside GitHub (by editing it directly on the website, or creating a fork) and doing a pull request. This is an easy way to contribute, and it guarantees you will be credited for your work (accepted pull requests have their authors show as contributors to the project).
+
+
+## Credits and thanks
+
+ * James Dean Palmer for the original idea about auto-mapping controls and many bindings
+ * Patrick Bastiani for the NeoFlex controller mapping
+ * Rusty Moyher for many Mac bindings
