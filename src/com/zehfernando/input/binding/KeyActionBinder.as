@@ -21,18 +21,8 @@ package com.zehfernando.input.binding {
 
 		// More info: https://github.com/zeh/key-action-binder
 
-		// Versions:
-		// 2014-02-09	1.5.2	Added support for "split" controls, where the same GameInput control fires two distinct buttons (e.g. XBox 360 dpads on OUYA)
-		// 2014-01-12	1.4.2	Added support for PS4 controller (and OPTIONS, SHARE and TRACKPAD meta controls)
-		// 2014-01-12	1.4.1	Moved gamepad data to an external JSON (cleaner maintenance)
-		// 2013-10-12	1.3.1	Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
-		// 2013-10-12	1.2.1	Added gamepad index filter support for isActionActivated() and getActionValue()
-		// 2013-10-08	1.1.1	Removed max/min from addGamepadSensitiveActionBinding() (always use hardcoded values)
-		// 2013-10-08	1.1.0	Completely revamped the control scheme by using "auto" controls for cross-platform operation
-		// 2013-10-08	1.0.0	First version to have a version number
-
 		// Constants
-		public static const VERSION:String = "1.5.2";
+		public static const VERSION:String = "1.5.3";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;

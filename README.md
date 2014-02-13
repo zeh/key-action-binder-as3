@@ -164,6 +164,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 ## Changelog
 
+ * 2014-02-13 - 1.5.3 - Added support for SELECT meta control
  * 2014-02-09 - 1.5.2 - Added support for "split" controls, where the same GameInput control fires two distinct buttons (e.g. XBox 360 dpads on OUYA)
  * 2014-01-12 - 1.4.2 - Added support for PS4 controller (and OPTIONS, SHARE and TRACKPAD meta controls)
  * 2014-01-12 - 1.4.1 - Moved gamepad data to an external JSON (cleaner maintenance)
