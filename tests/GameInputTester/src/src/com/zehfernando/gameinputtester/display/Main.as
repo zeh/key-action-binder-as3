@@ -1,8 +1,7 @@
 package com.zehfernando.gameinputtester.display {
-	import com.zehfernando.display.abstracts.ResizableSprite;
 	import com.zehfernando.display.components.text.TextSprite;
-	import com.zehfernando.utils.console.log;
 
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.GameInputEvent;
 	import flash.events.KeyboardEvent;
@@ -14,7 +13,13 @@ package com.zehfernando.gameinputtester.display {
 	/**
 	 * @author zeh fernando
 	 */
-	public class Main extends ResizableSprite {
+	public class Main extends Sprite {
+
+		// Properties
+		private var _width:Number;
+		private var _height:Number;
+
+		private var frame:uint;
 
 		// Instances
 		private var textDeviceState:TextSprite;			// Complete device state
@@ -25,7 +30,6 @@ package com.zehfernando.gameinputtester.display {
 		private var textLogLines:Vector.<String>;
 		private var gameInput:GameInput;
 		private var devicesWithEvents:Vector.<GameInputDevice>;
-		private var frame:uint;
 		private var pressedKeys:Object;
 
 
@@ -36,6 +40,8 @@ package com.zehfernando.gameinputtester.display {
 			super();
 
 			frame = 0;
+			_width = 100;
+			_height = 100;
 
 			pressedKeys = {};
 
@@ -58,12 +64,18 @@ package com.zehfernando.gameinputtester.display {
 			textKeys.embeddedFonts = false;
 			textKeys.leading = 2;
 			addChild(textKeys);
+
+			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage, false, 0, true);
+			addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage, false, 0, true);
+
+			redrawWidth();
+			redrawHeight();
 		}
 
 		// ================================================================================================================
 		// INTERNAL INTERFACE ---------------------------------------------------------------------------------------------
 
-		override protected function redrawWidth():void {
+		private function redrawWidth():void {
 			textDeviceState.x = 0;
 			textDeviceState.width = _width/3;
 			textKeys.x = textDeviceState.x + textDeviceState.width;
@@ -72,7 +84,7 @@ package com.zehfernando.gameinputtester.display {
 			textLog.width = _width/3;
 		}
 
-		override protected function redrawHeight():void {
+		private  function redrawHeight():void {
 			textDeviceState.y = 2;
 			textKeys.y = 2;
 			textLog.y = 2;
@@ -91,7 +103,7 @@ package com.zehfernando.gameinputtester.display {
 		}
 
 		private function updateTextLog():void {
-			if (textLogLines.length > 50) textLogLines.splice(0, log.length - 50);
+			if (textLogLines.length > 50) textLogLines.splice(0, textLogLines.length - 50);
 			textLog.text = textLogLines.join("\n");
 			textLog.y = _height - textLog.height;
 		}
@@ -223,6 +235,14 @@ package com.zehfernando.gameinputtester.display {
 		// ================================================================================================================
 		// EVENT INTERFACE ------------------------------------------------------------------------------------------------
 
+		private function onAddedToStage(__e:Event):void {
+			redrawWidth();
+			redrawHeight();
+		}
+
+		private function onRemovedFromStage(__e:Event):void {
+		}
+
 		private function onKeyDown(__e:KeyboardEvent):void {
 			logText("Pressed key code: [" + __e.keyCode + "] location: [" + __e.keyLocation + "]");
 			setKeyState(__e.keyCode, __e.keyLocation, true);
@@ -243,11 +263,11 @@ package com.zehfernando.gameinputtester.display {
 		}
 
 		private function onActivate(__e:Event):void {
-			log("Activating");
+			trace("Activating");
 		}
 
 		private function onDeactivate(__e:Event):void {
-			log("Deactivating");
+			trace("Deactivating");
 
 //			if (gameInput != null) {
 //				gameInput.removeEventListener(GameInputEvent.DEVICE_ADDED, reportDevices);
@@ -289,6 +309,30 @@ package com.zehfernando.gameinputtester.display {
 			logText("Player type = " + Capabilities.playerType);
 			logText("GameInput.isSupported = " + GameInput.isSupported);
 			logText("");
+		}
+
+
+		// ================================================================================================================
+		// ACCESSOR INTERFACE ---------------------------------------------------------------------------------------------
+
+		override public function get width():Number {
+			return _width;
+		}
+		override public function set width(__value:Number):void {
+			if (_width != __value) {
+				_width = __value;
+				redrawWidth();
+			}
+		}
+
+		override public function get height():Number {
+			return _height;
+		}
+		override public function set height(__value:Number):void {
+			if (_height != __value) {
+				_height = __value;
+				redrawHeight();
+			}
 		}
 	}
 }
