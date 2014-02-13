@@ -161,7 +161,7 @@ package com.zehfernando.input.binding {
 		/* Select button
 		 *
 		 * <p>Style: digital</p>
-		 * <p>Works in: Windows (Playstation DS3, OUYA (Playstation DS3)</p>
+		 * <p>Works in: Windows (Generic Gamepad), OUYA (Playstation DS3)</p>
 		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
 		 */
 		public static const SELECT:String = "meta_select";
