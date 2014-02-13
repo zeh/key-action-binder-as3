@@ -1,10 +1,9 @@
 package com.zehfernando.keyactionbindertester.display {
-	import com.zehfernando.display.abstracts.ResizableSprite;
 	import com.zehfernando.display.components.text.TextSprite;
 	import com.zehfernando.input.binding.GamepadControls;
 	import com.zehfernando.input.binding.KeyActionBinder;
-	import com.zehfernando.utils.console.log;
 
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.system.Capabilities;
@@ -15,11 +14,17 @@ package com.zehfernando.keyactionbindertester.display {
 	/**
 	 * @author zeh fernando
 	 */
-	public class Main extends ResizableSprite {
+	public class Main extends Sprite {
 
 		// Constants
 		private static const ACTION_PREFIX:String = "action-";		// Prefix just to be easy (normally those are arbritrary action names)
 		private static const VALUE_PREFIX:String = "value-";		// Prefix just to be easy (normally those are arbritrary value names)
+
+		// Properties
+		private var _width:Number;
+		private var _height:Number;
+
+		private var frame:uint;
 
 		// Instances
 		private var textDeviceState:TextSprite;			// Complete device state
@@ -29,7 +34,6 @@ package com.zehfernando.keyactionbindertester.display {
 		private var deviceSensitive:Vector.<Object>;	// Whether device controls are sensitive or not (key = control.id, value = false or true)
 		private var textLogLines:Vector.<String>;
 		private var devicesWithEvents:Vector.<GameInputDevice>;
-		private var frame:uint;
 		private var pressedKeys:Object;
 
 		private var binder:KeyActionBinder;
@@ -45,13 +49,15 @@ package com.zehfernando.keyactionbindertester.display {
 			super();
 
 			frame = 0;
+			_width = 100;
+			_height = 100;
 
 			pressedKeys = {};
 
 			actionsToTrack = [
 				GamepadControls.ACTION_LEFT, GamepadControls.ACTION_RIGHT, GamepadControls.ACTION_UP, GamepadControls.ACTION_DOWN,
 				GamepadControls.DPAD_LEFT, GamepadControls.DPAD_RIGHT, GamepadControls.DPAD_UP, GamepadControls.DPAD_DOWN,
-				GamepadControls.MENU, GamepadControls.BACK, GamepadControls.START,
+				GamepadControls.MENU, GamepadControls.BACK, GamepadControls.START, GamepadControls.SELECT,
 				GamepadControls.OPTIONS, GamepadControls.TRACKPAD,
 				GamepadControls.LB, GamepadControls.RB,
 				GamepadControls.LT, GamepadControls.RT,
@@ -82,12 +88,18 @@ package com.zehfernando.keyactionbindertester.display {
 			textKeys.embeddedFonts = false;
 			textKeys.leading = 2;
 			addChild(textKeys);
+
+			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage, false, 0, true);
+			addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage, false, 0, true);
+
+			redrawWidth();
+			redrawHeight();
 		}
 
 		// ================================================================================================================
 		// INTERNAL INTERFACE ---------------------------------------------------------------------------------------------
 
-		override protected function redrawWidth():void {
+		private function redrawWidth():void {
 			textDeviceState.x = 0;
 			textDeviceState.width = _width/3;
 			textKeys.x = textDeviceState.x + textDeviceState.width;
@@ -96,7 +108,7 @@ package com.zehfernando.keyactionbindertester.display {
 			textLog.width = _width/3;
 		}
 
-		override protected function redrawHeight():void {
+		private function redrawHeight():void {
 			textDeviceState.y = 2;
 			textKeys.y = 2;
 			textLog.y = 2;
@@ -115,7 +127,7 @@ package com.zehfernando.keyactionbindertester.display {
 		}
 
 		private function updateTextLog():void {
-			if (textLogLines.length > 60) textLogLines.splice(0, log.length - 60);
+			if (textLogLines.length > 60) textLogLines.splice(0, textLogLines.length - 60);
 			textLog.text = textLogLines.join("\n");
 			textLog.y = _height - textLog.height;
 		}
@@ -212,6 +224,14 @@ package com.zehfernando.keyactionbindertester.display {
 		// ================================================================================================================
 		// EVENT INTERFACE ------------------------------------------------------------------------------------------------
 
+		private function onAddedToStage(__e:Event):void {
+			redrawWidth();
+			redrawHeight();
+		}
+
+		private function onRemovedFromStage(__e:Event):void {
+		}
+
 		private function onKeyDown(__e:KeyboardEvent):void {
 			logText("Pressed key code: [" + __e.keyCode + "] location: [" + __e.keyLocation + "]");
 			setKeyState(__e.keyCode, __e.keyLocation, true);
@@ -232,11 +252,11 @@ package com.zehfernando.keyactionbindertester.display {
 		}
 
 		private function onActivate(__e:Event):void {
-			log("Activating");
+			trace("Activating");
 		}
 
 		private function onDeactivate(__e:Event):void {
-			log("Deactivating");
+			trace("Deactivating");
 		}
 
 		private function onEnterFrame(__e:Event):void {
@@ -283,6 +303,30 @@ package com.zehfernando.keyactionbindertester.display {
 			logText("Player type = " + Capabilities.playerType);
 			logText("GameInput.isSupported = " + GameInput.isSupported);
 			logText("");
+		}
+
+
+		// ================================================================================================================
+		// ACCESSOR INTERFACE ---------------------------------------------------------------------------------------------
+
+		override public function get width():Number {
+			return _width;
+		}
+		override public function set width(__value:Number):void {
+			if (_width != __value) {
+				_width = __value;
+				redrawWidth();
+			}
+		}
+
+		override public function get height():Number {
+			return _height;
+		}
+		override public function set height(__value:Number):void {
+			if (_height != __value) {
+				_height = __value;
+				redrawHeight();
+			}
 		}
 	}
 }

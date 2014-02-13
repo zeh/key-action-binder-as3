@@ -1,12 +1,13 @@
 package com.zehfernando.keyactionbindertester.application {
-	import com.zehfernando.display.templates.application.SimpleApplication;
 	import com.zehfernando.input.binding.KeyActionBinder;
 	import com.zehfernando.keyactionbindertester.display.Main;
-	import com.zehfernando.utils.console.log;
+
+	import flash.display.MovieClip;
+	import flash.events.Event;
 	/**
 	 * @author zeh fernando
 	 */
-	public class KeyActionBinderTester extends SimpleApplication {
+	public class KeyActionBinderTester extends MovieClip {
 
 		// Instances
 		private var main:Main;
@@ -18,22 +19,24 @@ package com.zehfernando.keyactionbindertester.application {
 			// Anything that uses GameInput must be started on the first "frame" of the application
 			KeyActionBinder.init(stage);
 
-			super();
-		}
-
-		// ================================================================================================================
-		// INTERNAL INTERFACE ---------------------------------------------------------------------------------------------
-
-		override protected function createVisualAssets():void {
-			// Initiate the main sprite - all logic is somewhere else
+			// Create display
 			main = new Main();
 			main.width = stage.stageWidth;
 			main.height = stage.stageHeight;
 			addChild(main);
 			main.init();
+
+			// Create events
+			stage.addEventListener(Event.RESIZE, onResize);
+			onResize(null);
+
+			super();
 		}
 
-		override protected function redrawVisualAssets():void {
+		// ================================================================================================================
+		// EVENT INTERFACE ------------------------------------------------------------------------------------------------
+
+		protected function onResize(__e:Event):void {
 			main.width = stage.stageWidth;
 			main.height = stage.stageHeight;
 		}

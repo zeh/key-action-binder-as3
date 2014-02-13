@@ -13,7 +13,7 @@ left_button, left_trigger
 right_button, right_trigger
 dpad_up, dpad_down, dpad_left, dpad_right
 action_up, action_down, action_left, action_right
-meta_back, meta_start, meta_menu, meta_share, meta_options, meta_trackpad
+meta_back, meta_start, meta_menu, meta_share, meta_options, meta_trackpad, meta_select
 
 "code" and "location" come from Keyboard.* and KeyLocation.*
 
@@ -23,14 +23,14 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 	"platforms": {
 		"windows7" : {
 			"filters" : {
-				"manufacturer"		: "", /* On Windows, this can be "Adobe Windows" or "Google Pepper" */
-				"os"				: "Windows 7",
-				"version"			: "WIN"
+				"manufacturer"		: [], /* On Windows, this can be "Adobe Windows" or "Google Pepper" */
+				"os"				: ["Windows 7"],
+				"version"			: ["WIN"]
 			},
 			"gamepads" : {
 				"xbox360" : {
 					"filters" : {
-						"name"			: "Xbox 360 Controller"
+						"name"			: ["Xbox 360 Controller"]
 					},
 					"controls" : {
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
@@ -67,7 +67,7 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 				},
 				"ps4" : {
 					"filters" : {
-						"name"			: "Wireless Controller"
+						"name"			: ["Wireless Controller"]
 					},
 					"controls" : {
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
@@ -101,14 +101,49 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 					},
 					"keys" : [
 					]
+				},
+				"genericGamepad" : {
+					/* NeoFlex - http://neotronics.com.br/neo/produtos/pc/controle-neo-flex - Thanks to Patrick Bastiani */
+					"filters" : {
+						"name"			: ["USB Gamepad"]
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"AXIS_2"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
+						"AXIS_4"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
+						"BUTTON_5"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
+						"BUTTON_6"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
+						"BUTTON_7"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
+						"BUTTON_8"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1},
+						"BUTTON_9"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_10"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_11"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_12"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_13"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_14"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_15"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_16"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_17"		: {"target" : "meta_select",			"min" : 0,		"max" : 1},
+						"BUTTON_18"		: {"target" : "meta_start",				"min" : 0,		"max" : 1},
+						"BUTTON_19"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_20"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1}
+
+						/*
+						Ignored:
+						"AXIS_3" (same as AXIS_2)
+						*/
+					},
+					"keys" : [
+					]
 				}
 			}
 		},
 		"ouya" : {
 			"filters" : {
-				"manufacturer"		: "Android Linux",
-				"os"				: "Linux",
-				"version"			: "AND"
+				"manufacturer"		: ["Android Linux"],
+				"os"				: ["Linux"],
+				"version"			: ["AND"]
 			},
 			"gamepads" : {
 				"native" : {
@@ -153,7 +188,7 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 				},
 				"ps3" : {
 					"filters" : {
-						"name"			: "Sony PLAYSTATION(R)3 Controller"
+						"name"			: ["Sony PLAYSTATION(R)3 Controller"]
 					},
 					"controls" : {
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
@@ -190,14 +225,14 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 					},
 					"keys" : [
 						/* SELECT button */
-						{"code" : "BACK", "location" : "STANDARD", "target" :  "meta_back", "min":0, "max" :1},
+						{"code" : "BACK", "location" : "STANDARD", "target" :  "meta_select", "min":0, "max" :1},
 						/* PS button */
 						{"code" : "MENU", "location" : "STANDARD", "target" :  "meta_menu", "min":0, "max" :1}
 					]
 				},
 				"xbox360" : {
 					"filters" : {
-						"name"			: "Microsoft X-Box 360 pad"
+						"name"			: ["Microsoft X-Box 360 pad"]
 					},
 					"controls" : {
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,	"max" : 1},
