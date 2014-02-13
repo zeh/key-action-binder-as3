@@ -1,10 +1,11 @@
 com.powerflasher.fdt.core.CompatiblePlayers=AIR_Debug_Launcher
-com.powerflasher.fdt.core.CompilerArguments=--target-player\={playerVersion}\n--library-path+\="{flexSDK}/frameworks/locale/en_US"\n--default-frame-rate\=60\n--default-background-color\=0x000000\n--default-size\=320,480\n--compress\=false\n--compiler.inline\=true\n--advanced-telemetry\=true
+com.powerflasher.fdt.core.CompilerArguments=--target-player\={playerVersion}\n--library-path+\="{flexSDK}/frameworks/locale/en_US"\n--default-frame-rate\=60\n--default-background-color\=0x000000\n--default-size\=320,480\n--compress\=true\n--compiler.inline\=true\n--advanced-telemetry\=true
 com.powerflasher.fdt.core.CompilerConstants=CONFIG\:\:AUTHOR\!"{user.name}"
 com.powerflasher.fdt.core.DefaultOutputFolder=bin
 com.powerflasher.fdt.core.DefaultPlayer=AIR_Debug_Launcher
 com.powerflasher.fdt.core.Language=AS3
 com.powerflasher.fdt.core.PassClasspath=true
+com.powerflasher.fdt.core.PassDefines=true
 com.powerflasher.fdt.core.PassExterns=true
 com.powerflasher.fdt.core.PassMainclass=true
 com.powerflasher.fdt.core.PassRsls=false
@@ -13,7 +14,7 @@ com.powerflasher.fdt.core.PlatformType=MOBILE
 com.powerflasher.fdt.core.PlayerVersion=12.0
 com.powerflasher.fdt.core.ProjectTypeHint=AIR Mobile
 com.powerflasher.fdt.core.Runtime=AIR
-com.powerflasher.fdt.core.SdkName=AIR 4.0.0.1390 (Beta)
+com.powerflasher.fdt.core.SdkName=AIR 4.0.0.1390
 com.powerflasher.fdt.core.mobile.AirDesktop.ACTIVE=false
 com.powerflasher.fdt.core.mobile.AirDesktop.AVAILABLE.EXTENSIONS=
 com.powerflasher.fdt.core.mobile.AirDesktop.CUSTOM.ADT.CMD.LINE=${package} ${signing} ${target} ${connection} ${provision} ${output} ${content} ${icons}
