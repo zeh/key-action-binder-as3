@@ -21,18 +21,8 @@ package com.zehfernando.input.binding {
 
 		// More info: https://github.com/zeh/key-action-binder
 
-		// Versions:
-		// 2014-02-09	1.5.2	Added support for "split" controls, where the same GameInput control fires two distinct buttons (e.g. XBox 360 dpads on OUYA)
-		// 2014-01-12	1.4.2	Added support for PS4 controller (and OPTIONS, SHARE and TRACKPAD meta controls)
-		// 2014-01-12	1.4.1	Moved gamepad data to an external JSON (cleaner maintenance)
-		// 2013-10-12	1.3.1	Added ability to inject game controls from keyboard events (used for some meta keys on some platforms)
-		// 2013-10-12	1.2.1	Added gamepad index filter support for isActionActivated() and getActionValue()
-		// 2013-10-08	1.1.1	Removed max/min from addGamepadSensitiveActionBinding() (always use hardcoded values)
-		// 2013-10-08	1.1.0	Completely revamped the control scheme by using "auto" controls for cross-platform operation
-		// 2013-10-08	1.0.0	First version to have a version number
-
 		// Constants
-		public static const VERSION:String = "1.5.2";
+		public static const VERSION:String = "1.5.4";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
@@ -82,26 +72,26 @@ package com.zehfernando.input.binding {
 			var platformInfo:AutoPlatformInfo, gamepadInfo:AutoGamepadInfo, controlInfo:AutoGamepadControlInfo, controlKeyInfo:AutoGamepadControlKeyInfo;
 			var iis:String, jjs:String, kks:String, kjs:String;
 			var platformObj:Object, gamepadObj:Object, controlObj:Object, keyObj:Object, controlObjSplit:Object;
-			var manufacturerFilter:String, osFilter:String, versionFilter:String;
+			var manufacturerFilters:Vector.<String>, osFilters:Vector.<String>, versionFilters:Vector.<String>;
 
 			for (iis in allPlatforms) {
 				platformObj = allPlatforms[iis];
 
-				manufacturerFilter	= platformObj["filters"]["manufacturer"];
-				osFilter			= platformObj["filters"]["os"];
-				versionFilter		= platformObj["filters"]["version"];
+				manufacturerFilters = arrayToStringVector(platformObj["filters"]["manufacturer"]);
+				osFilters           = arrayToStringVector(platformObj["filters"]["os"]);
+				versionFilters      = arrayToStringVector(platformObj["filters"]["version"]);
 
 				// Only keep items in memory if the version passes the filters
-				if ((manufacturerFilter == null	|| manufacturerFilter.length == 0	|| Capabilities.manufacturer.indexOf(manufacturerFilter) > -1) &&
-					(osFilter == null 			|| osFilter.length == 0				|| Capabilities.os.indexOf(osFilter) > -1) &&
-					(versionFilter == null		|| versionFilter.length == 0		|| Capabilities.version.indexOf(versionFilter) > -1)) {
+				if ((manufacturerFilters.length == 0 || searchFromStringVector(manufacturerFilters, Capabilities.manufacturer)) &&
+					(osFilters.length == 0           || searchFromStringVector(osFilters, Capabilities.os)                    ) &&
+					(versionFilters.length == 0      || searchFromStringVector(versionFilters, Capabilities.version)          )) {
 					// Add this platform (same as current platform)
 
 					platformInfo = new AutoPlatformInfo();
-					platformInfo.id					= iis;
-					platformInfo.manufacturerFilter	= manufacturerFilter;
-					platformInfo.osFilter			= osFilter;
-					platformInfo.versionFilter		= versionFilter;
+					platformInfo.id                 = iis;
+					platformInfo.manufacturerFilter = manufacturerFilters;
+					platformInfo.osFilter           = osFilters;
+					platformInfo.versionFilter      = versionFilters;
 
 					knownGamepadPlatforms.push(platformInfo);
 
@@ -110,8 +100,8 @@ package com.zehfernando.input.binding {
 						gamepadObj = platformObj["gamepads"][jjs];
 
 						gamepadInfo = new AutoGamepadInfo();
-						gamepadInfo.id			= jjs;
-						gamepadInfo.nameFilter	= gamepadObj["filters"]["name"];
+						gamepadInfo.id          = jjs;
+						gamepadInfo.nameFilter  = arrayToStringVector(gamepadObj["filters"]["name"]);
 
 						platformInfo.gamepads.push(gamepadInfo);
 
@@ -166,6 +156,25 @@ package com.zehfernando.input.binding {
 			}
 
 //			trace("Took " + (getTimer() - ti) + "ms to initialize.");
+		}
+
+		// Utilitarian parsing functions
+
+		private static function arrayToStringVector(__strings:Array):Vector.<String> {
+			// Convert a JSON array to a string Vector
+			var v:Vector.<String> = new Vector.<String>();
+			if (__strings != null) {
+				for (var i:int = 0; i < __strings.length; i++) v.push(__strings[i]);
+			}
+			return v;
+		}
+
+		private static function searchFromStringVector(__stringsToFind:Vector.<String>, __stringToSearchIn:String):Boolean {
+			// Search a list of strings in another string, returning true if any found (simple match)
+			for (var i:int = 0; i < __stringsToFind.length; i++) {
+				if (__stringToSearchIn.indexOf(__stringsToFind[i]) > -1) return true;
+			}
+			return false;
 		}
 
 		// ================================================================================================================
@@ -246,12 +255,14 @@ package com.zehfernando.input.binding {
 			var i:int, j:int;
 			for (i = 0; i < knownGamepadPlatforms.length; i++) {
 				for (j = 0; j < knownGamepadPlatforms[i].gamepads.length; j++) {
-					if (knownGamepadPlatforms[i].gamepads[j].nameFilter == null || gameInputDevices[i].name.indexOf(knownGamepadPlatforms[i].gamepads[j].nameFilter) > -1) {
+					if (knownGamepadPlatforms[i].gamepads[j].nameFilter.length == 0 || searchFromStringVector(knownGamepadPlatforms[i].gamepads[j].nameFilter, gameInputDevices[i].name)) {
 						return knownGamepadPlatforms[i].gamepads[j];
 					}
 				}
 			}
-			trace("Error! Gamepad definition not found for GameInputDevice " + __gameInputDevice.name + "!!");
+			trace("Error! Gamepad definition not found for GameInputDevice [" + __gameInputDevice.name + "]!");
+			trace("Data about this controller needs to be added to controller.json.");
+			trace("Please read: https://github.com/zeh/key-action-binder#Contributing");
 			return null;
 		}
 
@@ -950,9 +961,9 @@ class AutoPlatformInfo {
 	// Properties
 	public var id:String;
 
-	public var manufacturerFilter:String;		// Filter for Capabilities.manufacturer
-	public var osFilter:String;					// Filter for Capabilities.os
-	public var versionFilter:String;			// Filter for Capabilities.version
+	public var manufacturerFilter:Vector.<String>;							// Filter for Capabilities.manufacturer
+	public var osFilter:Vector.<String>;									// Filter for Capabilities.os
+	public var versionFilter:Vector.<String>;								// Filter for Capabilities.version
 
 	public var gamepads:Vector.<AutoGamepadInfo>;
 
@@ -961,6 +972,9 @@ class AutoPlatformInfo {
 	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
 	public function AutoPlatformInfo() {
+		manufacturerFilter = new Vector.<String>();
+		osFilter = new Vector.<String>();
+		versionFilter = new Vector.<String>();
 		gamepads = new Vector.<AutoGamepadInfo>();
 	}
 }
@@ -973,11 +987,11 @@ class AutoGamepadInfo {
 	// Properties
 	public var id:String;
 
-	public var nameFilter:String;							// Filter for device.name
+	public var nameFilter:Vector.<String>;									// Filter for device.name
 
-	public var controls:Object;								// AutoGamepadControlInfo, key is the control.id
-	public var controlsSplit:Object;						// Vector.<AutoGamepadControlInfo>, key is the control.id
-	public var keys:Vector.<AutoGamepadControlKeyInfo>;		// List of keys that double as controls
+	public var controls:Object;												// AutoGamepadControlInfo, key is the control.id
+	public var controlsSplit:Object;										// Vector.<AutoGamepadControlInfo>, key is the control.id
+	public var keys:Vector.<AutoGamepadControlKeyInfo>;						// List of keys that double as controls
 
 
 	// ================================================================================================================

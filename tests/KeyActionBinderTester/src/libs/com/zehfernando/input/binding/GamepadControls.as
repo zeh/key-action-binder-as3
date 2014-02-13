@@ -150,13 +150,21 @@ package com.zehfernando.input.binding {
 		 */
 		public static const ACTION_RIGHT:String = "action_right";
 
-		/* Back button (BACK in the XBox 360, SELECT in the Playstation)
+		/* Back button (BACK in the XBox 360)
 		 *
 		 * <p>Style: digital</p>
-		 * <p>Works in: OUYA (Playstation DS3; XBox 360 Controller)</p>
+		 * <p>Works in: OUYA (XBox 360 Controller)</p>
 		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
 		 */
 		public static const BACK:String = "meta_back";
+
+		/* Select button
+		 *
+		 * <p>Style: digital</p>
+		 * <p>Works in: Windows (Generic Gamepad), OUYA (Playstation DS3)</p>
+		 * <p>Possible values: 0 (at rest) to 1 (pressed)</p>
+		 */
+		public static const SELECT:String = "meta_select";
 
 		/* Start button
 		 *
