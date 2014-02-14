@@ -192,7 +192,9 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
 | PlayStation 4 DS3      | **Y**     | ? (D) | **Y** | ?       |
 | OUYA Native controller | N         | N     | **Y** | ?       |
 | [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) ("USB Gamepad") | **Y** | ? | ? | ? |
-| Bullalo SNES ("USB,2-axis 8-button gamepad") | **Y** | (P) | ? | ? |
+| Buffalo SNES ("USB,2-axis 8-button gamepad") | **Y** | (P) | N | N |
+| Logitech Gamepad F710 | N  | (P)   | N     | N       |
+| Logitech Gamepad F310 | N  | (P)   | N     | N       |
 
 Legend:
  * Y: Yes

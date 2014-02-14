@@ -507,6 +507,116 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 					},
 					"keys" : [
 					]
+				},
+				"xbox360" : {
+					"filters" : {
+						"name"			: ["Controller", "Xbox 360", "MadCatz GamePad"]
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"AXIS_2"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"AXIS_3"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
+						"AXIS_4"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
+						"AXIS_5"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_6"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
+						"BUTTON_7"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
+						"BUTTON_8"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
+						"BUTTON_9"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1},
+						"BUTTON_17"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_18"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_19"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_20"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_14"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_15"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_12"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_13"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
+						"BUTTON_10"		: {"target" : "meta_start",				"min" : 0,		"max" : 1},
+						"BUTTON_11"		: {"target" : "meta_back",				"min" : 0,		"max" : 1}
+
+						/*
+						Missing:
+						meta_select,
+						meta_options,
+						meta_share,
+						meta_trackpad,
+						meta_menu
+						*/
+					},
+					"keys" : [
+					]
+				},
+				"logitechf710" : {
+					"filters" : {
+						"name"			: ["Logitech Cordless RumblePad 2"]
+					},
+					"controls" : {
+						"AXIS_1"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_2"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"AXIS_3"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
+						"AXIS_4"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
+						"BUTTON_15"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_16"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_10"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_11"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_9"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_12"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_13"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_14"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_19"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_20"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
+						"BUTTON_18"		: {"target" : "meta_start",				"min" : 0,		"max" : 1},
+						"BUTTON_17"		: {"target" : "meta_back",				"min" : 0,		"max" : 1}
+
+						/*
+						Missing:
+						meta_select,
+						meta_options,
+						meta_share,
+						meta_trackpad,
+						meta_menu
+						*/
+					},
+					"keys" : [
+					]
+				},
+				"logitechf310" : {
+					"filters" : {
+						"name"			: ["Gamepad F310"]
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"AXIS_3"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
+						"AXIS_4"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
+						"AXIS_2"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"AXIS_5"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_17"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_18"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_19"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_20"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_14"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_15"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_6"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
+						"BUTTON_7"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
+						"BUTTON_8"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
+						"BUTTON_9"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1},
+						"BUTTON_12"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_13"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
+						"BUTTON_10"		: {"target" : "meta_start",				"min" : 0,		"max" : 1},
+						"BUTTON_11"		: {"target" : "meta_back",				"min" : 0,		"max" : 1}
+
+						/*
+						Missing:
+						meta_select,
+						meta_options,
+						meta_share,
+						meta_trackpad,
+						meta_menu
+						*/
+					},
+					"keys" : [
+					]
 				}
 			}
 		},
