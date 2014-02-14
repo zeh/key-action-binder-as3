@@ -42,7 +42,7 @@ You can add as many bindings to the same action as you'd like.
 	binder.addKeyboardActionBinding("move-right", Keyboard.D);
 
 ### Gamepad bindings (buttons)
-	
+
 To add a gamepad binding, you use a similar syntax:
 
 	binder.addGamepadActionBinding("move-left", GamepadControls.DPAD_LEFT);
@@ -187,13 +187,19 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
   * PlayStation 4 DS4
   * [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) (generic Gamepad)
  * OUYA
-  * XBox 360 controller
-
-To confirm/re-test:
-
- * OUYA
   * Native controller
-  * PlayStation 3 controller
+  * XBox 360 controller
+  * Playstation 3 DS3
+  * Playstation 4 DS4
+
+Added, but need to be tested:
+
+ * OSX
+  * Playstation 3 DS3 (standard plugin version)
+  * Playstation 4 DS4 (standard plugin version)
+
+To add:
+
  * All other platforms (Mac, Android, Windows 8, ...)
 
 More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself:
@@ -211,7 +217,7 @@ A pure AS3 source of the tester app can be found on /tests/GameInputTester/src.
  * Blog post: [Big changes to KeyActionBinder: automatic game control ids, new repository](http://zehfernando.com/2013/big-changes-to-keyactionbinder-automatic-game-control-ids-new-repository/) (October 2013)
  * Blog post: [A GameInput testing interface](http://zehfernando.com/2014/a-gameinput-testing-interface/) (January 2014)
 
- 
+
 ## License
 
 KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/). You can use this code in any project, whether of commercial nature or not. If you redistribute the code, the license (LICENSE.txt) must be present with it .

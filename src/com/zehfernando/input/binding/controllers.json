@@ -148,7 +148,7 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 			"gamepads" : {
 				"native" : {
 					"filters" : {
-						"name"			: "OUYA Game Controller"
+						"name"			: ["OUYA Game Controller"]
 					},
 					"controls" : {
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
@@ -176,14 +176,18 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						"BUTTON_105"	(right_trigger, 0 -> 1) (using analog instead)
 
 						Missing:
-						CONTROL_START (via keyboard though)
-						CONTROL_MENU
-						CONTROL_BACK
+						"meta_start"
+						"meta_menu" (via keyboard)
+						"meta_back"
+						"meta_select"
+						"meta_share"
+						"meta_options"
+						"meta_trackpad"
 						*/
 					},
 					"keys" : [
 						/* OUYA button */
-						{"code" : "MENU", "location" : "STANDARD", "target" :  "meta_start", "min":0, "max" :1}
+						{"code" : "MENU", "location" : "STANDARD", "target" :  "meta_menu", "min":0, "max" :1}
 					]
 				},
 				"ps3" : {
@@ -213,14 +217,18 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 
 						/*
 						Ignored:
-						"BUTTON_19"		: [GamepadControls.CONTROL_DPAD_UP,					"min" : 0,	"max" : 1},
-						"BUTTON_20"		: [GamepadControls.CONTROL_DPAD_DOWN,				"min" : 0,	"max" : 1},
-						"BUTTON_21"		: [GamepadControls.CONTROL_DPAD_LEFT,				"min" : 0,	"max" : 1},
-						"BUTTON_22"		: [GamepadControls.CONTROL_DPAD_RIGHT,				"min" : 0,	"max" : 1},
+						"BUTTON_19"		(dpad_up, 0 -> 1) (using analog instead)
+						"BUTTON_20"		(dpad_down, 0 -> 1) (using analog instead)
+						"BUTTON_21"		(dpad_left, 0 -> 1) (using analog instead)
+						"BUTTON_22"		(dpad_right, 0 -> 1) (using analog instead)
 
 						Missing:
-						CONTROL_MENU (via keyboard though)
-						CONTROL_BACK (via keyboard though)
+						"meta_menu" (via keyboard)
+						"meta_back"
+						"meta_select" (via keyboard)
+						"meta_share"
+						"meta_options"
+						"meta_trackpad"
 						*/
 					},
 					"keys" : [
@@ -228,6 +236,61 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						{"code" : "BACK", "location" : "STANDARD", "target" :  "meta_select", "min":0, "max" :1},
 						/* PS button */
 						{"code" : "MENU", "location" : "STANDARD", "target" :  "meta_menu", "min":0, "max" :1}
+					]
+				},
+				"ps4" : {
+					"filters" : {
+						"name"			: ["Sony Computer Entertainment Wireless Controller"]
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"AXIS_11"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
+						"AXIS_12"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"AXIS_13"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"AXIS_14"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
+						"AXIS_15"		: {
+							"targets": [
+								{"target" :"dpad_left", "min":0, "max" :-1}, /* Max/min here are ranges from the original value reported (mapped then to min/max of the control) */
+								{"target" :"dpad_right", "min":0, "max" :1}
+							],
+							"min" : 0,
+							"max" : 1
+						},
+						"AXIS_16"		: {
+							"targets": [
+								{"target" :"dpad_up", "min":0, "max" :-1},
+								{"target" :"dpad_down", "min":0, "max" :1}
+							],
+							"min" : 0,
+							"max" : 1
+						},
+						"BUTTON_96"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_97"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_98"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_99"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_100"	: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_101"	: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_104"	: {"target" : "meta_share",				"min" : 0,		"max" : 1},
+						"BUTTON_105"	: {"target" : "meta_options",			"min" : 0,		"max" : 1},
+						"BUTTON_106"	: {"target" : "meta_trackpad",			"min" : 0,		"max" : 1},
+						"BUTTON_107"	: {"target" : "meta_start",				"min" : 0,		"max" : 1},
+						"BUTTON_108"	: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
+						"BUTTON_109"	: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_110"	: {"target" : "meta_menu",				"min" : 0,		"max" : 1}
+
+						/*
+						Ignored:
+						"BUTTON_102"	(left_trigger, 0 -> 1) (using analog instead)
+						"BUTTON_103"	(right_trigger, 0 -> 1) (using analog instead)
+
+						Missing:
+						"meta_start"
+						"meta_back"
+						"meta_select"
+						*/
+					},
+					"keys" : [
 					]
 				},
 				"xbox360" : {
@@ -247,7 +310,14 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 							"min" : 0,
 							"max" : 1
 						},
-						"AXIS_16"		: {"targets": [{"target" :"dpad_up", "min":0, "max" :-1},	{"target" :"dpad_down", "min":0, "max" :1}],					"min" : 0,	"max" : 1},
+						"AXIS_16"		: {
+							"targets": [
+								{"target" :"dpad_up", "min":0, "max" :-1},
+								{"target" :"dpad_down", "min":0, "max" :1}
+							],
+							"min" : 0,
+							"max" : 1
+						},
 						"AXIS_17"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
 						"AXIS_18"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
 						"BUTTON_96"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
@@ -261,15 +331,14 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						"BUTTON_108"	: {"target" : "meta_start",				"min" : 0,		"max" : 1}
 
 						/*
-						Ignored:
-						"BUTTON_19"		: [GamepadControls.CONTROL_DPAD_UP,					"min" : 0,	"max" : 1},
-						"BUTTON_20"		: [GamepadControls.CONTROL_DPAD_DOWN,				"min" : 0,	"max" : 1},
-						"BUTTON_21"		: [GamepadControls.CONTROL_DPAD_LEFT,				"min" : 0,	"max" : 1},
-						"BUTTON_22"		: [GamepadControls.CONTROL_DPAD_RIGHT,				"min" : 0,	"max" : 1},
-
 						Missing:
-						CONTROL_MENU (via keyboard though)
-						CONTROL_BACK (via keyboard though)
+						"meta_start"
+						"meta_menu" (via keyboard)
+						"meta_back" (via keyboard)
+						"meta_select"
+						"meta_share"
+						"meta_options"
+						"meta_trackpad"
 						*/
 					},
 					"keys" : [
@@ -277,6 +346,99 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						{"code" : "BACK", "location" : "STANDARD", "target" :  "meta_back", "min":0, "max" :1},
 						/* XBox button */
 						{"code" : "MENU", "location" : "STANDARD", "target" :  "meta_menu", "min":0, "max" :1}
+					]
+				}
+			}
+		},
+		"osx-plugin" : {
+			"filters" : {
+				"manufacturer"		: ["Adobe Macintosh"],
+				"os"				: ["Mac"],  /* This can contain the version, e.g. "Mac OS 10.5.2" */
+				"version"			: ["MAC"]
+			},
+			"gamepads" : {
+				"ps3" : {
+					"filters" : {
+						"name"			: "Sony PLAYSTATION(R)3 Controller"
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"AXIS_2"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
+						"AXIS_3"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
+						"BUTTON_4"		: {"target" : "meta_select",			"min" : 0,		"max" : 1},
+						"BUTTON_5"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_6"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
+						"BUTTON_7"		: {"target" : "meta_start",				"min" : 0,		"max" : 1},
+						"BUTTON_8"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
+						"BUTTON_9"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1},
+						"BUTTON_10"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
+						"BUTTON_11"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
+						"BUTTON_12"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_13"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_14"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_15"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_16"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_17"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_18"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_19"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_20"		: {"target" : "meta_menu",				"min" : 0,		"max" : 1}
+
+						/*
+						Ignored:
+						"BUTTON_21"		(never activated)
+						"BUTTON_22"		(never activated)
+
+						Missing:
+						meta_back,
+						meta_share,
+						meta_options,
+						meta_trackpad
+						*/
+					},
+					"keys" : [
+					]
+				},
+				"ps4" : {
+					"filters" : {
+						"name"			: "Wireless Controller"
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"AXIS_2"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
+						"AXIS_3"		: {"target" : "left_trigger",			"min" : -1,		"max" : 1},
+						"AXIS_4"		: {"target" : "right_trigger",			"min" : -1,		"max" : 1},
+						"AXIS_5"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
+						"BUTTON_6"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
+						"BUTTON_7"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
+						"BUTTON_8"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
+						"BUTTON_9"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1},
+						"BUTTON_10"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_11"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_12"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_13"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_14"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_15"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_18"		: {"target" : "meta_share",				"min" : 0,		"max" : 1},
+						"BUTTON_19"		: {"target" : "meta_options",			"min" : 0,		"max" : 1},
+						"BUTTON_20"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_21"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
+						"BUTTON_22"		: {"target" : "meta_menu",				"min" : 0,		"max" : 1},
+						"BUTTON_22"		: {"target" : "meta_trackpad",			"min" : 0,		"max" : 1}
+
+						/*
+						Ignored:
+						"BUTTON_16"		(left_trigger, 0 -> 1) (using analog instead)
+						"BUTTON_17"		(right_trigger, 0 -> 1) (using analog instead)
+
+						Missing:
+						meta_back,
+						meta_select,
+						meta_start
+						*/
+					},
+					"keys" : [
 					]
 				}
 			}
