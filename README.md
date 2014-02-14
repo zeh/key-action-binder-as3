@@ -192,6 +192,7 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
 | PlayStation 4 DS3      | **Y**     | ? (D) | **Y** | ?       |
 | OUYA Native controller | N         | N     | **Y** | ?       |
 | [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) ("USB Gamepad") | **Y** | ? | ? | ? |
+| Bullalo SNES ("USB,2-axis 8-button gamepad") | **Y** | (P) | ? | ? |
 
 Legend:
  * Y: Yes
@@ -225,7 +226,7 @@ A pure AS3 source of the tester app can be found on /tests/GameInputTester/src.
 
 ## License
 
-KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/). You can use this code in any project, whether of commercial nature or not. If you redistribute the code, the license (LICENSE.txt) must be present with it .
+KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/). You can use this code in any project, whether of commercial nature or not. If you redistribute the code, the license (LICENSE.txt) must be present with it.
 
 
 ## To-do
@@ -262,4 +263,4 @@ To contribute with code, fixes, additions, or even new key mappings added direct
 
  * James Dean Palmer for the original idea about auto-mapping controls and many bindings
  * Patrick Bastiani for the NeoFlex controller mapping
- * Rusty Moyher for many Mac bindings
+ * Rusty Moyher for the Buffalo SNES mapping, and several other mappings for Windows and OSX

@@ -17,7 +17,7 @@ meta_back, meta_start, meta_menu, meta_share, meta_options, meta_trackpad, meta_
 
 "code" and "location" come from Keyboard.* and KeyLocation.*
 
-Filters don't take wildcards into account, but it's a simple case sensitive search. Eg. version "WIN" will match "WINDOWS".
+Filters don't take wildcards/regex into account, but it's a simple case sensitive search. Eg. version "WIN" will match "WINDOWS".
 */
 {
 	"platforms": {
@@ -132,6 +132,43 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						/*
 						Ignored:
 						"AXIS_3" (same as AXIS_2)
+
+						Missing:
+						"meta_back",
+						"meta_menu",
+						"meta_share",
+						"meta_options",
+						"meta_trackpad"
+						*/
+					},
+					"keys" : [
+					]
+				},
+				"buffaloSnes" : {
+					"filters" : {
+						"name"			: ["USB,2-axis 8-button gamepad"]
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"BUTTON_3"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_2"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_5"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_4"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_6"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_7"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_9"		: {"target" : "meta_start",				"min" : 0,		"max" : 1},
+						"BUTTON_8"		: {"target" : "meta_select",			"min" : 0,		"max" : 1}
+
+						/*
+						Missing:
+						"stick_right_x", "stick_right_y",
+						"left_trigger", "right_trigger",
+						"meta_back",
+						"meta_menu",
+						"meta_share",
+						"meta_options",
+						"meta_trackpad"
 						*/
 					},
 					"keys" : [
@@ -357,6 +394,36 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 				"version"			: ["MAC"]
 			},
 			"gamepads" : {
+				"buffaloSnes" : {
+					"filters" : {
+						"name"			: ["USB,2-axis 8-button gamepad"]
+					},
+					"controls" : {
+						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
+						"BUTTON_3"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_2"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_5"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_4"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_6"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_7"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_9"		: {"target" : "meta_start",				"min" : 0,		"max" : 1},
+						"BUTTON_8"		: {"target" : "meta_back",				"min" : 0,		"max" : 1}
+
+						/*
+						Missing:
+						"stick_right_x", "stick_right_y",
+						"left_trigger", "right_trigger",
+						"meta_back",
+						"meta_menu",
+						"meta_share",
+						"meta_options",
+						"meta_trackpad"
+						*/
+					},
+					"keys" : [
+					]
+				},
 				"ps3" : {
 					"filters" : {
 						"name"			: ["Sony PLAYSTATION(R)3 Controller"]
@@ -407,8 +474,8 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
 						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
 						"AXIS_2"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
-						"AXIS_3"		: {"target" : "left_trigger",			"min" : -1,		"max" : 1},
-						"AXIS_4"		: {"target" : "right_trigger",			"min" : -1,		"max" : 1},
+						"AXIS_3"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"AXIS_4"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
 						"AXIS_5"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
 						"BUTTON_6"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
 						"BUTTON_7"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
@@ -496,8 +563,8 @@ Filters don't take wildcards into account, but it's a simple case sensitive sear
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
 						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
 						"AXIS_2"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
-						"AXIS_3"		: {"target" : "left_trigger",			"min" : -1,		"max" : 1},
-						"AXIS_4"		: {"target" : "right_trigger",			"min" : -1,		"max" : 1},
+						"AXIS_3"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"AXIS_4"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
 
 						/*
 						AXIS_9 is weird:
