@@ -2,6 +2,8 @@ package com.zehfernando.gameinputtester.application {
 	import com.zehfernando.gameinputtester.display.Main;
 
 	import flash.display.MovieClip;
+	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	/**
 	 * @author zeh fernando
@@ -16,6 +18,10 @@ package com.zehfernando.gameinputtester.application {
 
 		public function GameInputTester() {
 			super();
+
+			// Initializations
+			stage.align = StageAlign.TOP_LEFT;
+			stage.scaleMode = StageScaleMode.NO_SCALE;
 
 			// Initiate the main sprite - all logic is somewhere else
 			main = new Main();
@@ -33,6 +39,7 @@ package com.zehfernando.gameinputtester.application {
 		// EVENT INTERFACE ------------------------------------------------------------------------------------------------
 
 		protected function onResize(__e:Event):void {
+			trace("New size: " + stage.stageWidth + ", " + stage.stageHeight);
 			main.width = stage.stageWidth;
 			main.height = stage.stageHeight;
 		}

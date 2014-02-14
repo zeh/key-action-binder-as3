@@ -5,10 +5,8 @@ package com.zehfernando.keyactionbindertester.display {
 
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.KeyboardEvent;
 	import flash.system.Capabilities;
 	import flash.ui.GameInput;
-	import flash.ui.GameInputControl;
 	import flash.ui.GameInputDevice;
 
 	/**
@@ -57,7 +55,7 @@ package com.zehfernando.keyactionbindertester.display {
 			actionsToTrack = [
 				GamepadControls.ACTION_LEFT, GamepadControls.ACTION_RIGHT, GamepadControls.ACTION_UP, GamepadControls.ACTION_DOWN,
 				GamepadControls.DPAD_LEFT, GamepadControls.DPAD_RIGHT, GamepadControls.DPAD_UP, GamepadControls.DPAD_DOWN,
-				GamepadControls.MENU, GamepadControls.BACK, GamepadControls.START, GamepadControls.SELECT,
+				GamepadControls.MENU, GamepadControls.BACK, GamepadControls.START, GamepadControls.SELECT, GamepadControls.SHARE,
 				GamepadControls.OPTIONS, GamepadControls.TRACKPAD,
 				GamepadControls.LB, GamepadControls.RB,
 				GamepadControls.LT, GamepadControls.RT,
@@ -67,6 +65,7 @@ package com.zehfernando.keyactionbindertester.display {
 			valuesToTrack = [
 				GamepadControls.LT, GamepadControls.RT,
 				GamepadControls.STICK_LEFT_X, GamepadControls.STICK_LEFT_Y, GamepadControls.STICK_RIGHT_X, GamepadControls.STICK_RIGHT_Y,
+				GamepadControls.DPAD_LEFT, GamepadControls.DPAD_RIGHT, GamepadControls.DPAD_UP, GamepadControls.DPAD_DOWN
 			];
 
 			deviceStates = new Vector.<Object>();
@@ -159,54 +158,7 @@ package com.zehfernando.keyactionbindertester.display {
 		private function updateTextDeviceState():void {
 			// Update the device text log with the current state of all devices
 			var text:String = "";
-			var i:int, j:int;
-
-			/*
-			var ids:Vector.<String>, iis:String;
-			var device:GameInputDevice;
-			var control:GameInputControl;
-
-			// Header
-			text += "Devices: " + GameInput.numDevices + "\n";
-			text += "\n";
-
-			// Device info
-			for (i = 0; i < GameInput.numDevices; i++) {
-				if (i > 0) text += "\n";
-				device = GameInput.getDeviceAt(i);
-				if (device != null) {
-					text += i + ": \"" + device.name + "\"\n";
-					text += "  Enabled: " + device.enabled + "\n";
-					text += "  Sample interval: " + device.sampleInterval + "\n";
-					text += "  Controls: " + device.numControls + "\n";
-
-					// Device state
-					if (device.enabled) {
-						// Create a sorted list of controls
-						ids = new Vector.<String>();
-						for (iis in deviceStates[i]) {
-							ids.push(iis);
-						}
-						ids = ids.sort(Array.CASEINSENSITIVE);
-						for (j = 0; j < ids.length; j++) {
-							control = deviceStates[i][ids[j]];
-
-							// Find whether they're sensitive or not
-							if (!deviceSensitive[i][ids[j]] && control.value != control.minValue && control.value != control.maxValue) {
-								// If the value is not min nor max, should be pressure-sensitive
-								deviceSensitive[i][ids[j]] = true;
-							}
-
-							text += "  " + ids[j] + ": " + control.minValue + " -> " + control.maxValue + " = " + control.value.toFixed(3);
-							if (deviceSensitive[i][ids[j]]) text += " (Pressure sensitive)";
-							text += "\n";
-						}
-					}
-				} else {
-					text += "Device [" + i + "]: NULL!";
-				}
-			}
-			*/
+			var i:int;
 
 			// Update state
 			for (i = 0; i < actionsToTrack.length; i++) {
@@ -230,25 +182,6 @@ package com.zehfernando.keyactionbindertester.display {
 		}
 
 		private function onRemovedFromStage(__e:Event):void {
-		}
-
-		private function onKeyDown(__e:KeyboardEvent):void {
-			logText("Pressed key code: [" + __e.keyCode + "] location: [" + __e.keyLocation + "]");
-			setKeyState(__e.keyCode, __e.keyLocation, true);
-		}
-
-		private function onKeyUp(__e:KeyboardEvent):void {
-			logText("Released key code: [" + __e.keyCode + "] location: [" + __e.keyLocation + "]");
-			setKeyState(__e.keyCode, __e.keyLocation, false);
-		}
-
-		private function onGameInputControlChanged(__e:Event):void {
-			// Update device states
-			updateTextDeviceState();
-
-			// Update log
-			var control:GameInputControl = __e.target as GameInputControl;
-			logText("Changed value of control [" + control.id + "] to " + control.value.toFixed(3));
 		}
 
 		private function onActivate(__e:Event):void {

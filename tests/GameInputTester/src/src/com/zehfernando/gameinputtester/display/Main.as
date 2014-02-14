@@ -246,11 +246,13 @@ package com.zehfernando.gameinputtester.display {
 		private function onKeyDown(__e:KeyboardEvent):void {
 			logText("Pressed key code: [" + __e.keyCode + "] location: [" + __e.keyLocation + "]");
 			setKeyState(__e.keyCode, __e.keyLocation, true);
+			__e.preventDefault();
 		}
 
 		private function onKeyUp(__e:KeyboardEvent):void {
 			logText("Released key code: [" + __e.keyCode + "] location: [" + __e.keyLocation + "]");
 			setKeyState(__e.keyCode, __e.keyLocation, false);
+			__e.preventDefault();
 		}
 
 		private function onGameInputControlChanged(__e:Event):void {
