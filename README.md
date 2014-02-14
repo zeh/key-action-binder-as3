@@ -188,21 +188,23 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
 | Controller             | Win 7     | OSX   | OUYA  | Android |
 |------------------------|:---------:|:-----:|:-----:|:-------:|
 | XBox 360 controller    | **Y**     | N     | **Y** | ?       |
-| PlayStation 3 DS3      | **Y** (E) | ? (P) | **Y** | ?       |
-| PlayStation 4 DS3      | **Y**     | ? (P) | **Y** | ?       |
+| PlayStation 3 DS3      | **Y** (E) | ?     | **Y** | ?       |
+| PlayStation 4 DS3      | **Y**     | ? (D) | **Y** | ?       |
 | OUYA Native controller | N         | N     | **Y** | ?       |
-| [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) (generic Gamepad) | **Y** | ? | ? | ? |
+| [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) ("USB Gamepad") | **Y** | ? | ? | ? |
 
 Legend:
  * Y: Yes
  * N: No
  * ?: Maybe; needs to be tested
- * (E): Not natively supported by the system, but may work when using drivers that emulate other device
+ * (E): Not natively supported by the system, but work when using drivers that emulate other devices
  * (P): Standard Flash plugin only (and not Pepper Flash)
+ * (D): D-pad is not working properly in Pepper Flash version (Chrome); Flash/driver problems?
 
 To add:
 
  * All other platforms (Mac, Android, Windows 8, Windows XP, ...)
+ * Android: GameStick, NVIDIA Shield, MadCatz MOJO, GamePop, Green Throttle, ...
 
 More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself:
 
@@ -218,6 +220,7 @@ A pure AS3 source of the tester app can be found on /tests/GameInputTester/src.
  * Blog post: [KeyActionBinder updates: time sensitive activations, new constants](http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/) (September 2013)
  * Blog post: [Big changes to KeyActionBinder: automatic game control ids, new repository](http://zehfernando.com/2013/big-changes-to-keyactionbinder-automatic-game-control-ids-new-repository/) (October 2013)
  * Blog post: [A GameInput testing interface](http://zehfernando.com/2014/a-gameinput-testing-interface/) (January 2014)
+ * Blog post: [KeyActionBinder is growing up](http://zehfernando.com/2014/keyactionbinder-is-growing-up/) (February 2014)
 
 
 ## License
