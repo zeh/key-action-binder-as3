@@ -4,12 +4,13 @@ KeyActionBinder tries to provide universal game input control for both keyboard 
 
 While Adobe Flash already provides all the means for using keyboard and game input (via [KeyboardEvent](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/events/KeyboardEvent.html) and [GameInput](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/ui/GameInput.html)), KeyActionBinder tries to abstract those classes behind a straightforward, higher-level interface. It is meant to be simple but powerful, while solving some of the most common pitfalls involved with player input in AS3 games.
 
-## Advantages
+## Goals
 
  * Unified interface for keyboard and game controller input
  * Made to be fast: memory allocation is kept to a minimum
  * Abstract actual controls in favor of action ids: easier to configure key bindings through variables
  * Automatic bindings on any platform by hiding away platform-specific controls over unified ids
+ * Self-containment and independence from any other system or framework
 
 ## Using KeyActionBinder
 
@@ -177,26 +178,27 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 Check [the commit history](https://github.com/zeh/key-action-binder/commits) for a more in-depth list.
 
+The list above also excludes additions of device mappings; check [the history for controllers.json](https://github.com/zeh/key-action-binder/commits/master/src/com/zehfernando/input/binding/controllers.json) for a list of changes and additions.
+
 
 ## Supportted platforms/devices
 
 Because KeyActionBinder tries to automatically support whatever platform and devices one is using, it depends on having code that targets each specific platform/device combination. These are the platforms currently supported, and their respective supported devices:
 
- * Windows 7
-  * XBox 360 controller
-  * PlayStation 4 DS4
-  * [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) (generic Gamepad)
- * OUYA
-  * Native controller
-  * XBox 360 controller
-  * Playstation 3 DS3
-  * Playstation 4 DS4
+| Controller             | Win 7 | OSX   | OUYA |
+|------------------------|:-----:|:-----:|:----:|
+| XBox 360 controller    | Y     | N     | Y    |
+| PlayStation 3 DS3      | Y (E) | ? (P) | Y    |
+| PlayStation 4 DS3      | Y     | ? (P) | Y    |
+| OUYA Native controller | N     | N     | Y    |
+| [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) (generic Gamepad) | Y | ? | ? |
 
-Added, but need to be tested:
-
- * OSX
-  * Playstation 3 DS3 (standard plugin version)
-  * Playstation 4 DS4 (standard plugin version)
+Legend:
+ * Y: Yes
+ * N: No
+ * ?: Unknown/maybe
+ * (E): Not natively supported by the system, but may work when using drivers that emulate other device
+ * (P): Standard Flash plugin only (and not Pepper Flash)
 
 To add:
 
@@ -250,7 +252,7 @@ To contribute with new key mappings (so more devices are supported by KeyActionB
  5. Send the screenshot and the list of controls to zeh at zehfernando dot com.
  6. If possible, test in additional browsers to see if you get different results. In some systems, the regular Flash Player (plugin on FireFox, Safari, etc) behaves differently from the built-in Flash Player (Pepper Flash on Chrome). In this case, we need screenshots and lists of mappings for both kinds of player.
 
-To contribute with code, fixes, additions, or even new key mappings added directly to the [controllers list file](https://github.com/zeh/key-action-binder/blob/master/src/com/zehfernando/input/binding/controllers.json), you can just edit the related file inside GitHub (by editing it directly on the website, or creating a fork) and doing a pull request. This is an easy way to contribute, and it guarantees you will be credited for your work (accepted pull requests have their authors show as contributors to the project).
+To contribute with code, fixes, additions, or even new key mappings added directly to the [controllers list file](https://github.com/zeh/key-action-binder/blob/master/src/com/zehfernando/input/binding/controllers.json), you can just edit the related file inside GitHub (by editing it directly on the website, or creating a fork) and doing a pull request. This is an easy way to contribute, and it guarantees you will be credited for your work (accepted pull requests have their authors automatically show as contributors to the project).
 
 
 ## Credits and thanks
