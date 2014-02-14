@@ -200,7 +200,7 @@ Added, but need to be tested:
 
 To add:
 
- * All other platforms (Mac, Android, Windows 8, ...)
+ * All other platforms (Mac, Android, Windows 8, Windows XP, ...)
 
 More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself:
 
@@ -225,19 +225,16 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 
 ## To-do
 
- * Allow sensitive controls to be treated as normal controls (with a user-defined threshold?)
- * Think of a way to avoid axis injecting button pressed
- * Add gamepad index to return signals parameters?
- * Use caching samples?
- * Allow "any" gamepad key (for "press any key")
- * Add missing asdocs (any?)
+ * Use caching samples? Change sampling rate?
+ * Properly detect buttons that immediately send down+up events that cannot be detected by normal frames (e.g. HOME on OUYA)
+ * Allow detecting "any" gamepad key (for "press any key")
  * Finish auto Gamepad control ids
  * Still allow platform-specific control ids?
  * Profile and test performance/bottlenecks/memory allocations
- * More demos
+ * A better looking KeyActionBinderTester demo
  * Add events (signals) for devices removal/listing?
- * Binary SWC
- * Better tests with 2 controllers
+ * Compile binary/stable SWC
+ * More bulletproof support for 2+ controllers
 
 
 ## Contributing
