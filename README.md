@@ -185,18 +185,18 @@ The list above also excludes additions of device mappings; check [the history fo
 
 Because KeyActionBinder tries to automatically support whatever platform and devices one is using, it depends on having code that targets each specific platform/device combination. These are the platforms currently supported, and their respective supported devices:
 
-| Controller             | Win 7 | OSX   | OUYA |
-|------------------------|:-----:|:-----:|:----:|
-| XBox 360 controller    | Y     | N     | Y    |
-| PlayStation 3 DS3      | Y (E) | ? (P) | Y    |
-| PlayStation 4 DS3      | Y     | ? (P) | Y    |
-| OUYA Native controller | N     | N     | Y    |
-| [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) (generic Gamepad) | Y | ? | ? |
+| Controller             | Win 7     | OSX   | OUYA  | Android |
+|------------------------|:---------:|:-----:|:-----:|:-------:|
+| XBox 360 controller    | **Y**     | N     | **Y** | ?       |
+| PlayStation 3 DS3      | **Y** (E) | ? (P) | **Y** | ?       |
+| PlayStation 4 DS3      | **Y**     | ? (P) | **Y** | ?       |
+| OUYA Native controller | N         | N     | **Y** | ?       |
+| [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) (generic Gamepad) | **Y** | ? | ? | ? |
 
 Legend:
  * Y: Yes
  * N: No
- * ?: Unknown/maybe
+ * ?: Maybe; needs to be tested
  * (E): Not natively supported by the system, but may work when using drivers that emulate other device
  * (P): Standard Flash plugin only (and not Pepper Flash)
 
