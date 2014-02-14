@@ -185,24 +185,26 @@ The list above also excludes additions of device mappings; check [the history fo
 
 Because KeyActionBinder tries to automatically support whatever platform and devices one is using, it depends on having code that targets each specific platform/device combination. These are the platforms currently supported, and their respective supported devices:
 
-| Controller             | Win 7     | OSX   | OUYA  | Android |
-|------------------------|:---------:|:-----:|:-----:|:-------:|
-| XBox 360 controller    | **Y**     | N     | **Y** | ?       |
-| PlayStation 3 DS3      | **Y** (E) | ?     | **Y** | ?       |
-| PlayStation 4 DS3      | **Y**     | ? (D) | **Y** | ?       |
-| OUYA Native controller | N         | N     | **Y** | ?       |
-| [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) ("USB Gamepad") | **Y** | ? | ? | ? |
+| Controller             | Win 7     | OSX    | OUYA  | Android |
+|------------------------|:---------:|:------:|:-----:|:-------:|
+| XBox 360 controller    | **Y**     | N      | **Y** | Y?      |
+| PlayStation 3 DS3      | **Y** (E) | Y?     | **Y** | Y?      |
+| PlayStation 4 DS3      | **Y**     | Y? (D) | **Y** | Y?      |
+| OUYA Native controller | N         | N      | **Y** | N       |
+| [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) ("USB Gamepad") | **Y** | N | N | N |
 | Buffalo SNES ("USB,2-axis 8-button gamepad") | **Y** | (P) | N | N |
-| Logitech Gamepad F710 | N  | (P)   | N     | N       |
-| Logitech Gamepad F310 | N  | (P)   | N     | N       |
+| Logitech Gamepad F710  | N         | (P)    | N     | N       |
+| Logitech Gamepad F310  | N         | (P)    | N     | N       |
 
 Legend:
- * Y: Yes
- * N: No
- * ?: Maybe; needs to be tested
+ * Y: Supported
+ * N: Not supported
+ * Y?: Maybe; needs to be tested or confirmed
  * (E): Not natively supported by the system, but work when using drivers that emulate other devices
  * (P): Standard Flash plugin only (and not Pepper Flash)
  * (D): D-pad is not working properly in Pepper Flash version (Chrome); Flash/driver problems?
+
+Controllers that emulate other controllers (e.g. XBox 360 alternatives) should work as long as the original does.
 
 To add:
 
