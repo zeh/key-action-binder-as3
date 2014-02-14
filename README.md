@@ -187,7 +187,7 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
 
 | Controller             | Win 7     | OSX    | OUYA  | Android |
 |------------------------|:---------:|:------:|:-----:|:-------:|
-| XBox 360 controller    | **Y**     | N      | **Y** | Y?      |
+| XBox 360 controller    | **Y**     | Y?     | **Y** | Y?      |
 | PlayStation 3 DS3      | **Y** (E) | Y?     | **Y** | Y?      |
 | PlayStation 4 DS3      | **Y**     | Y? (D) | **Y** | Y?      |
 | OUYA Native controller | N         | N      | **Y** | N       |
