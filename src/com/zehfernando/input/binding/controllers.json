@@ -741,7 +741,7 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 						"BUTTON_17"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
 						"BUTTON_18"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
 						"BUTTON_19"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1},
-						"BUTTON_20"		: {"target" : "meta_menu",				"min" : 0,		"max" : 1},
+						"BUTTON_20"		: {"target" : "meta_menu",				"min" : 0,		"max" : 1}
 
 						/*
 						Missing:
