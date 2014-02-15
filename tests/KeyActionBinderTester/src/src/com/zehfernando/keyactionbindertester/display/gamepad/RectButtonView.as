@@ -1,6 +1,6 @@
 package com.zehfernando.keyactionbindertester.display.gamepad {
-	import com.zehfernando.display.components.text.TextSpriteAlign;
 	import com.zehfernando.display.components.text.TextSprite;
+	import com.zehfernando.display.components.text.TextSpriteAlign;
 	import com.zehfernando.display.shapes.Box;
 
 	import flash.display.Sprite;
@@ -94,7 +94,6 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 					fillView.x = _width - fillView.width - strokeWidth;
 					break;
 			}
-			fillView.scaleX = fillView.scaleY = _value;
 			strokeView.alpha = _pressed ? 1 : 0.25;
 		}
 
