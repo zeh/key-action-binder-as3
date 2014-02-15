@@ -34,9 +34,9 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 					},
 					"controls" : {
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
-						"AXIS_1"		: {"target" : "stick_left_y",			"min" : 1,		"max" : -1},
+						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
 						"AXIS_2"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
-						"AXIS_3"		: {"target" : "stick_right_y",			"min" : 1,		"max" : -1},
+						"AXIS_3"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
 						"BUTTON_4"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
 						"BUTTON_5"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
 						"BUTTON_6"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
