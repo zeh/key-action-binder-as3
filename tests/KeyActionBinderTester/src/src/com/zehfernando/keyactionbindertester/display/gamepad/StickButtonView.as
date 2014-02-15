@@ -61,8 +61,8 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 			// Re-apply the current state
 			fillView.scaleX = fillView.scaleY = _value;
 			strokeView.alpha = _pressed ? 1 : 0.25;
-			stickView.x = radius * _valueX;
-			stickView.y = radius * _valueY;
+			stickView.x = radius * 0.75 * _valueX;
+			stickView.y = radius * 0.75 * _valueY;
 		}
 
 
