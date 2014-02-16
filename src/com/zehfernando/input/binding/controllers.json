@@ -581,7 +581,7 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 				},
 				"ps3" : {
 					"filters" : {
-						"name"			: ["Sony PLAYSTATION(R)3 Controller"]
+						"name"			: ["PLAYSTATION(R)3 Controller"]
 					},
 					"controls" : {
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
@@ -647,7 +647,7 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 						"BUTTON_20"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
 						"BUTTON_21"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
 						"BUTTON_22"		: {"target" : "meta_menu",				"min" : 0,		"max" : 1},
-						"BUTTON_22"		: {"target" : "meta_trackpad",			"min" : 0,		"max" : 1}
+						"BUTTON_23"		: {"target" : "meta_trackpad",			"min" : 0,		"max" : 1}
 
 						/*
 						Ignored:
@@ -852,7 +852,7 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 						"BUTTON_20"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
 						"BUTTON_21"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
 						"BUTTON_22"		: {"target" : "meta_menu",				"min" : 0,		"max" : 1},
-						"BUTTON_22"		: {"target" : "meta_trackpad",			"min" : 0,		"max" : 1}
+						"BUTTON_23"		: {"target" : "meta_trackpad",			"min" : 0,		"max" : 1}
 
 						/*
 						Ignored:

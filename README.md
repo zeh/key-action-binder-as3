@@ -185,16 +185,16 @@ The list above also excludes additions of device mappings; check [the history fo
 
 Because KeyActionBinder tries to automatically support whatever platform and devices one is using, it depends on having code that targets each specific platform/device combination. These are the platforms currently supported, and their respective supported devices:
 
-| Controller             | Win 7 (Pl) | Win 7 (GP) | OSX (Pl) | OSX (GP) | OUYA  | Android |
-|------------------------|:----------:|:----------:|:--------:|:--------:|:-----:|:-------:|
-| XBox 360 controller    | **Y**      | **Y**      | Y?       | **Y**    | **Y** | Y?      |
-| PlayStation 3 DS3      | **Y** (E)  | **Y** (E)  | Y?       | **Y**    | **Y** | Y?      |
-| PlayStation 4 DS3      | **Y**      | -?         | Y?       | Y? (*1)  | **Y** | Y?      |
-| OUYA Native controller | -          | -          | -        | -        | **Y** | -       |
+| Controller             | Win 7 (Pl) | Win 7 (GP) | OSX (Pl) | OSX (GP)   | OUYA  | Android |
+|------------------------|:----------:|:----------:|:--------:|:----------:|:-----:|:-------:|
+| XBox 360 controller    | **Y**      | **Y**      | -        | **Y**      | **Y** | Y?      |
+| PlayStation 3 DS3      | **Y** (E)  | **Y** (E)  | **Y**    | **Y**      | **Y** | Y?      |
+| PlayStation 4 DS3      | **Y**      | -?         | **Y**    | **Y** (*1) | **Y** | Y?      |
+| OUYA Native controller | -          | -          | -        | -          | **Y** | -       |
 | [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) ("USB Gamepad") | **Y** | Y? | N | N | N | N |
 | Buffalo SNES ("USB,2-axis 8-button gamepad") | **Y** | **Y** | **Y** | **Y** | N | N |
-| Logitech Gamepad F710  | N          | N          | Y?       | N        | N     | N       |
-| Logitech Gamepad F310  | N          | N          | Y?       | N        | N     | N       |
+| Logitech Gamepad F710  | N          | N          | Y?       | N          | N     | N       |
+| Logitech Gamepad F310  | N          | N          | Y?       | N          | N     | N       |
 
 Legend:
  * Y: Supported
