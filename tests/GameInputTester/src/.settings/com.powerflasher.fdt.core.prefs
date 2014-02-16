@@ -30,7 +30,7 @@ com.powerflasher.fdt.core.mobile.AirDesktop.ICON.PATH.36x36=
 com.powerflasher.fdt.core.mobile.AirDesktop.ICON.PATH.48x48=
 com.powerflasher.fdt.core.mobile.AirDesktop.ICON.PATH.72x72=
 com.powerflasher.fdt.core.mobile.AirDesktop.MOBILE.DESCRIPTOR=bin/GameInputTester-app.xml
-com.powerflasher.fdt.core.mobile.AirDesktop.PACKAGE.CONTENT=bin/GameInputTester-app.xml > GameInputTester-app.xml;bin/GameInputTester.swf > GameInputTester.swf;
+com.powerflasher.fdt.core.mobile.AirDesktop.PACKAGE.CONTENT=bin/GameInputTester-app.xml > GameInputTester-app.xml;bin/GameInputTester.swf > GameInputTester.swf
 com.powerflasher.fdt.core.mobile.AirDesktop.SIGNATURE.CERTIFICATE=
 com.powerflasher.fdt.core.mobile.AirDesktop.SIGNATURE.PWD=HZsdm2UDN/4\=
 com.powerflasher.fdt.core.mobile.AirDesktop.SIGNATURE.REMEMBER.PWD=false
@@ -50,7 +50,7 @@ com.powerflasher.fdt.core.mobile.Android.ICON.PATH.48x48=
 com.powerflasher.fdt.core.mobile.Android.ICON.PATH.72x72=
 com.powerflasher.fdt.core.mobile.Android.ICON.PATH.96x96=
 com.powerflasher.fdt.core.mobile.Android.MOBILE.DESCRIPTOR=bin/GameInputTester-app.xml
-com.powerflasher.fdt.core.mobile.Android.PACKAGE.CONTENT=bin/GameInputTester-app.xml > GameInputTester-app.xml;bin/GameInputTester.swf > GameInputTester.swf;
+com.powerflasher.fdt.core.mobile.Android.PACKAGE.CONTENT=bin/GameInputTester-app.xml > GameInputTester-app.xml;bin/GameInputTester.swf > GameInputTester.swf
 com.powerflasher.fdt.core.mobile.Android.SIGNATURE.CERTIFICATE=certificates/ouya_certificate_password_ouya31337G.p12
 com.powerflasher.fdt.core.mobile.Android.SIGNATURE.PWD=xI/g4cN9Ub0CQLdXlIeXyg\=\=
 com.powerflasher.fdt.core.mobile.Android.SIGNATURE.REMEMBER.PWD=true
@@ -75,7 +75,7 @@ com.powerflasher.fdt.core.mobile.iOS.ICON.PATH.57x57=
 com.powerflasher.fdt.core.mobile.iOS.ICON.PATH.58x58=
 com.powerflasher.fdt.core.mobile.iOS.ICON.PATH.72x72=
 com.powerflasher.fdt.core.mobile.iOS.MOBILE.DESCRIPTOR=bin/GameInputTester-app.xml
-com.powerflasher.fdt.core.mobile.iOS.PACKAGE.CONTENT=bin/GameInputTester-app.xml > GameInputTester-app.xml;bin/GameInputTester.swf > GameInputTester.swf;
+com.powerflasher.fdt.core.mobile.iOS.PACKAGE.CONTENT=bin/GameInputTester-app.xml > GameInputTester-app.xml;bin/GameInputTester.swf > GameInputTester.swf
 com.powerflasher.fdt.core.mobile.iOS.SIGNATURE.CERTIFICATE=
 com.powerflasher.fdt.core.mobile.iOS.SIGNATURE.CERTIFICATE.RELEASE=
 com.powerflasher.fdt.core.mobile.iOS.SIGNATURE.PROVISIONING.FILE=

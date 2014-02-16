@@ -325,11 +325,11 @@ package com.zehfernando.keyactionbindertester.display {
 			updateTextDeviceState();
 			updateTextLog();
 
-			logText("Manufacturer: " + Capabilities.manufacturer);
-			logText("OS: " + Capabilities.os);
-			logText("Version: " + Capabilities.version);
-			logText("Player type = " + Capabilities.playerType);
-			logText("GameInput.isSupported = " + GameInput.isSupported);
+			logText("Manufacturer: [" + Capabilities.manufacturer + "]");
+			logText("OS: [" + Capabilities.os + "]");
+			logText("Version: [" + Capabilities.version + "]");
+			logText("Player type: [" + Capabilities.playerType + "]");
+			logText("GameInput.isSupported: [" + GameInput.isSupported + "]");
 			logText("");
 		}
 
