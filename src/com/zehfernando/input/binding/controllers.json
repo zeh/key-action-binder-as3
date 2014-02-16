@@ -663,6 +663,7 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 					"keys" : [
 					]
 				},
+				/*
 				"xbox360" : {
 					"filters" : {
 						"name"			: ["Controller", "Xbox 360", "MadCatz GamePad"]
@@ -689,18 +690,18 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 						"BUTTON_10"		: {"target" : "meta_start",				"min" : 0,		"max" : 1},
 						"BUTTON_11"		: {"target" : "meta_back",				"min" : 0,		"max" : 1}
 
-						/*
+						//
 						Missing:
 						meta_select,
 						meta_options,
 						meta_share,
 						meta_trackpad,
 						meta_menu
-						*/
+						//
 					},
 					"keys" : [
 					]
-				},
+				},*/
 				"logitechf710" : {
 					"filters" : {
 						"name"			: ["Logitech Cordless RumblePad 2"]
@@ -873,7 +874,7 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 				},
 				"xbox360" : {
 					"filters" : {
-						"name"			: ["Vendor: 054c Product: 05c4"]
+						"name"			: ["Vendor: 028e Product: 045e"]
 					},
 					"controls" : {
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
