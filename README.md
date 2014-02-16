@@ -185,11 +185,11 @@ The list above also excludes additions of device mappings; check [the history fo
 
 Because KeyActionBinder tries to automatically support whatever platform and devices one is using, it depends on having code that targets each specific platform/device combination. These are the platforms currently supported, and their respective supported devices:
 
-| Controller             | Win 7 (Pl) | Win 7 (GP) | OSX (Pl) | OSX (GP)   | OUYA  | Android |
+| Controller             | Win 7 (PL) | Win 7 (GP) | OSX (PL) | OSX (GP)   | OUYA  | Android |
 |------------------------|:----------:|:----------:|:--------:|:----------:|:-----:|:-------:|
-| XBox 360 controller    | **Y**      | **Y**      | -        | **Y**      | **Y** | Y?      |
-| PlayStation 3 DS3      | **Y** (E)  | **Y** (E)  | **Y**    | **Y**      | **Y** | Y?      |
-| PlayStation 4 DS3      | **Y**      | -?         | **Y**    | **Y** (*1) | **Y** | Y?      |
+| XBox 360 controller    | **Y**      | **Y**      | -        | **Y**      | **Y** | -       |
+| PlayStation 3 DS3      | **Y** (E)  | **Y** (E)  | **Y**    | **Y**      | **Y** | **Y**   |
+| PlayStation 4 DS3      | **Y**      | -          | **Y**    | **Y** (*1) | **Y** | **Y**   |
 | OUYA Native controller | -          | -          | -        | -          | **Y** | -       |
 | [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) ("USB Gamepad") | **Y** | Y? | N | N | N | N |
 | Buffalo SNES ("USB,2-axis 8-button gamepad") | **Y** | **Y** | **Y** | **Y** | N | N |
@@ -198,10 +198,10 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
 
 Legend:
  * Y: Supported
- * N: Not supported
- * -: Not supported by the system, or Flash Player
+ * N: Not supported (no mappings)
+ * -: Not supported by the system, or Flash Player (not showing up at all on GameInput)
  * Y?: Maybe; needs to be tested or confirmed
- * (Pl): Standard Flash Player plugin (Firefox, Safari), ActiveX (MSIE) or Adobe AIR player
+ * (PL): Standard Flash Player plugin (Firefox, Safari), ActiveX (MSIE) or Adobe AIR player
  * (GP): Google Pepper Flash Player (Chrome)
  * (E): Not natively supported by the system, but work when using drivers that emulate other devices
  * (*1): D-pad is not working properly; Flash/driver problems?

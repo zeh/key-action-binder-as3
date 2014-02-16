@@ -405,7 +405,8 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 						"BUTTON_103"	: {"target" : "right_button",			"min" : 0,		"max" : 1},
 						"BUTTON_106"	: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
 						"BUTTON_107"	: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
-						"BUTTON_108"	: {"target" : "meta_start",				"min" : 0,		"max" : 1}
+						"BUTTON_108"	: {"target" : "meta_start",				"min" : 0,		"max" : 1},
+						"BUTTON_109"	: {"target" : "meta_select",			"min" : 0,		"max" : 1}
 
 						/*
 						Ignored:
@@ -417,16 +418,17 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 						Missing:
 						"meta_menu" (via keyboard)
 						"meta_back"
-						"meta_select" (via keyboard)
+						"meta_select" (via keyboard, OUYA only)
 						"meta_share"
 						"meta_options"
 						"meta_trackpad"
 						*/
 					},
 					"keys" : [
-						/* SELECT button */
+						/* SELECT button, OUYA only */
 						{"code" : "BACK", "location" : "STANDARD", "target" :  "meta_select", "min":0, "max" :1},
 						/* PS button */
+						/* Doesn't work on Android: exists immediately (same as "home") */
 						{"code" : "MENU", "location" : "STANDARD", "target" :  "meta_menu", "min":0, "max" :1}
 					]
 				},
