@@ -265,6 +265,17 @@ To contribute with new key mappings (so more devices are supported by KeyActionB
 To contribute with code, fixes, additions, or even new key mappings added directly to the [controllers list file](https://github.com/zeh/key-action-binder/blob/master/src/com/zehfernando/input/binding/controllers.json), you can just edit the related file inside GitHub (by editing it directly on the website, or creating a fork) and doing a pull request. This is an easy way to contribute, and it guarantees you will be credited for your work (accepted pull requests have their authors automatically show as contributors to the project).
 
 
+## GameInput problems
+
+In case of problems with KeyActionBinder... know that Flash's GameInput API is still severely ridden with bugs. You may run into some of them. Here's some more information.
+
+* [Supported devices are not detected properly when added or removed](https://bugbase.adobe.com/index.cfm?event=bug&id=3709110): no workaround
+* [Using GameInput add Timer overhead every second in Windows](http://forums.adobe.com/message/6129689#6129689): no workaround
+* [GameInput devices simply stop working when running on Android/OUYA](http://forums.adobe.com/message/6033965): need to initialize things in the first frame of SWF
+
+I'll remove items from the list when they're fixed.
+
+
 ## Credits and thanks
 
  * James Dean Palmer for the original idea about auto-mapping controls and many bindings
