@@ -105,11 +105,11 @@ You can check for the activation of actions regardless of whether they're bound 
 
 ### Gamepad bindings (analog)
 
-To handle sensitive gamepad controls, like axis or triggers, you create sensitive actions. Set it up first:
+To handle sensitive gamepad controls, like axis or triggers, you still use actions. Set it up first:
 
-	binder.addGamepadSensitiveActionBinding("run-speed", GamepadControls.LT); // L2/LT
-	binder.addGamepadSensitiveActionBinding("axis-x", GamepadControls.STICK_LEFT_X);
-	binder.addGamepadSensitiveActionBinding("axis-y", GamepadControls.STICK_LEFT_Y);
+	binder.addGamepadActionBinding("run-speed", GamepadControls.LT); // L2/LT
+	binder.addGamepadActionBinding("axis-x", GamepadControls.STICK_LEFT_X);
+	binder.addGamepadActionBinding("axis-y", GamepadControls.STICK_LEFT_Y);
 
 Then use it on your loop:
 
@@ -143,14 +143,14 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 	// Create input bindings
 	binder.addKeyboardActionBinding("continue", Keyboard.ENTER);
-	binder.addGamepadSensitiveActionBinding("trigger-press", GamepadControls.LT);
+	binder.addGamepadActionBinding("trigger-press", GamepadControls.LT);
 
 	// Add callbacks to the event signals
 	binder.onActionActivated.add(onActionActivated);
 	binder.onActionDeactivated.add(onActionReleased);
-	binder.onSensitiveActionChanged.add(onSensitiveActionChanged);
+	binder.onActionValueChanged.add(onActionValueChanged);
 
-	private function onSensitiveActionChanged(__action:String, __value:Number):void {
+	private function onActionValueChanged(__action:String, __value:Number):void {
 		trace("The user activated the " + __action + " action's value. The new value is " + __value);
 	}
 
@@ -165,6 +165,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 ## Changelog
 
+ * 2014-02-16 - 1.6.5 - Removed distinction between "sensitive" and normal controls; everything is a sensitive control
  * 2014-02-16 - 1.5.5 - When a device is not recognized, just fail with a trace() message rather than crash
  * 2014-02-14 - 1.5.4 - Controllers data now use an array of strings for filters
  * 2014-02-13 - 1.5.3 - Added support for SELECT meta control
