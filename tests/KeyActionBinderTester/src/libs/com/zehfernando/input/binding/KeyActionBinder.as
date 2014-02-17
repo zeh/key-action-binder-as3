@@ -22,7 +22,7 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Constants
-		public static const VERSION:String = "1.5.4";
+		public static const VERSION:String = "1.7.5";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
@@ -34,7 +34,7 @@ package com.zehfernando.input.binding {
 
 		// Properties
 		private var _isRunning:Boolean;
-		private var alwaysPreventDefault:Boolean;						// If true, prevent action by other keys all the time (e.g. menu key)
+		private var _alwaysPreventDefault:Boolean;						// If true, prevent action by other keys all the time (e.g. menu key)
 
 		// Instances
 		private var bindings:Vector.<BindingInfo>;						// Actual existing bindings, their action, and whether they're activated or not
@@ -42,7 +42,8 @@ package com.zehfernando.input.binding {
 
 		private var _onActionActivated:SimpleSignal;					// Receives: action:String
 		private var _onActionDeactivated:SimpleSignal;					// Receives: action:String
-		private var _onSensitiveActionChanged:SimpleSignal;				// Receives: action:String, value:Number (0-1)
+		private var _onActionValueChanged:SimpleSignal;					// Receives: action:String, value:Number (0-1)
+		private var _onDevicesChanged:SimpleSignal;
 
 		private var gameInputDevices:Vector.<GameInputDevice>;
 		private var gameInputDeviceDefinitions:Vector.<AutoGamepadInfo>;
@@ -101,6 +102,7 @@ package com.zehfernando.input.binding {
 
 						gamepadInfo = new AutoGamepadInfo();
 						gamepadInfo.id          = jjs;
+						gamepadInfo.platformId  = iis;
 						gamepadInfo.nameFilter  = arrayToStringVector(gamepadObj["filters"]["name"]);
 
 						platformInfo.gamepads.push(gamepadInfo);
@@ -181,13 +183,14 @@ package com.zehfernando.input.binding {
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
 		public function KeyActionBinder() {
-			alwaysPreventDefault = true;
+			_alwaysPreventDefault = true;
 			bindings = new Vector.<BindingInfo>();
 			actionsActivations = {};
 
 			_onActionActivated = new SimpleSignal();
 			_onActionDeactivated = new SimpleSignal();
-			_onSensitiveActionChanged = new SimpleSignal();
+			_onActionValueChanged = new SimpleSignal();
+			_onDevicesChanged = new SimpleSignal();
 
 			start();
 		}
@@ -242,10 +245,8 @@ package com.zehfernando.input.binding {
 				gameInputDeviceDefinitions.push(findGamepadInfo(gameInputDevices[i]));
 			}
 
-//			log("Game input devices changed; new list:");
-//			for (i = 0; i < gameInputDevices.length; i++) {
-//				log("  " + i + " => device.name is [" + gameInputDevices[i].name + "], identified as [" + gameInputDeviceDefinitions[i].id + "]");
-//			}
+			// Dispatch the signal
+			_onDevicesChanged.dispatch();
 		}
 
 		private function findGamepadInfo(__gameInputDevice:GameInputDevice):AutoGamepadInfo {
@@ -255,7 +256,7 @@ package com.zehfernando.input.binding {
 			var i:int, j:int;
 			for (i = 0; i < knownGamepadPlatforms.length; i++) {
 				for (j = 0; j < knownGamepadPlatforms[i].gamepads.length; j++) {
-					if (knownGamepadPlatforms[i].gamepads[j].nameFilter.length == 0 || searchFromStringVector(knownGamepadPlatforms[i].gamepads[j].nameFilter, gameInputDevices[i].name)) {
+					if (knownGamepadPlatforms[i].gamepads[j].nameFilter.length == 0 || searchFromStringVector(knownGamepadPlatforms[i].gamepads[j].nameFilter, __gameInputDevice.name)) {
 						return knownGamepadPlatforms[i].gamepads[j];
 					}
 				}
@@ -321,38 +322,36 @@ package com.zehfernando.input.binding {
 			for (var i:int = 0; i < filteredControls.length; i++) {
 				activationInfo = actionsActivations[filteredControls[i].action] as ActivationInfo;
 
-				if (filteredControls[i].binding is GamepadSensitiveBinding) {
-					// A sensitive binding, send changed value signals instead
+				// Treating as a sensitive binding: send changed value signals
 
-					// Dispatches signal
-					activationInfo.addSensitiveValue(filteredControls[i].action, __mappedValue, __gamepadIndex);
-					_onSensitiveActionChanged.dispatch(filteredControls[i].action, activationInfo.getValue());
-				} else {
-					// A standard action binding, send activated/deactivated signals
+				// Dispatches signal
+				activationInfo.addSensitiveValue(filteredControls[i].action, __mappedValue, __gamepadIndex);
+				_onActionValueChanged.dispatch(filteredControls[i].action, activationInfo.getValue());
 
-					if (filteredControls[i].isActivated != isActivated) {
-						// Value changed
-						filteredControls[i].isActivated = isActivated;
-						if (isActivated) {
-							// Marks as pressed
-							filteredControls[i].lastActivatedTime = getTimer();
+				// Treating as a standard action binding: send activated/deactivated signals
 
-							// Add this activation to the list of current activations
-							activationInfo.addActivation(filteredControls[i], __gamepadIndex);
+				if (filteredControls[i].isActivated != isActivated) {
+					// Value changed
+					filteredControls[i].isActivated = isActivated;
+					if (isActivated) {
+						// Marks as pressed
+						filteredControls[i].lastActivatedTime = getTimer();
 
-							// Dispatches signal
-							if (activationInfo.getNumActivations() == 1) _onActionActivated.dispatch(filteredControls[i].action);
-						} else {
-							// Marks as released
+						// Add this activation to the list of current activations
+						activationInfo.addActivation(filteredControls[i], __gamepadIndex);
 
-							// Removes this activation from the list of current activations
-							activationInfo.removeActivation(filteredControls[i]);
+						// Dispatches signal
+						if (activationInfo.getNumActivations() == 1) _onActionActivated.dispatch(filteredControls[i].action);
+					} else {
+						// Marks as released
 
-							// Dispatches signal
-							if (activationInfo.getNumActivations() == 0) _onActionDeactivated.dispatch(filteredControls[i].action);
+						// Removes this activation from the list of current activations
+						activationInfo.removeActivation(filteredControls[i]);
+
+						// Dispatches signal
+						if (activationInfo.getNumActivations() == 0) _onActionDeactivated.dispatch(filteredControls[i].action);
 						}
 					}
-				}
 			}
 		}
 
@@ -389,7 +388,7 @@ package com.zehfernando.input.binding {
 				}
 			}
 
-			if (alwaysPreventDefault) __e.preventDefault();
+			if (_alwaysPreventDefault) __e.preventDefault();
 
 			// Check all current game input devices for a key injection definition that matches
 			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
@@ -418,7 +417,7 @@ package com.zehfernando.input.binding {
 				if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 0) _onActionDeactivated.dispatch(filteredKeys[i].action);
 			}
 
-			if (alwaysPreventDefault) __e.preventDefault();
+			if (_alwaysPreventDefault) __e.preventDefault();
 
 			// Check all current game input devices for a key injection definition that matches
 			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
@@ -453,7 +452,7 @@ package com.zehfernando.input.binding {
 			// Find the re-mapped control id
 			var deviceIndex:int = gameInputDevices.indexOf(control.device);
 
-			if (deviceIndex > -1) {
+			if (deviceIndex > -1 && gameInputDeviceDefinitions[deviceIndex] != null) {
 				// Find single controls, where one control has one binding
 				if (gameInputDeviceDefinitions[deviceIndex].controls.hasOwnProperty(control.id)) {
 					var deviceControlInfo:AutoGamepadControlInfo = gameInputDeviceDefinitions[deviceIndex].controls[control.id];
@@ -578,8 +577,8 @@ package com.zehfernando.input.binding {
 
 		/**
 		 * Add an action bound to a game controller button, trigger, or axis. When a control of id
-		 * <code>controlId</code> is pressed, the desired action is activated. Optionally, keys can be restricted
-		 * to a specific game controller location.
+		 * <code>controlId</code> is pressed, the desired action can be activated, and its value changes.
+		 * Optionally, keys can be restricted to a specific game controller location.
 		 *
 		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
 		 *						input combination is detected.
@@ -589,7 +588,6 @@ package com.zehfernando.input.binding {
 		 *						first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or
 		 *						<code>NaN</code> is passed, the gamepad index is never taken into consideration
 		 *						when detecting whether the passed action should be fired.
-		 *
 		 * <p>Examples:</p>
 		 *
 		 * <pre>
@@ -607,47 +605,22 @@ package com.zehfernando.input.binding {
 		 *
 		 * // L2/LT to shoot, regardless of whether it is sensitive or not
 		 * myBinder.addGamepadActionBinding("shoot", GamepadControls.LT);
+		 *
+		 * // L2/LT to accelerate, depending on how much it is pressed (if supported)
+		 * myBinder.addGamepadActionBinding("accelerate", GamepadControls.LT);
+		.*
+		 * // Direction pad left to move left or right
+		 * myBinder.addGamepadActionBinding("move-sides", GamepadControls.STICK_LEFT_X);
+		 *
 		 * </pre>
 		 *
 		 * @see GamepadControls
 		 * @see #isActionActivated()
+		 * @see #getActionValue()
 		 */
 		public function addGamepadActionBinding(__action:String, __controlId:String, __gamepadIndex:int = -1):void {
 			// Create a binding to be verified later
 			bindings.push(new BindingInfo(__action, new GamepadBinding(__controlId, __gamepadIndex >= 0 ? __gamepadIndex : GamepadBinding.GAMEPAD_INDEX_ANY)));
-			prepareAction(__action);
-		}
-
-		/**
-		 * Add a sensitive action bound to a game controller button, trigger, or axis. When a control of id
-		 * <code>controlId</code> is pressed, the desired action receives a value. Optionally, keys can be
-		 * restricted to a specific game controller location.
-		 *
-		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
-		 *						input combination is detected.
-		 * @param controlId		The id code of a GameInput contol, as an String. Use one of the constants from
-		 *						<code>GamepadControls</code>.
-		 * @param gamepadIndex	The int of the gamepad that you want to restrict this action to. Use 0 for the
-		 *						first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or
-		 *						<code>NaN</code> is passed, the gamepad index is never taken into consideration
-		 *						when detecting whether the passed action should be fired.
-		 *
-		 * <p>Examples:</p>
-		 *
-		 * <pre>
-		 * // Direction pad left to move left or right
-		 * myBinder.addGamepadSensitiveActionBinding("move-sides", GamepadControls.STICK_LEFT_X);
-		 *
-		 * // L2/LT to accelerate, depending on how much it is pressed
-		 * myBinder.addGamepadSensitiveActionBinding("accelerate", GamepadControls.LT);
-		 * </pre>
-		 *
-		 * @see GamepadControls
-		 * @see #getActionValue()
-		 */
-		public function addGamepadSensitiveActionBinding(__action:String, __controlId:String, __gamepadIndex:int = -1):void {
-			// Create a binding to be verified later
-			bindings.push(new BindingInfo(__action, new GamepadSensitiveBinding(__controlId, __gamepadIndex >= 0 ? __gamepadIndex : GamepadBinding.GAMEPAD_INDEX_ANY)));
 			prepareAction(__action);
 		}
 
@@ -663,7 +636,7 @@ package com.zehfernando.input.binding {
 		 *						when detecting whether the passed action should be fired.
 		 * @return				A numeric value based on the bindings that might have activated this action.
 		 *						The maximum and minimum values returned depend on the kind of control passed
-		 *						via <code>addGamepadSensitiveActionBinding()</code>.
+		 *						via <code>addGamepadActionBinding()</code>.
 		 *
 		 * <p>Examples:</p>
 		 *
@@ -676,7 +649,7 @@ package com.zehfernando.input.binding {
 		 * </pre>
 		 *
 		 * @see GamepadControls
-		 * @see #addGamepadSensitiveActionBinding()
+		 * @see #addGamepadActionBinding()
 		 * @see #isActionActivated()
 		 */
 		public function getActionValue(__action:String, __gamepadIndex:int = -1):Number {
@@ -754,12 +727,45 @@ package com.zehfernando.input.binding {
 			return _onActionDeactivated;
 		}
 
-		public function get onSensitiveActionChanged():SimpleSignal {
-			return _onSensitiveActionChanged;
+		public function get onActionValueChanged():SimpleSignal {
+			return _onActionValueChanged;
+		}
+
+		public function get onDevicesChanged():SimpleSignal {
+			return _onDevicesChanged;
 		}
 
 		public function get isRunning():Boolean {
 			return _isRunning;
+		}
+
+		public function get alwaysPreventDefault():Boolean {
+			return _alwaysPreventDefault;
+		}
+
+		public function set alwaysPreventDefault(__value:Boolean):void {
+			// TODO: this is a dumb getter/setter just for ASDocs reasons
+			_alwaysPreventDefault = __value;
+		}
+
+		public function getNumDevices():uint {
+			return gameInputDevices.length;
+		}
+
+		public function getDeviceAt(__index:uint):GameInputDevice {
+			return gameInputDevices.length > __index && gameInputDevices[__index] != null ? gameInputDevices[__index] : null;
+		}
+
+		public function getDeviceTypeAt(__index:uint):String {
+			return gameInputDeviceDefinitions.length > __index && gameInputDeviceDefinitions[__index] != null ? gameInputDeviceDefinitions[__index].getType() : null;
+		}
+
+		public function getPlatformTypes():Vector.<String> {
+			var platforms:Vector.<String> = new Vector.<String>();
+			for (var i:int = 0; i < knownGamepadPlatforms.length; i++) {
+				platforms.push(knownGamepadPlatforms[i].id);
+			}
+			return platforms;
 		}
 	}
 }
@@ -941,19 +947,6 @@ class GamepadBinding implements IBinding {
 }
 
 /**
- * Information on a gamepad event filter with sensitivity values
- */
-class GamepadSensitiveBinding extends GamepadBinding {
-
-	// ================================================================================================================
-	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
-
-	public function GamepadSensitiveBinding(__controlId:String, __gamepadIndex:uint) {
-		super(__controlId, __gamepadIndex);
-	}
-}
-
-/**
  * Information on platforms that are automatically mapped
  */
 class AutoPlatformInfo {
@@ -986,6 +979,7 @@ class AutoGamepadInfo {
 
 	// Properties
 	public var id:String;
+	public var platformId:String;
 
 	public var nameFilter:Vector.<String>;									// Filter for device.name
 
@@ -1001,6 +995,10 @@ class AutoGamepadInfo {
 		controls = {};
 		controlsSplit = {};
 		keys = new Vector.<AutoGamepadControlKeyInfo>();
+	}
+
+	public function getType():String {
+		return platformId + "/" + id;
 	}
 }
 
