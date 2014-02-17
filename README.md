@@ -165,6 +165,8 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 ## Changelog
 
+Below is a list of all significant changes done to KeyActionBinder. Versions with links are assumed to be stable versions, and are [tagged in Git](https://github.com/zeh/key-action-binder/releases).
+
  * 2014-02-16 - 1.7.5 - Added support for device detection via signals (onDevicesChanged) and device info getters (getNumDevices(), getDeviceAt(), and getDeviceTypeAt())
  * 2014-02-16 - 1.6.5 - Removed distinction between "sensitive" and normal controls; everything is a sensitive control
  * 2014-02-16 - [1.5.5](http://github.com/zeh/key-action-binder/releases/tag/1.5.5) - When a device is not recognized, just fail with a trace() message rather than crash
@@ -235,25 +237,6 @@ A pure AS3 source of the tester app can be found on /tests/GameInputTester/src.
  * Blog post: [KeyActionBinder is growing up](http://zehfernando.com/2014/keyactionbinder-is-growing-up/) (February 2014)
 
 
-## License
-
-KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/). You can use this code in any project, whether of commercial nature or not. If you redistribute the code, the license (LICENSE.txt) must be present with it.
-
-
-## To-do
-
- * Use caching samples? Change sampling rate?
- * Properly detect buttons that immediately send down+up events that cannot be detected by normal frames (e.g. HOME on OUYA)
- * Allow detecting "any" gamepad key (for "press any key")
- * More automatic gamepad mappings
- * Still allow platform-specific control ids?
- * Profile and test performance/bottlenecks/memory allocations
- * A better looking KeyActionBinderTester demo
- * Add events (signals) for devices removal/listing?
- * Compile binary/stable SWC
- * More bulletproof support for 2+ controllers
-
-
 ## Contributing
 
 There are everal ways to contribute to this project.
@@ -280,3 +263,21 @@ To contribute with code, fixes, additions, or even new key mappings added direct
  * James Dean Palmer for the original idea about auto-mapping controls and many bindings
  * Patrick Bastiani for the NeoFlex controller mapping
  * Rusty Moyher for the Buffalo SNES mapping, and several other mappings for Windows and OSX
+
+
+## License
+
+KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/). You can use this code in any project, whether of commercial nature or not. If you redistribute the code, the license (LICENSE.txt) must be present with it.
+
+
+## To-do
+
+ * Use caching samples? Change sampling rate?
+ * Properly detect buttons that immediately send down+up events that cannot be detected by normal frames (e.g. HOME on OUYA)
+ * Allow detecting "any" gamepad key (for "press any key")
+ * More automatic gamepad mappings
+ * Still allow platform-specific control ids?
+ * Profile and test performance/bottlenecks/memory allocations
+ * A better looking KeyActionBinderTester demo
+ * Compile binary/stable SWC
+ * More bulletproof support for 2+ controllers
