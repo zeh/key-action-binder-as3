@@ -203,7 +203,7 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
 |------------------------|:----------:|:----------:|:--------:|:----------:|:-----:|:-------:|
 | XBox 360 controller    | **Y**      | **Y**      | -        | **Y**      | **Y** | -       |
 | PlayStation 3 DS3      | **Y** (E)  | **Y** (E)  | **Y**    | **Y**      | **Y** | **Y**   |
-| PlayStation 4 DS3      | **Y**      | -          | **Y**    | **Y** (*1) | **Y** | **Y**   |
+| PlayStation 4 DS3      | **Y**      | **Y**      | **Y**    | **Y** (*1) | **Y** | **Y**   |
 | OUYA Native controller | -          | -          | -        | -          | **Y** | -       |
 | [NeoFlex](http://neotronics.com.br/neo/produtos/pc/controle-neo-flex) ("USB Gamepad") | **Y** | Y? | N | N | N | N |
 | Buffalo SNES ("USB,2-axis 8-button gamepad") | **Y** | **Y** | **Y** | **Y** | N | N |
