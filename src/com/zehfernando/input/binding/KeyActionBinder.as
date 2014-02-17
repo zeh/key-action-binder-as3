@@ -247,11 +247,6 @@ package com.zehfernando.input.binding {
 
 			// Dispatch the signal
 			_onDevicesChanged.dispatch();
-
-//			log("Game input devices changed; new list:");
-//			for (i = 0; i < gameInputDevices.length; i++) {
-//				log("  " + i + " => device.name is [" + gameInputDevices[i].name + "], identified as [" + gameInputDeviceDefinitions[i].id + "]");
-//			}
 		}
 
 		private function findGamepadInfo(__gameInputDevice:GameInputDevice):AutoGamepadInfo {
@@ -261,7 +256,7 @@ package com.zehfernando.input.binding {
 			var i:int, j:int;
 			for (i = 0; i < knownGamepadPlatforms.length; i++) {
 				for (j = 0; j < knownGamepadPlatforms[i].gamepads.length; j++) {
-					if (knownGamepadPlatforms[i].gamepads[j].nameFilter.length == 0 || searchFromStringVector(knownGamepadPlatforms[i].gamepads[j].nameFilter, gameInputDevices[i].name)) {
+					if (knownGamepadPlatforms[i].gamepads[j].nameFilter.length == 0 || searchFromStringVector(knownGamepadPlatforms[i].gamepads[j].nameFilter, __gameInputDevice.name)) {
 						return knownGamepadPlatforms[i].gamepads[j];
 					}
 				}
