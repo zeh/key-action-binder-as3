@@ -748,11 +748,11 @@ package com.zehfernando.input.binding {
 		}
 
 		public function getDeviceAt(__index:uint):GameInputDevice {
-			return gameInputDevices.length >= __index && gameInputDevices[__index] != null ? gameInputDevices[__index] : null;
+			return gameInputDevices.length > __index && gameInputDevices[__index] != null ? gameInputDevices[__index] : null;
 		}
 
 		public function getDeviceTypeAt(__index:uint):String {
-			return gameInputDevices.length >= __index && gameInputDevices[__index] != null ? gameInputDeviceDefinitions[__index].id : null;
+			return gameInputDeviceDefinitions.length > __index && gameInputDeviceDefinitions[__index] != null ? gameInputDeviceDefinitions[__index].id : null;
 		}
 	}
 }
