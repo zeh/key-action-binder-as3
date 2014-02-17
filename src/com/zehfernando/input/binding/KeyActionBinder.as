@@ -102,6 +102,7 @@ package com.zehfernando.input.binding {
 
 						gamepadInfo = new AutoGamepadInfo();
 						gamepadInfo.id          = jjs;
+						gamepadInfo.platformId  = iis;
 						gamepadInfo.nameFilter  = arrayToStringVector(gamepadObj["filters"]["name"]);
 
 						platformInfo.gamepads.push(gamepadInfo);
@@ -752,7 +753,7 @@ package com.zehfernando.input.binding {
 		}
 
 		public function getDeviceTypeAt(__index:uint):String {
-			return gameInputDeviceDefinitions.length > __index && gameInputDeviceDefinitions[__index] != null ? gameInputDeviceDefinitions[__index].id : null;
+			return gameInputDeviceDefinitions.length > __index && gameInputDeviceDefinitions[__index] != null ? gameInputDeviceDefinitions[__index].getType() : null;
 		}
 	}
 }
@@ -966,6 +967,7 @@ class AutoGamepadInfo {
 
 	// Properties
 	public var id:String;
+	public var platformId:String;
 
 	public var nameFilter:Vector.<String>;									// Filter for device.name
 
@@ -981,6 +983,10 @@ class AutoGamepadInfo {
 		controls = {};
 		controlsSplit = {};
 		keys = new Vector.<AutoGamepadControlKeyInfo>();
+	}
+
+	public function getType():String {
+		return platformId + "/" + id;
 	}
 }
 
