@@ -34,7 +34,7 @@ package com.zehfernando.input.binding {
 
 		// Properties
 		private var _isRunning:Boolean;
-		private var alwaysPreventDefault:Boolean;						// If true, prevent action by other keys all the time (e.g. menu key)
+		private var _alwaysPreventDefault:Boolean;						// If true, prevent action by other keys all the time (e.g. menu key)
 
 		// Instances
 		private var bindings:Vector.<BindingInfo>;						// Actual existing bindings, their action, and whether they're activated or not
@@ -183,7 +183,7 @@ package com.zehfernando.input.binding {
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
 		public function KeyActionBinder() {
-			alwaysPreventDefault = true;
+			_alwaysPreventDefault = true;
 			bindings = new Vector.<BindingInfo>();
 			actionsActivations = {};
 
@@ -393,7 +393,7 @@ package com.zehfernando.input.binding {
 				}
 			}
 
-			if (alwaysPreventDefault) __e.preventDefault();
+			if (_alwaysPreventDefault) __e.preventDefault();
 
 			// Check all current game input devices for a key injection definition that matches
 			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
@@ -422,7 +422,7 @@ package com.zehfernando.input.binding {
 				if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 0) _onActionDeactivated.dispatch(filteredKeys[i].action);
 			}
 
-			if (alwaysPreventDefault) __e.preventDefault();
+			if (_alwaysPreventDefault) __e.preventDefault();
 
 			// Check all current game input devices for a key injection definition that matches
 			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
@@ -742,6 +742,15 @@ package com.zehfernando.input.binding {
 
 		public function get isRunning():Boolean {
 			return _isRunning;
+		}
+
+		public function get alwaysPreventDefault():Boolean {
+			return _alwaysPreventDefault;
+		}
+
+		public function set alwaysPreventDefault(__value:Boolean):void {
+			// TODO: this is a dumb getter/setter just for ASDocs reasons
+			_alwaysPreventDefault = __value;
 		}
 
 		public function getNumDevices():uint {
