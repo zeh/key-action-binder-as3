@@ -22,7 +22,7 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Constants
-		public static const VERSION:String = "1.5.4";
+		public static const VERSION:String = "1.5.5";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
@@ -453,7 +453,7 @@ package com.zehfernando.input.binding {
 			// Find the re-mapped control id
 			var deviceIndex:int = gameInputDevices.indexOf(control.device);
 
-			if (deviceIndex > -1) {
+			if (deviceIndex > -1 && gameInputDeviceDefinitions[deviceIndex] != null) {
 				// Find single controls, where one control has one binding
 				if (gameInputDeviceDefinitions[deviceIndex].controls.hasOwnProperty(control.id)) {
 					var deviceControlInfo:AutoGamepadControlInfo = gameInputDeviceDefinitions[deviceIndex].controls[control.id];

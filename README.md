@@ -165,6 +165,7 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 ## Changelog
 
+ * 2014-02-16 - 1.5.5 - When a device is not recognized, just fail with a trace() message rather than crash
  * 2014-02-14 - 1.5.4 - Controllers data now use an array of strings for filters
  * 2014-02-13 - 1.5.3 - Added support for SELECT meta control
  * 2014-02-09 - 1.5.2 - Added support for "split" controls, where the same GameInput control fires two distinct buttons (e.g. XBox 360 dpads on OUYA)
@@ -210,13 +211,15 @@ Controllers that emulate other controllers (e.g. XBox 360 alternatives) should w
 
 To add:
 
- * All other platforms (Mac, Android, Windows 8, Windows XP, ...)
+ * All other platforms (Windows 8, Windows XP, ...)
  * Android: GameStick, NVIDIA Shield, MadCatz MOJO, GamePop, Green Throttle, ...
 
 More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself:
 
- * [Web-based GameInput tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/) (requires Flash Player)
- * [Android/OUYA APK GameInput tester app](hosted.zehfernando.com/key-action-binder/game-input-tester/GameInputTester.apk)
+ * [Web-based KeyActionBinder tester](http://hosted.zehfernando.com/key-action-binder/tester/): use this to see if your device/OS/browser is recognized by KeyActionBinder (requires Flash Player)
+ * [Android/OUYA APK GameInput tester app](http://hosted.zehfernando.com/key-action-binder/tester/KeyActionBinderTester.apk)
+ * [Web-based GameInput tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/): use this to see if OS is supported by Flash at all, and which controls are reported (requires Flash Player)
+ * [Android/OUYA APK GameInput tester app](http://hosted.zehfernando.com/key-action-binder/game-input-tester/GameInputTester.apk)
 
 A pure AS3 source of the tester app can be found on /tests/GameInputTester/src.
 
@@ -240,7 +243,7 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Use caching samples? Change sampling rate?
  * Properly detect buttons that immediately send down+up events that cannot be detected by normal frames (e.g. HOME on OUYA)
  * Allow detecting "any" gamepad key (for "press any key")
- * Finish auto Gamepad control ids
+ * More automatic gamepad mappings
  * Still allow platform-specific control ids?
  * Profile and test performance/bottlenecks/memory allocations
  * A better looking KeyActionBinderTester demo
@@ -253,14 +256,19 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 
 There are everal ways to contribute to this project.
 
+### Testing devices
+
 To contribute with new key mappings (so more devices are supported by KeyActionBinder):
 
- 1. Run the [Web-based GameInput tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/) with your desired device connected to the machine.
- 2. Push all buttons.
- 3. Take a screenshot.
- 4. Take notes of all buttons, indicating which buttons and axis relate to what (e.g. "BUTTON_4" means "directional pad up"). Be sure to include which of the values (-1 or 1) mean "UP" on the gamepad's sticks.
- 5. Send the screenshot and the list of controls to zeh at zehfernando dot com.
- 6. If possible, test in additional browsers to see if you get different results. In some systems, the regular Flash Player (plugin on FireFox, Safari, etc) behaves differently from the built-in Flash Player (Pepper Flash on Chrome). In this case, we need screenshots and lists of mappings for both kinds of player.
+ 1. Run the [Web-based KeyActionBinder tester](http://hosted.zehfernando.com/key-action-binder/tester/) with your desired device connected to the machine. Be sure to press all buttons to see if it comes to life. If it works perfectly, there's nothing else needed!
+ 2. If not, run the [Web-based GameInput tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/) with your desired device connected to the machine.
+ 3. Push all buttons.
+ 4. Take a screenshot.
+ 5. Take notes of all buttons, indicating which buttons and axis relate to what (e.g. "BUTTON_4" means "directional pad up"). Be sure to include which of the values (-1 or 1) mean "UP" on the gamepad's analog sticks, if needed.
+ 6. [Create a new issue](http://github.com/zeh/key-action-binder/issues) with the screenshot and the list of controls, stating which exact device was tested, in which OS, and with which browser.
+ 7. If possible, test in additional browsers to see if you get different results. In some systems, the regular Flash Player (plugin on FireFox, Safari, etc) behaves differently from the built-in Flash Player (Pepper Flash on Chrome). In this case, we need screenshots and lists of mappings for both kinds of player, so the device is more widely supported.
+
+### Changing code or mappings yourself
 
 To contribute with code, fixes, additions, or even new key mappings added directly to the [controllers list file](https://github.com/zeh/key-action-binder/blob/master/src/com/zehfernando/input/binding/controllers.json), you can just edit the related file inside GitHub (by editing it directly on the website, or creating a fork) and doing a pull request. This is an easy way to contribute, and it guarantees you will be credited for your work (accepted pull requests have their authors automatically show as contributors to the project).
 
