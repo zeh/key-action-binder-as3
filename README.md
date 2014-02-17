@@ -4,11 +4,20 @@ KeyActionBinder tries to provide universal game input control for both keyboard 
 
 While Adobe Flash already provides all the means for using keyboard and game input (via [KeyboardEvent](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/events/KeyboardEvent.html) and [GameInput](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/ui/GameInput.html)), KeyActionBinder tries to abstract those classes behind a straightforward, higher-level interface. It is meant to be simple but powerful, while solving some of the most common pitfalls involved with player input in AS3 games.
 
+
+## Tests/demos
+
+| [![KeyActionBinderTester](http://hosted.zehfernando.com/key-action-binder/tester/git/kab_thumb.png)](http://hosted.zehfernando.com/key-action-binder/tester) |
+| **KeyActionBinderTester** |
+| [Web-based version](http://hosted.zehfernando.com/key-action-binder/tester/) |
+| [Android/OUYA APK](http://hosted.zehfernando.com/key-action-binder/tester/KeyActionBinderTester.apk) |
+| [Source code](https://github.com/zeh/key-action-binder/tree/master/tests/KeyActionBinderTester) |
+
 ## Goals
 
  * Unified interface for keyboard and game controller input
- * Made to be fast: memory allocation is kept to a minimum
- * Abstract actual controls in favor of action ids: easier to configure key bindings through variables
+ * Made to be fast: memory allocation is kept to a minimum, and there are no device references or instances to maintain
+ * Abstract actual controls in favor of action ids: easier to configure key bindings through variables, with redundant input types (keyboard and gamepad)
  * Automatic bindings on any platform by hiding away platform-specific controls over unified ids
  * Self-containment and independence from any other system or framework
 
@@ -218,14 +227,12 @@ To add:
  * All other platforms (Windows 8, Windows XP, ...)
  * Android: GameStick, NVIDIA Shield, MadCatz MOJO, GamePop, Green Throttle, ...
 
-More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself:
+More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself using [any of the demos](#Tests/demos), or find the controls using the KeyActionBinder-independent GameInputTester app:
 
- * [Web-based KeyActionBinder tester](http://hosted.zehfernando.com/key-action-binder/tester/): use this to see if your device/OS/browser is recognized by KeyActionBinder (requires Flash Player)
- * [Android/OUYA APK GameInput tester app](http://hosted.zehfernando.com/key-action-binder/tester/KeyActionBinderTester.apk)
  * [Web-based GameInput tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/): use this to see if OS is supported by Flash at all, and which controls are reported (requires Flash Player)
- * [Android/OUYA APK GameInput tester app](http://hosted.zehfernando.com/key-action-binder/game-input-tester/GameInputTester.apk)
+ * [Android/OUYA GameInput APK](http://hosted.zehfernando.com/key-action-binder/game-input-tester/GameInputTester.apk)
 
-A pure AS3 source of the tester app can be found on /tests/GameInputTester/src.
+A pure AS3 source of the tester app can be found in [/tests/GameInputTester/src](https://github.com/zeh/key-action-binder/tree/master/tests/GameInputTester/src).
 
 ## Read more
 
@@ -245,8 +252,8 @@ There are everal ways to contribute to this project.
 
 To contribute with new key mappings (so more devices are supported by KeyActionBinder):
 
- 1. Run the [Web-based KeyActionBinder tester](http://hosted.zehfernando.com/key-action-binder/tester/) with your desired device connected to the machine. Be sure to press all buttons to see if it comes to life. If it works perfectly, there's nothing else needed!
- 2. If not, run the [Web-based GameInput tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/) with your desired device connected to the machine.
+ 1. Run the [Web-based KeyActionBinder tester](http://hosted.zehfernando.com/key-action-binder/tester/) or install the [Android/OUYA KeyActionBinder APK](http://hosted.zehfernando.com/key-action-binder/tester/KeyActionBinderTester.apk) with your desired device connected to the machine. Be sure to press all buttons to see if it comes to life. If it works perfectly, there's nothing else needed!
+ 2. If not, run the [Web-based GameInput tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/) or install the [Android/OUYA GameInput APK](http://hosted.zehfernando.com/key-action-binder/game-input-tester/GameInputTester.apk) with your desired device connected to the machine.
  3. Push all buttons.
  4. Take a screenshot.
  5. Take notes of all buttons, indicating which buttons and axis relate to what (e.g. "BUTTON_4" means "directional pad up"). Be sure to include which of the values (-1 or 1) mean "UP" on the gamepad's analog sticks, if needed.
