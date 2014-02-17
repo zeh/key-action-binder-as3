@@ -8,9 +8,9 @@ While Adobe Flash already provides all the means for using keyboard and game inp
 ## Tests/demos
 
 | [![KeyActionBinderTester](http://hosted.zehfernando.com/key-action-binder/tester/git/kab_thumb.png)](http://hosted.zehfernando.com/key-action-binder/tester) |
+|:--:|
 | **KeyActionBinderTester** |
-| [Web-based version](http://hosted.zehfernando.com/key-action-binder/tester/) |
-| [Android/OUYA APK](http://hosted.zehfernando.com/key-action-binder/tester/KeyActionBinderTester.apk) |
+| [Web-based version](http://hosted.zehfernando.com/key-action-binder/tester/), [Android/OUYA APK](http://hosted.zehfernando.com/key-action-binder/tester/KeyActionBinderTester.apk) |
 | [Source code](https://github.com/zeh/key-action-binder/tree/master/tests/KeyActionBinderTester) |
 
 ## Goals
@@ -227,7 +227,7 @@ To add:
  * All other platforms (Windows 8, Windows XP, ...)
  * Android: GameStick, NVIDIA Shield, MadCatz MOJO, GamePop, Green Throttle, ...
 
-More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself using [any of the demos](#Tests/demos), or find the controls using the KeyActionBinder-independent GameInputTester app:
+More platforms and devices will be added as their controls are tested and figured out. If you wish, you can test it yourself using [any of the demos](#testsdemos), or find the controls using the KeyActionBinder-independent GameInputTester app:
 
  * [Web-based GameInput tester](http://hosted.zehfernando.com/key-action-binder/game-input-tester/): use this to see if OS is supported by Flash at all, and which controls are reported (requires Flash Player)
  * [Android/OUYA GameInput APK](http://hosted.zehfernando.com/key-action-binder/game-input-tester/GameInputTester.apk)
