@@ -70,7 +70,7 @@ Then, on your game loop block, you simply check whether any action is activated 
 For actions that are not repeated, like a player jump, you can "consume" them via `consumeAction()`. This forces the player to activate the button again if they want to perform the action again.
 
 	// During setup
-	binder.addGamepadActionBinding("jump", GamepadControls.BUTTON_ACTION_DOWN);
+	binder.addGamepadActionBinding("jump", GamepadControls.ACTION_DOWN);
 
 	// During the loop
 	if (isPlayerOnTheGround && binder.isActionActivated("jump")) {
@@ -83,7 +83,7 @@ For actions that are not repeated, like a player jump, you can "consume" them vi
 You can also check actions based on the time they were activated. This is especially useful for time-sensitive actions that are not available all the time; otherwise, a player could press the button way before an action was allowed to be performed - for example, a player pressing a button for "jump" while he/she is still in the air would jump immediately when touching the ground. To verify whether the player pressed jump in the past 0.03 seconds (30 miliseconds) instead:
 
 	// During setup
-	binder.addGamepadActionBinding("jump", GamepadControls.BUTTON_ACTION_DOWN);
+	binder.addGamepadActionBinding("jump", GamepadControls.ACTION_DOWN);
 
 	// During the loop
 	if (isPlayerOnTheGround && binder.isActionActivated("jump"), 0.03) {
