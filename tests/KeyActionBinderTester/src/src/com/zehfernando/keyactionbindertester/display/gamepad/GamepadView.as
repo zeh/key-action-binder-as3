@@ -1,9 +1,11 @@
 package com.zehfernando.keyactionbindertester.display.gamepad {
-	import flash.filters.BevelFilter;
-	import flash.filters.GlowFilter;
+	import com.zehfernando.display.components.text.TextSprite;
+	import com.zehfernando.display.components.text.TextSpriteAlign;
 	import com.zehfernando.utils.MathUtils;
 
 	import flash.display.Sprite;
+	import flash.filters.BevelFilter;
+	import flash.filters.GlowFilter;
 
 	/**
 	 * @author zeh fernando
@@ -32,6 +34,7 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 		// Instances
 		private var container:Sprite;
 		private var shapeView:Sprite;
+		private var textName:TextSprite;
 
 		public var buttonLB:RectButtonView;
 		public var buttonRB:RectButtonView;
@@ -224,6 +227,17 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 			buttonMTrackpad.x = _width * 0.5 - buttonMTrackpad.width * 0.5;
 			buttonMTrackpad.y = _height * 0.1;
 			container.addChild(buttonMTrackpad);
+
+			// Name
+			textName = new TextSprite("_sans", 8, 0x000000, 0.5);
+			textName.text = __name;
+			textName.embeddedFonts = false;
+			textName.align = TextSpriteAlign.CENTER;
+			textName.width = _width * 0.6;
+			textName.leading = 2;
+			textName.x = _width * 0.5 - textName.width * 0.5;
+			textName.y = 0 - textName.height - 4;
+			container.addChild(textName);
 
 			// End
 			applyScale();

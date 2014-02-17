@@ -43,7 +43,6 @@ package com.zehfernando.keyactionbindertester.application {
 		// EVENT INTERFACE ------------------------------------------------------------------------------------------------
 
 		protected function onResize(__e:Event):void {
-			trace("New size: " + stage.stageWidth + ", " + stage.stageHeight);
 			main.width = stage.stageWidth;
 			main.height = stage.stageHeight;
 		}

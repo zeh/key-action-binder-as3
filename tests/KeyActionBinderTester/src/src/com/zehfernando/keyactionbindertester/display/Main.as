@@ -4,6 +4,7 @@ package com.zehfernando.keyactionbindertester.display {
 	import com.zehfernando.input.binding.GamepadControls;
 	import com.zehfernando.input.binding.KeyActionBinder;
 	import com.zehfernando.keyactionbindertester.display.gamepad.GamepadView;
+	import com.zehfernando.keyactionbindertester.display.gamepad.GamepadViewList;
 
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -50,7 +51,6 @@ package com.zehfernando.keyactionbindertester.display {
 		private var frame:uint;
 
 		// Instances
-		private var textDeviceState:TextSprite;			// Complete device state
 		private var textLog:TextSprite;					// Log of what happens, in order
 		private var deviceStates:Vector.<Object>;		// List of devices (Objects with their state: key = control.id, value = control)
 		private var deviceSensitive:Vector.<Object>;	// Whether device controls are sensitive or not (key = control.id, value = false or true)
@@ -65,7 +65,7 @@ package com.zehfernando.keyactionbindertester.display {
 
 		private var background:Box;
 
-		private var gamepadView:GamepadView;
+		private var gamepadViewList:GamepadViewList;
 
 
 		// ================================================================================================================
@@ -105,18 +105,13 @@ package com.zehfernando.keyactionbindertester.display {
 			background = new Box(100, 100, 0xeeeeee);
 			addChild(background);
 
-			textDeviceState = new TextSprite("_sans", 12, 0x333333);
-			textDeviceState.embeddedFonts = false;
-			textDeviceState.leading = 2;
-			addChild(textDeviceState);
-
-			textLog = new TextSprite("_sans", 12, 0x333333);
+			textLog = new TextSprite("_sans", 12, 0xcccccc);
 			textLog.embeddedFonts = false;
 			textLog.leading = 2;
 			addChild(textLog);
 
-			gamepadView = new GamepadView(GamepadView.LAYOUT_SYMMETRIC, "GamepadName"); // Update name
-			addChild(gamepadView);
+			gamepadViewList = new GamepadViewList();
+			addChild(gamepadViewList);
 
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage, false, 0, true);
 			addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage, false, 0, true);
@@ -129,40 +124,22 @@ package com.zehfernando.keyactionbindertester.display {
 		// INTERNAL INTERFACE ---------------------------------------------------------------------------------------------
 
 		private function redrawWidth():void {
-			textDeviceState.x = 0;
-			textDeviceState.width = _width/2;
-			textLog.x = textDeviceState.x + textDeviceState.width;
-			textLog.width = _width/3;
+			textLog.x = 2;
+			textLog.width = _width/2;
 			background.width = _width;
-			redrawGamepad();
+			gamepadViewList.width = _width;
+			updateTextLog();
 		}
 
 		private function redrawHeight():void {
-			textDeviceState.y = 2;
 			textLog.y = 2;
 			background.height = _height;
-			redrawGamepad();
-		}
-
-		private function redrawGamepad():void {
-			var margin:Number = 100;
-			var desiredWidth:Number = _width - margin * 2;
-			var desiredHeight:Number = _height - margin * 2;
-			var s:Number;
-			// Fit inside
-			if (GamepadView.WIDTH / GamepadView.HEIGHT > desiredWidth / desiredHeight) {
-				// Thinner than image, use width
-				s = desiredWidth / GamepadView.WIDTH;
-			} else {
-				// Wider than image, use width
-				s = desiredHeight / GamepadView.HEIGHT;
-			}
-			gamepadView.scale = s * 0.5;
-			gamepadView.x = _width * 0.5 - gamepadView.width * 0.5;
-			gamepadView.y = _height * 0.5 - gamepadView.height * 0.5;
+			gamepadViewList.height = _height;
+			updateTextLog();
 		}
 
 		private function logText(__text:String):void {
+			trace(__text);
 			textLogLines.push("[" + frame + "] " + __text);
 			//textLogLines.push("[" + (getTimer()/1000).toFixed(3) + "s] " + __text);
 			updateTextLog();
@@ -174,70 +151,57 @@ package com.zehfernando.keyactionbindertester.display {
 			textLog.y = _height - textLog.height;
 		}
 
-		private function updateTextDeviceState():void {
-			// Update the device text log with the current state of all devices
-			var text:String = "";
-			var i:int;
-
-			// Update state
-//			for (i = 0; i < actionsToTrack.length; i++) {
-//				text += "Action " + actionsToTrack[i] + ": " + binder.isActionActivated(ACTION_PREFIX + actionsToTrack[i]) + "\n";
-//			}
-//			text += "\n";
-//			for (i = 0; i < valuesToTrack.length; i++) {
-//				text += "Value " + valuesToTrack[i] + ": " + binder.getActionValue(VALUE_PREFIX + valuesToTrack[i]) + "\n";
-//			}
-
-			textDeviceState.text = text;
-		}
-
 		private function updateDeviceViewState():void {
-			gamepadView.buttonLB.value   = binder.getActionValue(CONTROL_LB);
-			gamepadView.buttonLB.pressed = binder.isActionActivated(CONTROL_LB);
-			gamepadView.buttonRB.value   = binder.getActionValue(CONTROL_RB);
-			gamepadView.buttonRB.pressed = binder.isActionActivated(CONTROL_RB);
-			gamepadView.buttonLT.value   = binder.getActionValue(CONTROL_LT);
-			gamepadView.buttonLT.pressed = binder.isActionActivated(CONTROL_LT);
-			gamepadView.buttonRT.value   = binder.getActionValue(CONTROL_RT);
-			gamepadView.buttonRT.pressed = binder.isActionActivated(CONTROL_RT);
-			gamepadView.buttonDU.value   = binder.getActionValue(CONTROL_DU);
-			gamepadView.buttonDU.pressed = binder.isActionActivated(CONTROL_DU);
-			gamepadView.buttonDD.value   = binder.getActionValue(CONTROL_DD);
-			gamepadView.buttonDD.pressed = binder.isActionActivated(CONTROL_DD);
-			gamepadView.buttonDL.value   = binder.getActionValue(CONTROL_DL);
-			gamepadView.buttonDL.pressed = binder.isActionActivated(CONTROL_DL);
-			gamepadView.buttonDR.value   = binder.getActionValue(CONTROL_DR);
-			gamepadView.buttonDR.pressed = binder.isActionActivated(CONTROL_DR);
-			gamepadView.buttonAU.value   = binder.getActionValue(CONTROL_AU);
-			gamepadView.buttonAU.pressed = binder.isActionActivated(CONTROL_AU);
-			gamepadView.buttonAD.value   = binder.getActionValue(CONTROL_AD);
-			gamepadView.buttonAD.pressed = binder.isActionActivated(CONTROL_AD);
-			gamepadView.buttonAL.value   = binder.getActionValue(CONTROL_AL);
-			gamepadView.buttonAL.pressed = binder.isActionActivated(CONTROL_AL);
-			gamepadView.buttonAR.value   = binder.getActionValue(CONTROL_AR);
-			gamepadView.buttonAR.pressed = binder.isActionActivated(CONTROL_AR);
-			gamepadView.buttonSL.valueX         = binder.getActionValue(CONTROL_SL_X);
-			gamepadView.buttonSL.valueY         = binder.getActionValue(CONTROL_SL_Y);
-			gamepadView.buttonSL.value          = binder.getActionValue(CONTROL_SL_V);
-			gamepadView.buttonSL.pressed        = binder.isActionActivated(CONTROL_SL_V);
-			gamepadView.buttonSR.valueX         = binder.getActionValue(CONTROL_SR_X);
-			gamepadView.buttonSR.valueY         = binder.getActionValue(CONTROL_SR_Y);
-			gamepadView.buttonSR.value          = binder.getActionValue(CONTROL_SR_V);
-			gamepadView.buttonSR.pressed        = binder.isActionActivated(CONTROL_SR_V);
-			gamepadView.buttonMSelect.value     = binder.getActionValue(CONTROL_MSELECT);
-			gamepadView.buttonMSelect.pressed   = binder.isActionActivated(CONTROL_MSELECT);
-			gamepadView.buttonMBack.value       = binder.getActionValue(CONTROL_MBACK);
-			gamepadView.buttonMBack.pressed     = binder.isActionActivated(CONTROL_MBACK);
-			gamepadView.buttonMStart.value      = binder.getActionValue(CONTROL_MSTART);
-			gamepadView.buttonMStart.pressed    = binder.isActionActivated(CONTROL_MSTART);
-			gamepadView.buttonMMenu.value       = binder.getActionValue(CONTROL_MMENU);
-			gamepadView.buttonMMenu.pressed     = binder.isActionActivated(CONTROL_MMENU);
-			gamepadView.buttonMOptions.value    = binder.getActionValue(CONTROL_MOPTIONS);
-			gamepadView.buttonMOptions.pressed  = binder.isActionActivated(CONTROL_MOPTIONS);
-			gamepadView.buttonMTrackpad.value   = binder.getActionValue(CONTROL_MTRACKPAD);
-			gamepadView.buttonMTrackpad.pressed = binder.isActionActivated(CONTROL_MTRACKPAD);
-			gamepadView.buttonMShare.value      = binder.getActionValue(CONTROL_MSHARE);
-			gamepadView.buttonMShare.pressed    = binder.isActionActivated(CONTROL_MSHARE);
+			var gamepad:GamepadView;
+			for (var i:int = 0; i < binder.getNumDevices(); i++) {
+				gamepad = gamepadViewList.getGamepadAt(i);
+				gamepad.buttonLB.value   = binder.getActionValue(CONTROL_LB, i);
+				gamepad.buttonLB.pressed = binder.isActionActivated(CONTROL_LB, 0, i);
+				gamepad.buttonRB.value   = binder.getActionValue(CONTROL_RB, i);
+				gamepad.buttonRB.pressed = binder.isActionActivated(CONTROL_RB, 0, i);
+				gamepad.buttonLT.value   = binder.getActionValue(CONTROL_LT, i);
+				gamepad.buttonLT.pressed = binder.isActionActivated(CONTROL_LT, 0, i);
+				gamepad.buttonRT.value   = binder.getActionValue(CONTROL_RT, i);
+				gamepad.buttonRT.pressed = binder.isActionActivated(CONTROL_RT, 0, i);
+				gamepad.buttonDU.value   = binder.getActionValue(CONTROL_DU, i);
+				gamepad.buttonDU.pressed = binder.isActionActivated(CONTROL_DU, 0, i);
+				gamepad.buttonDD.value   = binder.getActionValue(CONTROL_DD, i);
+				gamepad.buttonDD.pressed = binder.isActionActivated(CONTROL_DD, 0, i);
+				gamepad.buttonDL.value   = binder.getActionValue(CONTROL_DL, i);
+				gamepad.buttonDL.pressed = binder.isActionActivated(CONTROL_DL, 0, i);
+				gamepad.buttonDR.value   = binder.getActionValue(CONTROL_DR, i);
+				gamepad.buttonDR.pressed = binder.isActionActivated(CONTROL_DR, 0, i);
+				gamepad.buttonAU.value   = binder.getActionValue(CONTROL_AU, i);
+				gamepad.buttonAU.pressed = binder.isActionActivated(CONTROL_AU, 0, i);
+				gamepad.buttonAD.value   = binder.getActionValue(CONTROL_AD, i);
+				gamepad.buttonAD.pressed = binder.isActionActivated(CONTROL_AD, 0, i);
+				gamepad.buttonAL.value   = binder.getActionValue(CONTROL_AL, i);
+				gamepad.buttonAL.pressed = binder.isActionActivated(CONTROL_AL, 0, i);
+				gamepad.buttonAR.value   = binder.getActionValue(CONTROL_AR, i);
+				gamepad.buttonAR.pressed = binder.isActionActivated(CONTROL_AR, 0, i);
+				gamepad.buttonSL.valueX         = binder.getActionValue(CONTROL_SL_X, i);
+				gamepad.buttonSL.valueY         = binder.getActionValue(CONTROL_SL_Y, i);
+				gamepad.buttonSL.value          = binder.getActionValue(CONTROL_SL_V, i);
+				gamepad.buttonSL.pressed        = binder.isActionActivated(CONTROL_SL_V, 0, i);
+				gamepad.buttonSR.valueX         = binder.getActionValue(CONTROL_SR_X, i);
+				gamepad.buttonSR.valueY         = binder.getActionValue(CONTROL_SR_Y, i);
+				gamepad.buttonSR.value          = binder.getActionValue(CONTROL_SR_V, i);
+				gamepad.buttonSR.pressed        = binder.isActionActivated(CONTROL_SR_V, 0, i);
+				gamepad.buttonMSelect.value     = binder.getActionValue(CONTROL_MSELECT, i);
+				gamepad.buttonMSelect.pressed   = binder.isActionActivated(CONTROL_MSELECT, 0, i);
+				gamepad.buttonMBack.value       = binder.getActionValue(CONTROL_MBACK, i);
+				gamepad.buttonMBack.pressed     = binder.isActionActivated(CONTROL_MBACK, 0, i);
+				gamepad.buttonMStart.value      = binder.getActionValue(CONTROL_MSTART, i);
+				gamepad.buttonMStart.pressed    = binder.isActionActivated(CONTROL_MSTART, 0, i);
+				gamepad.buttonMMenu.value       = binder.getActionValue(CONTROL_MMENU, i);
+				gamepad.buttonMMenu.pressed     = binder.isActionActivated(CONTROL_MMENU, 0, i);
+				gamepad.buttonMOptions.value    = binder.getActionValue(CONTROL_MOPTIONS, i);
+				gamepad.buttonMOptions.pressed  = binder.isActionActivated(CONTROL_MOPTIONS, 0, i);
+				gamepad.buttonMTrackpad.value   = binder.getActionValue(CONTROL_MTRACKPAD, i);
+				gamepad.buttonMTrackpad.pressed = binder.isActionActivated(CONTROL_MTRACKPAD, 0, i);
+				gamepad.buttonMShare.value      = binder.getActionValue(CONTROL_MSHARE, i);
+				gamepad.buttonMShare.pressed    = binder.isActionActivated(CONTROL_MSHARE, 0, i);
+			}
 		}
 
 
@@ -265,8 +229,31 @@ package com.zehfernando.keyactionbindertester.display {
 			frame++;
 
 			// Update controller state
-			updateTextDeviceState();
 			updateDeviceViewState();
+		}
+
+		private function onDevicesChanged():void {
+			// Devices have changed, list them
+			logText("The list of game input devices has changed. Total devices: " + binder.getNumDevices());
+
+			var i:int;
+
+			// Update gamepad list
+			gamepadViewList.removeAllGamepads();
+			for (i = 0; i < binder.getNumDevices(); i++) {
+				gamepadViewList.addGamepad(binder.getDeviceAt(i) == null ? null : binder.getDeviceAt(i).name, binder.getDeviceTypeAt(i), binder.getDeviceAt(i) == null ? null : binder.getDeviceAt(i).id);
+			}
+
+			// Trace info
+			for (i = 0; i < binder.getNumDevices(); i++) {
+				logText("  " + i + ": " + binder.getDeviceTypeAt(i));
+//				logText("    Name: [" + (binder.getDeviceAt(i) == null ? null : binder.getDeviceAt(i).name) + "]");
+//				logText("    Type: [" + binder.getDeviceTypeAt(i) + "]");
+//				logText("    id: [" + (binder.getDeviceAt(i) == null ? null : binder.getDeviceAt(i).id) + "]");
+			}
+
+			updateDeviceViewState();
+
 		}
 
 
@@ -274,47 +261,38 @@ package com.zehfernando.keyactionbindertester.display {
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
 		public function init():void {
-			var i:int;
-
 			binder = new KeyActionBinder();
 
-			// Track actions
-//			for (i = 0; i < actionsToTrack.length; i++) {
-//				binder.addGamepadActionBinding(ACTION_PREFIX + actionsToTrack[i], actionsToTrack[i]);
-//			}
-//
-//			// Track values
-//			for (i = 0; i < valuesToTrack.length; i++) {
-//				binder.addGamepadSensitiveActionBinding(VALUE_PREFIX + valuesToTrack[i], valuesToTrack[i]);
-//			}
+			binder.onDevicesChanged.add(onDevicesChanged);
 
 			// Create bindings for the controller
-			// Normally this would be your own actions (e.g. "jump"), but in this case we just want to track buttons themselves
-			binder.addGamepadSensitiveActionBinding(CONTROL_LB,        GamepadControls.LB);
-			binder.addGamepadSensitiveActionBinding(CONTROL_RB,        GamepadControls.RB);
-			binder.addGamepadSensitiveActionBinding(CONTROL_LT,        GamepadControls.LT);
-			binder.addGamepadSensitiveActionBinding(CONTROL_RT,        GamepadControls.RT);
-			binder.addGamepadSensitiveActionBinding(CONTROL_DU,        GamepadControls.DPAD_UP);
-			binder.addGamepadSensitiveActionBinding(CONTROL_DD,        GamepadControls.DPAD_DOWN);
-			binder.addGamepadSensitiveActionBinding(CONTROL_DL,        GamepadControls.DPAD_LEFT);
-			binder.addGamepadSensitiveActionBinding(CONTROL_DR,        GamepadControls.DPAD_RIGHT);
-			binder.addGamepadSensitiveActionBinding(CONTROL_AU,        GamepadControls.ACTION_UP);
-			binder.addGamepadSensitiveActionBinding(CONTROL_AD,        GamepadControls.ACTION_DOWN);
-			binder.addGamepadSensitiveActionBinding(CONTROL_AL,        GamepadControls.ACTION_LEFT);
-			binder.addGamepadSensitiveActionBinding(CONTROL_AR,        GamepadControls.ACTION_RIGHT);
-			binder.addGamepadSensitiveActionBinding(CONTROL_SL_X,      GamepadControls.STICK_LEFT_X);
-			binder.addGamepadSensitiveActionBinding(CONTROL_SL_Y,      GamepadControls.STICK_LEFT_Y);
-			binder.addGamepadSensitiveActionBinding(CONTROL_SL_V,      GamepadControls.STICK_LEFT_PRESS);
-			binder.addGamepadSensitiveActionBinding(CONTROL_SR_X,      GamepadControls.STICK_RIGHT_X);
-			binder.addGamepadSensitiveActionBinding(CONTROL_SR_Y,      GamepadControls.STICK_RIGHT_Y);
-			binder.addGamepadSensitiveActionBinding(CONTROL_SR_V,      GamepadControls.STICK_RIGHT_PRESS);
-			binder.addGamepadSensitiveActionBinding(CONTROL_MSELECT,   GamepadControls.SELECT);
-			binder.addGamepadSensitiveActionBinding(CONTROL_MBACK,     GamepadControls.BACK);
-			binder.addGamepadSensitiveActionBinding(CONTROL_MSTART,    GamepadControls.START);
-			binder.addGamepadSensitiveActionBinding(CONTROL_MMENU,     GamepadControls.MENU);
-			binder.addGamepadSensitiveActionBinding(CONTROL_MOPTIONS,  GamepadControls.OPTIONS);
-			binder.addGamepadSensitiveActionBinding(CONTROL_MTRACKPAD, GamepadControls.TRACKPAD);
-			binder.addGamepadSensitiveActionBinding(CONTROL_MSHARE,    GamepadControls.SHARE);
+			// Normally this would be your own actions (e.g. "jump"), but in this case we just
+			// want to track buttons themselves so we add actions that are 1:1 with the buttons
+			binder.addGamepadActionBinding(CONTROL_LB,        GamepadControls.LB);
+			binder.addGamepadActionBinding(CONTROL_RB,        GamepadControls.RB);
+			binder.addGamepadActionBinding(CONTROL_LT,        GamepadControls.LT);
+			binder.addGamepadActionBinding(CONTROL_RT,        GamepadControls.RT);
+			binder.addGamepadActionBinding(CONTROL_DU,        GamepadControls.DPAD_UP);
+			binder.addGamepadActionBinding(CONTROL_DD,        GamepadControls.DPAD_DOWN);
+			binder.addGamepadActionBinding(CONTROL_DL,        GamepadControls.DPAD_LEFT);
+			binder.addGamepadActionBinding(CONTROL_DR,        GamepadControls.DPAD_RIGHT);
+			binder.addGamepadActionBinding(CONTROL_AU,        GamepadControls.ACTION_UP);
+			binder.addGamepadActionBinding(CONTROL_AD,        GamepadControls.ACTION_DOWN);
+			binder.addGamepadActionBinding(CONTROL_AL,        GamepadControls.ACTION_LEFT);
+			binder.addGamepadActionBinding(CONTROL_AR,        GamepadControls.ACTION_RIGHT);
+			binder.addGamepadActionBinding(CONTROL_SL_X,      GamepadControls.STICK_LEFT_X);
+			binder.addGamepadActionBinding(CONTROL_SL_Y,      GamepadControls.STICK_LEFT_Y);
+			binder.addGamepadActionBinding(CONTROL_SL_V,      GamepadControls.STICK_LEFT_PRESS);
+			binder.addGamepadActionBinding(CONTROL_SR_X,      GamepadControls.STICK_RIGHT_X);
+			binder.addGamepadActionBinding(CONTROL_SR_Y,      GamepadControls.STICK_RIGHT_Y);
+			binder.addGamepadActionBinding(CONTROL_SR_V,      GamepadControls.STICK_RIGHT_PRESS);
+			binder.addGamepadActionBinding(CONTROL_MSELECT,   GamepadControls.SELECT);
+			binder.addGamepadActionBinding(CONTROL_MBACK,     GamepadControls.BACK);
+			binder.addGamepadActionBinding(CONTROL_MSTART,    GamepadControls.START);
+			binder.addGamepadActionBinding(CONTROL_MMENU,     GamepadControls.MENU);
+			binder.addGamepadActionBinding(CONTROL_MOPTIONS,  GamepadControls.OPTIONS);
+			binder.addGamepadActionBinding(CONTROL_MTRACKPAD, GamepadControls.TRACKPAD);
+			binder.addGamepadActionBinding(CONTROL_MSHARE,    GamepadControls.SHARE);
 
 			// Events
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -322,15 +300,13 @@ package com.zehfernando.keyactionbindertester.display {
 			stage.addEventListener(Event.ACTIVATE, onActivate);
 			stage.addEventListener(Event.DEACTIVATE, onDeactivate);
 
-			updateTextDeviceState();
-			updateTextLog();
-
 			logText("Manufacturer: [" + Capabilities.manufacturer + "]");
 			logText("OS: [" + Capabilities.os + "]");
 			logText("Version: [" + Capabilities.version + "]");
 			logText("Player type: [" + Capabilities.playerType + "]");
 			logText("GameInput.isSupported: [" + GameInput.isSupported + "]");
 			logText("");
+			logText("KeyActionBinderPlatform(s): [" + binder.getPlatformTypes() + "]");
 		}
 
 
