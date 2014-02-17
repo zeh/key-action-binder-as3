@@ -22,7 +22,7 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Constants
-		public static const VERSION:String = "1.6.5";
+		public static const VERSION:String = "1.7.5";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
@@ -43,6 +43,7 @@ package com.zehfernando.input.binding {
 		private var _onActionActivated:SimpleSignal;					// Receives: action:String
 		private var _onActionDeactivated:SimpleSignal;					// Receives: action:String
 		private var _onActionValueChanged:SimpleSignal;					// Receives: action:String, value:Number (0-1)
+		private var _onDevicesChanged:SimpleSignal;
 
 		private var gameInputDevices:Vector.<GameInputDevice>;
 		private var gameInputDeviceDefinitions:Vector.<AutoGamepadInfo>;
@@ -188,6 +189,7 @@ package com.zehfernando.input.binding {
 			_onActionActivated = new SimpleSignal();
 			_onActionDeactivated = new SimpleSignal();
 			_onActionValueChanged = new SimpleSignal();
+			_onDevicesChanged = new SimpleSignal();
 
 			start();
 		}
@@ -241,6 +243,9 @@ package com.zehfernando.input.binding {
 				gameInputDevices.push(GameInput.getDeviceAt(i));
 				gameInputDeviceDefinitions.push(findGamepadInfo(gameInputDevices[i]));
 			}
+
+			// Dispatch the signal
+			_onDevicesChanged.dispatch();
 
 //			log("Game input devices changed; new list:");
 //			for (i = 0; i < gameInputDevices.length; i++) {
@@ -730,8 +735,24 @@ package com.zehfernando.input.binding {
 			return _onActionValueChanged;
 		}
 
+		public function get onDevicesChanged():SimpleSignal {
+			return _onDevicesChanged;
+		}
+
 		public function get isRunning():Boolean {
 			return _isRunning;
+		}
+
+		public function getNumDevices():uint {
+			return gameInputDevices.length;
+		}
+
+		public function getDeviceAt(__index:uint):GameInputDevice {
+			return gameInputDevices.length >= __index && gameInputDevices[__index] != null ? gameInputDevices[__index] : null;
+		}
+
+		public function getDeviceTypeAt(__index:uint):String {
+			return gameInputDevices.length >= __index && gameInputDevices[__index] != null ? gameInputDeviceDefinitions[__index].id : null;
 		}
 	}
 }
