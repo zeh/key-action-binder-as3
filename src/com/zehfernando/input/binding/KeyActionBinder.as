@@ -755,6 +755,14 @@ package com.zehfernando.input.binding {
 		public function getDeviceTypeAt(__index:uint):String {
 			return gameInputDeviceDefinitions.length > __index && gameInputDeviceDefinitions[__index] != null ? gameInputDeviceDefinitions[__index].getType() : null;
 		}
+
+		public function getPlatformTypes():Vector.<String> {
+			var platforms:Vector.<String> = new Vector.<String>();
+			for (var i:int = 0; i < knownGamepadPlatforms.length; i++) {
+				platforms.push(knownGamepadPlatforms[i].id);
+			}
+			return platforms;
+		}
 	}
 }
 import flash.utils.Dictionary;
