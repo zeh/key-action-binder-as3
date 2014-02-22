@@ -1,5 +1,7 @@
 # Using KeyActionBinder
 
+This is a guide to the common uses of KeyActionBinder. For a full reference of available functions, methods and properties, refer to the [reference list](REFERENCE.md).
+
 ## Basic setup
 
 In KeyActionBinder, you evaluate your own arbitrary "actions" instead of specific keys or controls.

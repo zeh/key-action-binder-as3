@@ -88,7 +88,7 @@ myBinder.addKeyboardActionBinding("boost", Keyboard.SHIFT, KeyLocation.LEFT);
 </pre>
 
 #### See also
- flash.ui.Keyboard
+ * [flash.ui.Keyboard](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/ui/Keyboard.html)
 
 
 ### <a name="addGamepadActionBinding"></a>addGamepadActionBinding(action:String, controlId:String, gamepadIndex:int = -1):void
@@ -169,12 +169,21 @@ True if the action is currently activated (i.e., its button is pressed), false i
 
 #### Examples
 
-<pre>/ Moves player right when right is pressed/ Setup:
-myBinder.addGamepadActionBinding("move-right", GamepadControls.DPAD_RIGHT);/ In the game loop:
-if (myBinder.isActionActivated("move-right"))    player.moveRight();
+<pre>// Moves player right when right is pressed
+// Setup:
+myBinder.addGamepadActionBinding("move-right", GamepadControls.DPAD_RIGHT);
+// In the game loop:
+if (myBinder.isActionActivated("move-right")) {
+	player.moveRight();
 }
-/ Check if a jump was activated (includes just before falling, for a more user-friendly control):
-if (isTouchingSurface && myBinder.isActionActivated("jump"), 0.1)    player.performJump();
+</pre>
+<pre>
+// Check if a jump was activated (includes just before falling, for a more user-friendly control)
+// Setup:
+myBinder.addGamepadActionBinding("jump", GamepadControls.ACTION_DOWN);
+// In the game loop:
+if (isTouchingSurface && myBinder.isActionActivated("jump"), 0.1)) {
+	player.performJump();
 }
 </pre>
 
@@ -195,8 +204,9 @@ Consumes an action, causing all current activations and values attached to it to
 
 #### Examples
 
-<pre>// On jump, consume the jump
-if (isTouchingSurface && myBinder.isActionActivated("jump"))    myBinder.consumeAction("jump");
+<pre>// On jump, consume the jump to avoid constant jumping
+if (isTouchingSurface && myBinder.isActionActivated("jump")) {
+	myBinder.consumeAction("jump");
     player.performJump();
 }
 </pre>
