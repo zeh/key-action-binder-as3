@@ -232,21 +232,39 @@ package com.zehfernando.input.binding {
 
 		private function refreshGameInputDeviceList():void {
 			// The list of game devices has changed
-			removeGameInputDeviceEvents();
-			addGameInputDeviceEvents();
 
-			// Create a list of devices for easy identification
+			// Check if there was any actual change to the list
+			// This is necessary because some versions of Flash keep firing the changed event every second (Windows 7 + Firefox using Flash Player 12.0.0.44)
 			var i:int;
+			var hasChanged:Boolean = false;
 
-			gameInputDevices = new Vector.<GameInputDevice>();
-			gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>();
-			for (i = 0; i < GameInput.numDevices; i++) {
-				gameInputDevices.push(GameInput.getDeviceAt(i));
-				gameInputDeviceDefinitions.push(findGamepadInfo(gameInputDevices[i]));
+			if ((gameInputDevices == null && GameInput.numDevices > 0) || (gameInputDevices != null && GameInput.numDevices != gameInputDevices.length)) {
+				hasChanged = true;
+			} else {
+				for (i = 0; i < GameInput.numDevices; i++) {
+					if (gameInputDevices[i] != GameInput.getDeviceAt(i)) {
+						hasChanged = true;
+						break;
+					}
+				}
 			}
 
-			// Dispatch the signal
-			_onDevicesChanged.dispatch();
+			if (hasChanged) {
+				// List has actually changed
+				removeGameInputDeviceEvents();
+				addGameInputDeviceEvents();
+
+				// Create a list of devices for easy identification
+				gameInputDevices = new Vector.<GameInputDevice>();
+				gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>();
+				for (i = 0; i < GameInput.numDevices; i++) {
+					gameInputDevices.push(GameInput.getDeviceAt(i));
+					gameInputDeviceDefinitions.push(findGamepadInfo(gameInputDevices[i]));
+				}
+
+				// Dispatch the signal
+				_onDevicesChanged.dispatch();
+			}
 		}
 
 		private function findGamepadInfo(__gameInputDevice:GameInputDevice):AutoGamepadInfo {
