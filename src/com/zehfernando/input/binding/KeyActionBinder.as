@@ -58,6 +58,17 @@ package com.zehfernando.input.binding {
 		// ================================================================================================================
 		// STATIC CONSTRUCTOR ---------------------------------------------------------------------------------------------
 
+		/**
+		 * Initializes the KeyActionBinder class. This is necessary to allocate global references needed by
+		 * KeyActionBinder instances.
+		 *
+		 * <p>Due to bugs in Flash's GameInput API (especially on OUYA and Android), this initialization should be
+		 * done in the first frame of your SWF, preferably in the root class of your movie.</p>
+		 *
+		 * @param stage		Flash's global stage, used for adding event listeners.
+		 *
+		 * @see #KeyActionBinder()
+		 */
 		public static function init(__stage:Stage):void  {
 			stage = __stage;
 
@@ -184,6 +195,15 @@ package com.zehfernando.input.binding {
 		// ================================================================================================================
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
+		/**
+		 * Create a new KeyActionBinder instance.
+		 *
+		 * <p>Each instance has its own input bindings and actions.</p>
+		 *
+		 * <p>More than one KeyActionBinder instance can exist and be active at the same time.</p>
+		 *
+		 * @see #init()
+		 */
 		public function KeyActionBinder() {
 			_alwaysPreventDefault = true;
 			_maintainPlayerPositions = false;
@@ -840,6 +860,57 @@ package com.zehfernando.input.binding {
 			return _onDevicesChanged;
 		}
 
+		/**
+		 * Toggles whether KeyActionBinder tries to maintain the player positions based on unique device ids.
+		 *
+		 * <p>When this is set to false, the list of connected devices (via <code>getNumDevices()</code> and others) will
+		 * always reflect Flash's list of GameInput devices. This means that the connected gamepad devices can get
+		 * shuffled around when a device is added or removed, and potentially cause players to have their gamepads
+		 * swapped.</p>
+		 *
+		 * <p>When this is true, the class uses device ids to try and maintain a consistent list of devices, without
+		 * shuffling them around. This has several implications, both positive and negative:</p>
+		 *
+		 * <p>* A removed device will continue to exist in the list (as a null device), unless it's the last device listed</p>
+		 * <p>* An added will try to be re-added to its previously existing position, if one can be found</p>
+		 * <p>* If a previously existing position cannot be found, the device takes the first available position (first
+		 * null position, or at the end of the list if none is found)</p>
+		 *
+		 * <p>In general, you should set this option before gameplay starts.</p>
+		 *
+		 * <p>If you set this to <code>false</code> after it was set to <code>true</code>, it will cause a gamepad refresh, potentially shuffling
+		 * player positions around if a null device is currently listed.</p>
+		 *
+		 * <p>Default is false.</p>
+		 *
+		 * <p>Examples:</p>
+		 *
+		 * <pre>
+		 * // Test 1
+		 * binder.maintainPlayerPositions = false;
+		 *
+		 * // Add controller XBOX1; List is [XBOX1]
+		 * // Add controller XBOX2; List is [XBOX1, XBOX2]
+		 * // Remove controller XBOX1; List is [XBOX2]
+		 * // Add controller XBOX1; List is [XBOX2, XBOX1]
+		 * // Remove controller XBOX2; List is [XBOX1]
+		 * // Remove controller XBOX1; List is []
+		 *
+		 * // Test 2
+		 * binder.maintainPlayerPositions = true;
+		 *
+		 * // Add controller XBOX1; List is [XBOX1]
+		 * // Add controller XBOX2; List is [XBOX1, XBOX2]
+		 * // Remove controller XBOX1; List is [null, XBOX2]
+		 * // Add controller XBOX1; List is [XBOX1, XBOX2]
+		 * // Remove controller XBOX2; List is [XBOX1]
+		 * // Remove controller XBOX1; List is []
+		 * </pre>
+		 *
+		 * @see #getNumDevices()
+		 * @see #getDeviceAt()
+		 * @see #getDeviceTypeAt()
+		 */
 		public function get maintainPlayerPositions():Boolean {
 			return _maintainPlayerPositions;
 		}
@@ -850,6 +921,12 @@ package com.zehfernando.input.binding {
 			}
 		}
 
+		/**
+		 * Whether this KeyActionBinder instance is running, or not. This property is read-only.
+		 *
+		 * @see #start()
+		 * @see #stop()
+		 */
 		public function get isRunning():Boolean {
 			return _isRunning;
 		}
@@ -858,6 +935,16 @@ package com.zehfernando.input.binding {
 			return _alwaysPreventDefault;
 		}
 
+		/**
+		 * Whether to run <code>preventDefault()</code> on Keyboard events or not.
+		 *
+		 * <p>When this is set to <code>false</code>, KeyActionBinder doesn't try stopping the propagation of
+		 * standard Keyboard behavior. In general, this is a bad idea, as certain keys (such as A on the OUYA)
+		 * tend to trigger a <code>Keyboard.BACK</code> key event, potentially closing your application. Only
+		 * set this to <code>false</code> if you are handling Keyboard events in your own code.</p>
+		 *
+		 * <p>Default is true.</p>
+		 */
 		public function set alwaysPreventDefault(__value:Boolean):void {
 			// TODO: this is a dumb getter/setter just for ASDocs reasons
 			_alwaysPreventDefault = __value;
@@ -866,20 +953,50 @@ package com.zehfernando.input.binding {
 		/**
 		 * Returns the number of devices currently connected, regardless of whether they're valid or not.
 		 *
+		 * @see #maintainPlayerPositions
 		 * @see #getDeviceAt()
+		 * @see #getDeviceTypeAt()
 		 */
 		public function getNumDevices():uint {
 			return gameInputDevices.length;
 		}
 
+		/**
+		 * Returns the <code>GameInputDevice</code> associated with a player index, if any.
+		 *
+		 * <p>The value returned from this function can be <code>null</code>, especially if <code>maintainPlayerPositions</code>
+		 * is set to <code>true</code> and the index refers to a gamepad that has been removed.</p>
+		 *
+		 * @see #maintainPlayerPositions
+		 * @see #getNumDevices()
+		 * @see #getDeviceTypeAt()
+		 */
 		public function getDeviceAt(__index:uint):GameInputDevice {
 			return gameInputDevices.length > __index && gameInputDevices[__index] != null ? gameInputDevices[__index] : null;
 		}
 
+		/**
+		 * Returns the built-in id of the gamepad type at a certain position.
+		 *
+		 * <p>The value returned from this function can be <code>null</code> if <code>maintainPlayerPositions</code>
+		 * is set to <code>true</code> and the index refers to a gamepad that has been removed, or if the gamepad at that
+		 * location has not been properly identified by KeyActionBinder.</p>
+		 *
+		 * <p>Check the controllers.json file for a list of supported gamepads, and their ids.</p>
+		 *
+		 * @see #maintainPlayerPositions
+		 * @see #getNumDevices()
+		 * @see #getDeviceAt()
+		 */
 		public function getDeviceTypeAt(__index:uint):String {
 			return gameInputDeviceDefinitions.length > __index && gameInputDeviceDefinitions[__index] != null ? gameInputDeviceDefinitions[__index].getType() : null;
 		}
 
+		/**
+		 * Returns the current identified platform. This is a list of strings that can contain more than one platform id.
+		 *
+		 * <p>Check the controllers.json file for a list of supported platforms, and their ids.</p>
+		 */
 		public function getPlatformTypes():Vector.<String> {
 			var platforms:Vector.<String> = new Vector.<String>();
 			for (var i:int = 0; i < knownGamepadPlatforms.length; i++) {
