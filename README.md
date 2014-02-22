@@ -4,7 +4,7 @@ KeyActionBinder tries to provide universal game input control for both keyboard 
 
 While Adobe Flash already provides all the means for using keyboard and game input (via [KeyboardEvent](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/events/KeyboardEvent.html) and [GameInput](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/ui/GameInput.html)), KeyActionBinder tries to abstract those classes behind a straightforward, higher-level interface. It is meant to be simple but powerful, while solving some of the most common pitfalls involved with player input in AS3 games.
 
-[Using KeyActionBinder](GUIDE.md) — [Reference/docs](REFERENCE.md) — [Version Changelog](CHANGELOG.md) — [List of supported devices](SUPPORT.md) — [Contribute to the project](CONTRIBUTE.md)
+[Using KeyActionBinder](GUIDE.md) — [Reference](REFERENCE.md) — [Version Changelog](CHANGELOG.md) — [Supported devices](SUPPORT.md) — [Contribute](CONTRIBUTE.md)
 
 
 ## Goals

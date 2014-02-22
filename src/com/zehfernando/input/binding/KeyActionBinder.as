@@ -35,6 +35,7 @@ package com.zehfernando.input.binding {
 		// Properties
 		private var _isRunning:Boolean;
 		private var _alwaysPreventDefault:Boolean;						// If true, prevent action by other keys all the time (e.g. menu key)
+		private var _maintainPlayerPositions:Boolean;					// Whether it tries to keep player positions or not
 
 		// Instances
 		private var bindings:Vector.<BindingInfo>;						// Actual existing bindings, their action, and whether they're activated or not
@@ -46,6 +47,7 @@ package com.zehfernando.input.binding {
 		private var _onDevicesChanged:SimpleSignal;
 
 		private var gameInputDevices:Vector.<GameInputDevice>;
+		private var gameInputDeviceIds:Vector.<String>;
 		private var gameInputDeviceDefinitions:Vector.<AutoGamepadInfo>;
 
 		private static var gameInput:GameInput;
@@ -184,6 +186,7 @@ package com.zehfernando.input.binding {
 
 		public function KeyActionBinder() {
 			_alwaysPreventDefault = true;
+			_maintainPlayerPositions = false;
 			bindings = new Vector.<BindingInfo>();
 			actionsActivations = {};
 
@@ -254,12 +257,95 @@ package com.zehfernando.input.binding {
 				removeGameInputDeviceEvents();
 				addGameInputDeviceEvents();
 
-				// Create a list of devices for easy identification
-				gameInputDevices = new Vector.<GameInputDevice>();
-				gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>();
-				for (i = 0; i < GameInput.numDevices; i++) {
-					gameInputDevices.push(GameInput.getDeviceAt(i));
-					gameInputDeviceDefinitions.push(findGamepadInfo(gameInputDevices[i]));
+				if (_maintainPlayerPositions && gameInputDeviceIds != null) {
+					// Will try to maintain player positions:
+					// * A removed device will continue to exist in the list (as a null device), unless it's the latest device
+					// * An added device will try to be added to its previously existing position, if one can be found
+					// * If a previously existing position cannot be found, the device takes the first available position
+
+					var gamepadPosition:int;
+
+					// Creates a list of all the new ids
+					var newGamepadIds:Vector.<String> = new Vector.<String>();
+					var newGamepads:Vector.<GameInputDevice> = new Vector.<GameInputDevice>();
+					for (i = 0; i < GameInput.numDevices; i++) {
+						if (GameInput.getDeviceAt(i) != null) {
+							newGamepadIds.push(GameInput.getDeviceAt(i).id);
+							newGamepads.push(GameInput.getDeviceAt(i));
+						}
+					}
+
+					// Create a list of available slots for insertion
+					var availableSlots:Vector.<int> = new Vector.<int>();
+
+					// First, check for removed items
+					// Goes backward, so it can remove items from the list
+					var isEndPure:Boolean = true;
+					i = gameInputDeviceIds.length-1;
+					while (i >= 0) {
+						gamepadPosition = newGamepadIds.indexOf(gameInputDeviceIds[i]);
+						if (gamepadPosition < 0) {
+							// This device id doesn't exist in the new list, therefore it's removed
+							if (isEndPure) {
+								// But since it's in the end of the list, actually remove it
+								gameInputDeviceIds.splice(i, 1);
+							} else {
+								// It's in the middle of the list, so just mark that spot as available
+								availableSlots.push(i);
+							}
+						} else {
+							// This device id exists in the list, so ignore and assume it's not in the end anymore
+							isEndPure = false;
+						}
+						i--;
+					}
+
+					// Now, add new items that are not in the list
+					for (i = 0; i < newGamepadIds.length; i++) {
+						gamepadPosition = gameInputDeviceIds.indexOf(newGamepadIds[i]);
+						if (gamepadPosition < 0) {
+							// This gamepad is not in the list, so add it
+							if (availableSlots.length > 0) {
+								// Add it in the first available slot
+								gameInputDeviceIds.push(newGamepadIds[availableSlots[0]]);
+								availableSlots.splice(0, 1);
+							} else {
+								// No more slots availabloe, add it at the end
+								gameInputDeviceIds.push(newGamepadIds[i]);
+							}
+						}
+					}
+
+					// Now that gameInputDeviceIds is correct, just create the list of references
+					gameInputDevices = new Vector.<GameInputDevice>(gameInputDeviceIds.length);
+					gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>(gameInputDeviceIds.length);
+					for (i = 0; i < gameInputDeviceIds.length; i++) {
+						gamepadPosition = newGamepadIds.indexOf(gameInputDeviceIds[i]);
+						if (gamepadPosition < 0) {
+							// A spot for a gamepad that was just removed
+							gameInputDevices[i] = null;
+							gameInputDeviceDefinitions[i] = null;
+						} else {
+							// A normal game input device
+							gameInputDevices[i] = newGamepads[gamepadPosition];
+							gameInputDeviceDefinitions[i] = findGamepadInfo(newGamepads[gamepadPosition]);
+						}
+					}
+				} else {
+					// Full refresh: create a new list of devices
+					gameInputDevices = new Vector.<GameInputDevice>();
+					gameInputDeviceIds = new Vector.<String>();
+					gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>();
+					for (i = 0; i < GameInput.numDevices; i++) {
+						gameInputDevices.push(GameInput.getDeviceAt(i));
+						if (gameInputDevices[i] != null) {
+							gameInputDeviceIds.push(gameInputDevices[i].id);
+							gameInputDeviceDefinitions.push(findGamepadInfo(gameInputDevices[i]));
+						} else {
+							gameInputDeviceIds.push(null);
+							gameInputDeviceDefinitions.push(null);
+						}
+					}
 				}
 
 				// Dispatch the signal
@@ -373,6 +459,7 @@ package com.zehfernando.input.binding {
 			}
 		}
 
+		// Aux functions
 		private function map(__value:Number, __oldMin:Number, __oldMax:Number, __newMin:Number = 0, __newMax:Number = 1, __clamp:Boolean = false):Number {
 			// Same as map, but without allocations
 			if (__oldMin == __oldMax) return __newMin;
@@ -384,6 +471,7 @@ package com.zehfernando.input.binding {
 		private function clamp(__value:Number, __min:Number = 0, __max:Number = 1):Number {
 			return __value < __min ? __min : __value > __max ? __max : __value;
 		}
+
 
 		// ================================================================================================================
 		// EVENT INTERFACE ------------------------------------------------------------------------------------------------
@@ -629,7 +717,6 @@ package com.zehfernando.input.binding {
 		.*
 		 * // Direction pad left to move left or right
 		 * myBinder.addGamepadActionBinding("move-sides", GamepadControls.STICK_LEFT_X);
-		 *
 		 * </pre>
 		 *
 		 * @see GamepadControls
@@ -753,6 +840,16 @@ package com.zehfernando.input.binding {
 			return _onDevicesChanged;
 		}
 
+		public function get maintainPlayerPositions():Boolean {
+			return _maintainPlayerPositions;
+		}
+		public function set maintainPlayerPositions(__value:Boolean):void {
+			if (_maintainPlayerPositions != __value) {
+				_maintainPlayerPositions = __value;
+				if (!_maintainPlayerPositions) refreshGameInputDeviceList();
+			}
+		}
+
 		public function get isRunning():Boolean {
 			return _isRunning;
 		}
@@ -766,6 +863,11 @@ package com.zehfernando.input.binding {
 			_alwaysPreventDefault = __value;
 		}
 
+		/**
+		 * Returns the number of devices currently connected, regardless of whether they're valid or not.
+		 *
+		 * @see #getDeviceAt()
+		 */
 		public function getNumDevices():uint {
 			return gameInputDevices.length;
 		}

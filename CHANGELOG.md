@@ -2,6 +2,7 @@
 
 Below is a list of all significant changes done to KeyActionBinder. Versions with links are assumed to be stable versions, and are [tagged in Git](https://github.com/zeh/key-action-binder/releases).
 
+ * 2014-02-22 - 1.8.5 - Added an option to maintain the "player" seat based on controller id (`maintainPlayerPositions`)
  * 2014-02-16 - 1.7.5 - Added support for device detection via signals (onDevicesChanged) and device info getters (getNumDevices(), getDeviceAt(), and getDeviceTypeAt())
  * 2014-02-16 - 1.6.5 - Removed distinction between "sensitive" and normal controls; everything is a sensitive control
  * 2014-02-16 - [1.5.5](http://github.com/zeh/key-action-binder/releases/tag/1.5.5) - When a device is not recognized, just fail with a trace() message rather than crash
