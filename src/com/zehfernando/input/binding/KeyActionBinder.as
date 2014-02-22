@@ -665,7 +665,7 @@ package com.zehfernando.input.binding {
 		}
 
 		/**
-		 * Add an action bound to a keyboard key. When a key with the given <code>keyCode</code> is pressed, the
+		 * Adds an action bound to a keyboard key. When a key with the given <code>keyCode</code> is pressed, the
 		 * desired action is activated. Optionally, keys can be restricted to a specific <code>keyLocation</code>.
 		 *
 		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
@@ -702,7 +702,7 @@ package com.zehfernando.input.binding {
 		}
 
 		/**
-		 * Add an action bound to a game controller button, trigger, or axis. When a control of id
+		 * Adds an action bound to a game controller button, trigger, or axis. When a control of id
 		 * <code>controlId</code> is pressed, the desired action can be activated, and its value changes.
 		 * Optionally, keys can be restricted to a specific game controller location.
 		 *
@@ -714,6 +714,7 @@ package com.zehfernando.input.binding {
 		 *						first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or
 		 *						<code>NaN</code> is passed, the gamepad index is never taken into consideration
 		 *						when detecting whether the passed action should be fired.
+		 *
 		 * <p>Examples:</p>
 		 *
 		 * <pre>
@@ -881,7 +882,7 @@ package com.zehfernando.input.binding {
 		 * <p>If you set this to <code>false</code> after it was set to <code>true</code>, it will cause a gamepad refresh, potentially shuffling
 		 * player positions around if a null device is currently listed.</p>
 		 *
-		 * <p>Default is false.</p>
+		 * <p>The default is <code>false</code>.</p>
 		 *
 		 * <p>Examples:</p>
 		 *
@@ -943,7 +944,7 @@ package com.zehfernando.input.binding {
 		 * tend to trigger a <code>Keyboard.BACK</code> key event, potentially closing your application. Only
 		 * set this to <code>false</code> if you are handling Keyboard events in your own code.</p>
 		 *
-		 * <p>Default is true.</p>
+		 * <p>The default is <code>true</code>.</p>
 		 */
 		public function set alwaysPreventDefault(__value:Boolean):void {
 			// TODO: this is a dumb getter/setter just for ASDocs reasons
