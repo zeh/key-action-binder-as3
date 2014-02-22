@@ -269,9 +269,10 @@ To contribute with code, fixes, additions, or even new key mappings added direct
 
 In case of problems with KeyActionBinder... know that Flash's GameInput API is still severely ridden with bugs. You may run into some of them. Here's some more information.
 
-* [Supported devices are not detected properly when added or removed](https://bugbase.adobe.com/index.cfm?event=bug&id=3709110): no workaround
-* [Using GameInput add Timer overhead every second in Windows](http://forums.adobe.com/message/6129689#6129689): no workaround
-* [GameInput devices simply stop working when running on Android/OUYA](http://forums.adobe.com/message/6033965): need to initialize things in the first frame of SWF
+* Supported devices are not detected properly when added or removed ([Bug #3709110](https://bugbase.adobe.com/index.cfm?event=bug&id=3709110)): no workaround
+* [Using GameInput add Timer overhead every second in Windows](http://forums.adobe.com/message/6129689#6129689) ([Bug #3660823](https://bugbase.adobe.com/index.cfm?event=bug&id=3660823)): no workaround
+* [GameInput devices simply stop working when running on Android/OUYA](http://forums.adobe.com/message/6033965): need to initialize things in the first frame of SWF (fixed in [AIR 13.0.0.36/Flash Player 13.0.0.130](http://forums.adobe.com/thread/1411911?tstart=0)?)
+* Quick button presses may not be properly detected on Macs ([Bug #3702039](https://bugbase.adobe.com/index.cfm?event=bug&id=3702039)): no workaround (need to test sampling rate changes and if button activation can always be assumed from the up event)
 
 I'll remove items from the list when they're fixed.
 
