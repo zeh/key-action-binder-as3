@@ -22,7 +22,7 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Constants
-		public static const VERSION:String = "1.8.5";
+		public static const VERSION:String = "1.8.6";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
@@ -518,11 +518,13 @@ package com.zehfernando.input.binding {
 
 			// Check all current game input devices for a key injection definition that matches
 			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
-				for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
-					if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
-						// This key's code and location matches the pressed key, inject the press event
-						interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].max, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
-						return;
+				if (gameInputDeviceDefinitions[i] != null) {
+					for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
+						if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
+							// This key's code and location matches the pressed key, inject the press event
+							interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].max, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
+							return;
+						}
 					}
 				}
 			}
@@ -547,11 +549,13 @@ package com.zehfernando.input.binding {
 
 			// Check all current game input devices for a key injection definition that matches
 			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
-				for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
-					if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
-						// This key's code and location matches the pressed key, inject the release event
-						interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
-						return;
+				if (gameInputDeviceDefinitions[i] != null) {
+					for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
+						if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
+							// This key's code and location matches the pressed key, inject the release event
+							interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
+							return;
+						}
 					}
 				}
 			}

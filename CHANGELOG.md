@@ -2,6 +2,7 @@
 
 Below is a list of all significant changes done to KeyActionBinder. Versions with links are assumed to be stable versions, and are [tagged in Git](https://github.com/zeh/key-action-binder/releases).
 
+ * 2014-02-23 - 1.8.6 - Fixed Keyboard input events when `null` controllers are present (when `maintainPlayerPositions` is set to `true`)
  * 2014-02-22 - [1.8.5](http://github.com/zeh/key-action-binder/releases/tag/1.8.5) - Added an option to maintain the "player" seat based on controller id (`maintainPlayerPositions`)
  * 2014-02-16 - 1.7.5 - Added support for device detection via signals (onDevicesChanged) and device info getters (getNumDevices(), getDeviceAt(), and getDeviceTypeAt())
  * 2014-02-16 - 1.6.5 - Removed distinction between "sensitive" and normal controls; everything is a sensitive control
@@ -17,6 +18,12 @@ Below is a list of all significant changes done to KeyActionBinder. Versions wit
  * 2013-10-08 - 1.1.0 - Completely revamped the control scheme by using "auto" controls for cross-platform operation
  * 2013-10-08 - 1.0.0 - First version to have a version number
 
-Check [the commit history](https://github.com/zeh/key-action-binder/commits) for a more in-depth list.
+Check [the commit history](https://github.com/zeh/key-action-binder/commits) for a more in-depth list of changes.
 
 The list above also excludes additions of device mappings; check [the history for controllers.json](https://github.com/zeh/key-action-binder/commits/master/src/com/zehfernando/input/binding/controllers.json) for a list of changes and additions.
+
+Please not that starting with 1.8.6, the versioning number system used by KeyActionBinder follows the [semantic versioning specification](http://semver.org/). This means that:
+
+ * The MAJOR version number changes when there are incompatible API changes
+ * The MINOR version number changes when new functionality is added in a backwards-compatible manner
+ * The PATCH version number changes when backwards-compatible bug fixes are applied

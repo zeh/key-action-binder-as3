@@ -281,19 +281,19 @@ Todo...
 
 ### <a name="maintainPlayerPositions"></a>maintainPlayerPositions:Boolean
 
-Toggles whether KeyActionBinder tries to maintain the player index positions based on unique device ids.
+Toggles whether KeyActionBinder tries to maintain each player's gamepad index based on the unique id of each device.
 
-When this is set to `false`, the list of connected devices (via `getNumDevices()` and others) will always reflect Flash's list of connected GameInput devices. This means that the connected gamepads can get shuffled around when a device is added or removed, potentially causing players to have their gamepads switched around.
+When this is set to `false`, the list of connected devices (via `getNumDevices()` and others) will always reflect Flash's list of connected GameInputDevices. This means that the connected gamepads can be shuffled around when a device is added or removed, potentially causing players on a multi-player game to have their respective gamepad references swapped.
 
-When this is set to `true`, the class uses the device ids to try and maintain a consistent list of devices (without shuffling them around). This has several implications, both positive and negative:
+When this is set to `true`, KeyActionBinder uses the device ids to keep a more consistent list of devices, avoiding shuffling them around. This has several implications:
 
-* A removed device will continue to exist in the list (as a null device), unless it's the last device listed
-* An added device will try to be re-added to its previously existing position, if one can be found
-* If a previously existing position cannot be found, the device takes the first available position (first null position, or at the end of the list if none is found)
+* When removed, a device will continue to exist in the list as a `null` device (unless it's the last device in the GameInputDevice list, in which case it gets removed entirely)
+* An added device will try to be re-added to its previously existing position, if one can be found (that is, if it was present before and then removed)
+* If a previously existing position cannot be found for a new device, the device takes the first available (`null`) position if one can be found, or is added to the end of the list of devices otherwise
 
 In general, you should set this option before gameplay starts.
 
-If you set this to `false` after it was set to `true`, it will cause a refresh of the gamepad order, potentially shuffling player positions around if a null device was listed before.
+If you set this to `false` after it was set to `true`, it will cause a refresh of the gamepad order, potentially shuffling player positions around if devices were added or removed previously.
 
 The default is `false`.
 
