@@ -805,6 +805,9 @@ package com.zehfernando.input.binding {
 		 * }
 		 *
 		 * // Check if a jump was activated (includes just before falling, for a more user-friendly control):
+		 * // Setup:
+		 * myBinder.addGamepadActionBinding("jump", GamepadControls.ACTION_DOWN);
+		 * // In the game loop:
 		 * if (isTouchingSurface && myBinder.isActionActivated("jump"), 0.1) {
 		 *     player.performJump();
 		 * }
@@ -812,8 +815,8 @@ package com.zehfernando.input.binding {
 		 *
 		 * @see GamepadControls
 		 * @see #addGamepadActionBinding()
-		 * @see http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/
 		 * @see #getActionValue()
+		 * @see http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/
 		 */
 		public function isActionActivated(__action:String, __timeToleranceSeconds:Number = 0, __gamepadIndex:int = -1):Boolean {
 			return actionsActivations.hasOwnProperty(__action) && (actionsActivations[__action] as ActivationInfo).getNumActivations(__timeToleranceSeconds, __gamepadIndex) > 0;
@@ -866,25 +869,28 @@ package com.zehfernando.input.binding {
 		}
 
 		/**
-		 * Toggles whether KeyActionBinder tries to maintain the player positions based on unique device ids.
+		 * Toggles whether KeyActionBinder tries to maintain each player's gamepad index based on the unique id of each
+		 * device.
 		 *
-		 * <p>When this is set to false, the list of connected devices (via <code>getNumDevices()</code> and others) will
-		 * always reflect Flash's list of GameInput devices. This means that the connected gamepad devices can get
-		 * shuffled around when a device is added or removed, and potentially cause players to have their gamepads
-		 * swapped.</p>
+		 * <p>When this is set to <code>false</code>, the list of connected devices (via <code>getNumDevices()</code>
+		 * and others) will always reflect Flash's list of connected GameInputDevices. This means that the connected
+		 * gamepads can be shuffled around when a device is added or removed, potentially causing players on a
+		 * multi-player game to have their respective gamepad references swapped.</p>
 		 *
-		 * <p>When this is true, the class uses device ids to try and maintain a consistent list of devices, without
-		 * shuffling them around. This has several implications, both positive and negative:</p>
+		 * <p>When this is set to <code>true</code>, KeyActionBinder uses the device ids to keep a more consistent list
+		 * of devices, avoiding shuffling them around. This has several implications:</p>
 		 *
-		 * <p>* A removed device will continue to exist in the list (as a null device), unless it's the last device listed</p>
-		 * <p>* An added will try to be re-added to its previously existing position, if one can be found</p>
-		 * <p>* If a previously existing position cannot be found, the device takes the first available position (first
-		 * null position, or at the end of the list if none is found)</p>
+		 * <p> * When removed, a device will continue to exist in the list as a <code>null</code> device (unless it's
+		 * the last device in the GameInputDevice list, in which case it gets removed entirely)</p>
+		 * <p> * An added device will try to be re-added to its previously existing position, if one can be found (that
+		 * is, if it was present before and then removed)</p>
+		 * <p> * If a previously existing position cannot be found for a new device, the device takes the first available
+		 * (<code>null</code>) position if one can be found, or is added to the end of the list of devices otherwise</p>
 		 *
-		 * <p>In general, you should set this option before gameplay starts.</p>
+		 * <p>In general, you should set the value of this property before gameplay starts.</p>
 		 *
-		 * <p>If you set this to <code>false</code> after it was set to <code>true</code>, it will cause a gamepad refresh, potentially shuffling
-		 * player positions around if a null device is currently listed.</p>
+		 * <p>If you set this to <code>false</code> after it was set to <code>true</code>, it will cause a refresh of
+		 * the gamepad order, potentially shuffling player positions around if devices were added or removed previously.</p>
 		 *
 		 * <p>The default is <code>false</code>.</p>
 		 *
@@ -936,10 +942,6 @@ package com.zehfernando.input.binding {
 			return _isRunning;
 		}
 
-		public function get alwaysPreventDefault():Boolean {
-			return _alwaysPreventDefault;
-		}
-
 		/**
 		 * Whether to run <code>preventDefault()</code> on Keyboard events or not.
 		 *
@@ -950,6 +952,9 @@ package com.zehfernando.input.binding {
 		 *
 		 * <p>The default is <code>true</code>.</p>
 		 */
+		public function get alwaysPreventDefault():Boolean {
+			return _alwaysPreventDefault;
+		}
 		public function set alwaysPreventDefault(__value:Boolean):void {
 			// TODO: this is a dumb getter/setter just for ASDocs reasons
 			_alwaysPreventDefault = __value;
