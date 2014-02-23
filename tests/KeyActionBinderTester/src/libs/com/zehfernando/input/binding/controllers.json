@@ -222,37 +222,31 @@ Filters don't take wildcards/regex into account, but it's a simple case sensitiv
 				},
 				"ps4" : {
 					"filters" : {
-						"name"			: ["Wireless Controller"]
+						"name"			: ["Vendor: 054c Product: 05c4"]
 					},
 					"controls" : {
 						"AXIS_0"		: {"target" : "stick_left_x",			"min" : -1,		"max" : 1},
 						"AXIS_1"		: {"target" : "stick_left_y",			"min" : -1,		"max" : 1},
 						"AXIS_2"		: {"target" : "stick_right_x",			"min" : -1,		"max" : 1},
-						"AXIS_3"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
-						"AXIS_4"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
-						"AXIS_5"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
-						"BUTTON_6"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
-						"BUTTON_7"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
-						"BUTTON_8"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
-						"BUTTON_9"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1},
-						"BUTTON_10"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
-						"BUTTON_11"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
-						"BUTTON_12"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
-						"BUTTON_13"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
-						"BUTTON_14"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
-						"BUTTON_15"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
-						"BUTTON_18"		: {"target" : "meta_share",				"min" : 0,		"max" : 1},
-						"BUTTON_19"		: {"target" : "meta_options",			"min" : 0,		"max" : 1},
-						"BUTTON_20"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
-						"BUTTON_21"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
-						"BUTTON_22"		: {"target" : "meta_menu",				"min" : 0,		"max" : 1},
-						"BUTTON_23"		: {"target" : "meta_trackpad",			"min" : 0,		"max" : 1}
-
-						/*
-						Ignored:
-						"BUTTON_16"	(left_trigger, 0 -> 1) (using analog instead)
-						"BUTTON_17"	(right_trigger, 0 -> 1) (using analog instead)
-						*/
+						"AXIS_3"		: {"target" : "stick_right_y",			"min" : -1,		"max" : 1},
+						"BUTTON_4"		: {"target" : "action_down",			"min" : 0,		"max" : 1},
+						"BUTTON_5"		: {"target" : "action_right",			"min" : 0,		"max" : 1},
+						"BUTTON_6"		: {"target" : "action_left",			"min" : 0,		"max" : 1},
+						"BUTTON_7"		: {"target" : "action_up",				"min" : 0,		"max" : 1},
+						"BUTTON_8"		: {"target" : "left_button",			"min" : 0,		"max" : 1},
+						"BUTTON_9"		: {"target" : "right_button",			"min" : 0,		"max" : 1},
+						"BUTTON_10"		: {"target" : "left_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_11"		: {"target" : "right_trigger",			"min" : 0,		"max" : 1},
+						"BUTTON_12"		: {"target" : "meta_share",				"min" : 0,		"max" : 1},
+						"BUTTON_13"		: {"target" : "meta_options",			"min" : 0,		"max" : 1},
+						"BUTTON_14"		: {"target" : "stick_left_press",		"min" : 0,		"max" : 1},
+						"BUTTON_15"		: {"target" : "stick_right_press",		"min" : 0,		"max" : 1},
+						"BUTTON_16"		: {"target" : "dpad_up",				"min" : 0,		"max" : 1},
+						"BUTTON_17"		: {"target" : "dpad_down",				"min" : 0,		"max" : 1},
+						"BUTTON_18"		: {"target" : "dpad_left",				"min" : 0,		"max" : 1},
+						"BUTTON_19"		: {"target" : "dpad_right",				"min" : 0,		"max" : 1},
+						"BUTTON_20"		: {"target" : "meta_menu",				"min" : 0,		"max" : 1},
+						"BUTTON_21"		: {"target" : "meta_trackpad",			"min" : 0,		"max" : 1}
 					},
 					"keys" : [
 					]

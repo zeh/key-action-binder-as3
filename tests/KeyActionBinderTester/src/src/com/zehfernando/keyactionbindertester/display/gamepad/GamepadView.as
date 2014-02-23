@@ -35,6 +35,7 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 		private var container:Sprite;
 		private var shapeView:Sprite;
 		private var textName:TextSprite;
+		private var messageNull:MessageView;
 
 		public var buttonLB:RectButtonView;
 		public var buttonRB:RectButtonView;
@@ -239,6 +240,15 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 			textName.y = 0 - textName.height - 4;
 			container.addChild(textName);
 
+			if (__name == null) {
+				// No actual device
+				messageNull = new MessageView("NULL DEVICE\n\nSpot saved for a removed device");
+				addChild(messageNull);
+
+				container.alpha = 0.5;
+			}
+
+
 			// End
 			applyScale();
 		}
@@ -248,6 +258,11 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 
 		private function applyScale():void {
 			container.scaleX = container.scaleY = _scale;
+			if (messageNull != null) {
+				messageNull.scaleX = messageNull.scaleY = _scale;
+				messageNull.x = _width * 0.5 * _scale;
+				messageNull.y = _height * 0.5 * _scale;
+			}
 		}
 
 		// ================================================================================================================

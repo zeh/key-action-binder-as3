@@ -22,7 +22,7 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Constants
-		public static const VERSION:String = "1.7.5";
+		public static const VERSION:String = "1.8.6";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
@@ -35,6 +35,7 @@ package com.zehfernando.input.binding {
 		// Properties
 		private var _isRunning:Boolean;
 		private var _alwaysPreventDefault:Boolean;						// If true, prevent action by other keys all the time (e.g. menu key)
+		private var _maintainPlayerPositions:Boolean;					// Whether it tries to keep player positions or not
 
 		// Instances
 		private var bindings:Vector.<BindingInfo>;						// Actual existing bindings, their action, and whether they're activated or not
@@ -46,6 +47,7 @@ package com.zehfernando.input.binding {
 		private var _onDevicesChanged:SimpleSignal;
 
 		private var gameInputDevices:Vector.<GameInputDevice>;
+		private var gameInputDeviceIds:Vector.<String>;
 		private var gameInputDeviceDefinitions:Vector.<AutoGamepadInfo>;
 
 		private static var gameInput:GameInput;
@@ -56,6 +58,17 @@ package com.zehfernando.input.binding {
 		// ================================================================================================================
 		// STATIC CONSTRUCTOR ---------------------------------------------------------------------------------------------
 
+		/**
+		 * Initializes the KeyActionBinder class. This is necessary to allocate global references needed by
+		 * KeyActionBinder instances.
+		 *
+		 * <p>Due to bugs in Flash's GameInput API (especially on OUYA and Android), this initialization should be
+		 * done in the first frame of your SWF, preferably in the root class of your movie.</p>
+		 *
+		 * @param stage		Flash's global stage, used for adding event listeners.
+		 *
+		 * @see #KeyActionBinder()
+		 */
 		public static function init(__stage:Stage):void  {
 			stage = __stage;
 
@@ -182,8 +195,18 @@ package com.zehfernando.input.binding {
 		// ================================================================================================================
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
+		/**
+		 * Create a new KeyActionBinder instance.
+		 *
+		 * <p>Each instance has its own input bindings and actions.</p>
+		 *
+		 * <p>More than one KeyActionBinder instance can exist and be active at the same time.</p>
+		 *
+		 * @see #init()
+		 */
 		public function KeyActionBinder() {
 			_alwaysPreventDefault = true;
+			_maintainPlayerPositions = false;
 			bindings = new Vector.<BindingInfo>();
 			actionsActivations = {};
 
@@ -232,21 +255,122 @@ package com.zehfernando.input.binding {
 
 		private function refreshGameInputDeviceList():void {
 			// The list of game devices has changed
-			removeGameInputDeviceEvents();
-			addGameInputDeviceEvents();
 
-			// Create a list of devices for easy identification
+			// Check if there was any actual change to the list
+			// This is necessary because some versions of Flash keep firing the changed event every second (Windows 7 + Firefox using Flash Player 12.0.0.44)
 			var i:int;
+			var hasChanged:Boolean = false;
 
-			gameInputDevices = new Vector.<GameInputDevice>();
-			gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>();
-			for (i = 0; i < GameInput.numDevices; i++) {
-				gameInputDevices.push(GameInput.getDeviceAt(i));
-				gameInputDeviceDefinitions.push(findGamepadInfo(gameInputDevices[i]));
+			if ((gameInputDevices == null && GameInput.numDevices > 0) || (gameInputDevices != null && GameInput.numDevices != gameInputDevices.length)) {
+				hasChanged = true;
+			} else {
+				for (i = 0; i < GameInput.numDevices; i++) {
+					if (gameInputDevices[i] != GameInput.getDeviceAt(i)) {
+						hasChanged = true;
+						break;
+					}
+				}
 			}
 
-			// Dispatch the signal
-			_onDevicesChanged.dispatch();
+			if (hasChanged) {
+				// List has actually changed
+				removeGameInputDeviceEvents();
+				addGameInputDeviceEvents();
+
+				if (_maintainPlayerPositions && gameInputDeviceIds != null) {
+					// Will try to maintain player positions:
+					// * A removed device will continue to exist in the list (as a null device), unless it's the latest device
+					// * An added device will try to be added to its previously existing position, if one can be found
+					// * If a previously existing position cannot be found, the device takes the first available position
+
+					var gamepadPosition:int;
+
+					// Creates a list of all the new ids
+					var newGamepadIds:Vector.<String> = new Vector.<String>();
+					var newGamepads:Vector.<GameInputDevice> = new Vector.<GameInputDevice>();
+					for (i = 0; i < GameInput.numDevices; i++) {
+						if (GameInput.getDeviceAt(i) != null) {
+							newGamepadIds.push(GameInput.getDeviceAt(i).id);
+							newGamepads.push(GameInput.getDeviceAt(i));
+						}
+					}
+
+					// Create a list of available slots for insertion
+					var availableSlots:Vector.<int> = new Vector.<int>();
+
+					// First, check for removed items
+					// Goes backward, so it can remove items from the list
+					var isEndPure:Boolean = true;
+					i = gameInputDeviceIds.length-1;
+					while (i >= 0) {
+						gamepadPosition = newGamepadIds.indexOf(gameInputDeviceIds[i]);
+						if (gamepadPosition < 0) {
+							// This device id doesn't exist in the new list, therefore it's removed
+							if (isEndPure) {
+								// But since it's in the end of the list, actually remove it
+								gameInputDeviceIds.splice(i, 1);
+							} else {
+								// It's in the middle of the list, so just mark that spot as available
+								availableSlots.push(i);
+							}
+						} else {
+							// This device id exists in the list, so ignore and assume it's not in the end anymore
+							isEndPure = false;
+						}
+						i--;
+					}
+
+					// Now, add new items that are not in the list
+					for (i = 0; i < newGamepadIds.length; i++) {
+						gamepadPosition = gameInputDeviceIds.indexOf(newGamepadIds[i]);
+						if (gamepadPosition < 0) {
+							// This gamepad is not in the list, so add it
+							if (availableSlots.length > 0) {
+								// Add it in the first available slot
+								gameInputDeviceIds.push(newGamepadIds[availableSlots[0]]);
+								availableSlots.splice(0, 1);
+							} else {
+								// No more slots availabloe, add it at the end
+								gameInputDeviceIds.push(newGamepadIds[i]);
+							}
+						}
+					}
+
+					// Now that gameInputDeviceIds is correct, just create the list of references
+					gameInputDevices = new Vector.<GameInputDevice>(gameInputDeviceIds.length);
+					gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>(gameInputDeviceIds.length);
+					for (i = 0; i < gameInputDeviceIds.length; i++) {
+						gamepadPosition = newGamepadIds.indexOf(gameInputDeviceIds[i]);
+						if (gamepadPosition < 0) {
+							// A spot for a gamepad that was just removed
+							gameInputDevices[i] = null;
+							gameInputDeviceDefinitions[i] = null;
+						} else {
+							// A normal game input device
+							gameInputDevices[i] = newGamepads[gamepadPosition];
+							gameInputDeviceDefinitions[i] = findGamepadInfo(newGamepads[gamepadPosition]);
+						}
+					}
+				} else {
+					// Full refresh: create a new list of devices
+					gameInputDevices = new Vector.<GameInputDevice>();
+					gameInputDeviceIds = new Vector.<String>();
+					gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>();
+					for (i = 0; i < GameInput.numDevices; i++) {
+						gameInputDevices.push(GameInput.getDeviceAt(i));
+						if (gameInputDevices[i] != null) {
+							gameInputDeviceIds.push(gameInputDevices[i].id);
+							gameInputDeviceDefinitions.push(findGamepadInfo(gameInputDevices[i]));
+						} else {
+							gameInputDeviceIds.push(null);
+							gameInputDeviceDefinitions.push(null);
+						}
+					}
+				}
+
+				// Dispatch the signal
+				_onDevicesChanged.dispatch();
+			}
 		}
 
 		private function findGamepadInfo(__gameInputDevice:GameInputDevice):AutoGamepadInfo {
@@ -355,6 +479,7 @@ package com.zehfernando.input.binding {
 			}
 		}
 
+		// Aux functions
 		private function map(__value:Number, __oldMin:Number, __oldMax:Number, __newMin:Number = 0, __newMax:Number = 1, __clamp:Boolean = false):Number {
 			// Same as map, but without allocations
 			if (__oldMin == __oldMax) return __newMin;
@@ -366,6 +491,7 @@ package com.zehfernando.input.binding {
 		private function clamp(__value:Number, __min:Number = 0, __max:Number = 1):Number {
 			return __value < __min ? __min : __value > __max ? __max : __value;
 		}
+
 
 		// ================================================================================================================
 		// EVENT INTERFACE ------------------------------------------------------------------------------------------------
@@ -392,11 +518,13 @@ package com.zehfernando.input.binding {
 
 			// Check all current game input devices for a key injection definition that matches
 			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
-				for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
-					if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
-						// This key's code and location matches the pressed key, inject the press event
-						interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].max, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
-						return;
+				if (gameInputDeviceDefinitions[i] != null) {
+					for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
+						if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
+							// This key's code and location matches the pressed key, inject the press event
+							interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].max, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
+							return;
+						}
 					}
 				}
 			}
@@ -421,11 +549,13 @@ package com.zehfernando.input.binding {
 
 			// Check all current game input devices for a key injection definition that matches
 			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
-				for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
-					if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
-						// This key's code and location matches the pressed key, inject the release event
-						interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
-						return;
+				if (gameInputDeviceDefinitions[i] != null) {
+					for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
+						if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
+							// This key's code and location matches the pressed key, inject the release event
+							interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
+							return;
+						}
 					}
 				}
 			}
@@ -539,7 +669,7 @@ package com.zehfernando.input.binding {
 		}
 
 		/**
-		 * Add an action bound to a keyboard key. When a key with the given <code>keyCode</code> is pressed, the
+		 * Adds an action bound to a keyboard key. When a key with the given <code>keyCode</code> is pressed, the
 		 * desired action is activated. Optionally, keys can be restricted to a specific <code>keyLocation</code>.
 		 *
 		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
@@ -576,7 +706,7 @@ package com.zehfernando.input.binding {
 		}
 
 		/**
-		 * Add an action bound to a game controller button, trigger, or axis. When a control of id
+		 * Adds an action bound to a game controller button, trigger, or axis. When a control of id
 		 * <code>controlId</code> is pressed, the desired action can be activated, and its value changes.
 		 * Optionally, keys can be restricted to a specific game controller location.
 		 *
@@ -588,6 +718,7 @@ package com.zehfernando.input.binding {
 		 *						first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or
 		 *						<code>NaN</code> is passed, the gamepad index is never taken into consideration
 		 *						when detecting whether the passed action should be fired.
+		 *
 		 * <p>Examples:</p>
 		 *
 		 * <pre>
@@ -611,7 +742,6 @@ package com.zehfernando.input.binding {
 		.*
 		 * // Direction pad left to move left or right
 		 * myBinder.addGamepadActionBinding("move-sides", GamepadControls.STICK_LEFT_X);
-		 *
 		 * </pre>
 		 *
 		 * @see GamepadControls
@@ -675,6 +805,9 @@ package com.zehfernando.input.binding {
 		 * }
 		 *
 		 * // Check if a jump was activated (includes just before falling, for a more user-friendly control):
+		 * // Setup:
+		 * myBinder.addGamepadActionBinding("jump", GamepadControls.ACTION_DOWN);
+		 * // In the game loop:
 		 * if (isTouchingSurface && myBinder.isActionActivated("jump"), 0.1) {
 		 *     player.performJump();
 		 * }
@@ -682,8 +815,8 @@ package com.zehfernando.input.binding {
 		 *
 		 * @see GamepadControls
 		 * @see #addGamepadActionBinding()
-		 * @see http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/
 		 * @see #getActionValue()
+		 * @see http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/
 		 */
 		public function isActionActivated(__action:String, __timeToleranceSeconds:Number = 0, __gamepadIndex:int = -1):Boolean {
 			return actionsActivations.hasOwnProperty(__action) && (actionsActivations[__action] as ActivationInfo).getNumActivations(__timeToleranceSeconds, __gamepadIndex) > 0;
@@ -735,31 +868,145 @@ package com.zehfernando.input.binding {
 			return _onDevicesChanged;
 		}
 
+		/**
+		 * Toggles whether KeyActionBinder tries to maintain each player's gamepad index based on the unique id of each
+		 * device.
+		 *
+		 * <p>When this is set to <code>false</code>, the list of connected devices (via <code>getNumDevices()</code>
+		 * and others) will always reflect Flash's list of connected GameInputDevices. This means that the connected
+		 * gamepads can be shuffled around when a device is added or removed, potentially causing players on a
+		 * multi-player game to have their respective gamepad references swapped.</p>
+		 *
+		 * <p>When this is set to <code>true</code>, KeyActionBinder uses the device ids to keep a more consistent list
+		 * of devices, avoiding shuffling them around. This has several implications:</p>
+		 *
+		 * <p> * When removed, a device will continue to exist in the list as a <code>null</code> device (unless it's
+		 * the last device in the GameInputDevice list, in which case it gets removed entirely)</p>
+		 * <p> * An added device will try to be re-added to its previously existing position, if one can be found (that
+		 * is, if it was present before and then removed)</p>
+		 * <p> * If a previously existing position cannot be found for a new device, the device takes the first available
+		 * (<code>null</code>) position if one can be found, or is added to the end of the list of devices otherwise</p>
+		 *
+		 * <p>In general, you should set the value of this property before gameplay starts.</p>
+		 *
+		 * <p>If you set this to <code>false</code> after it was set to <code>true</code>, it will cause a refresh of
+		 * the gamepad order, potentially shuffling player positions around if devices were added or removed previously.</p>
+		 *
+		 * <p>The default is <code>false</code>.</p>
+		 *
+		 * <p>Examples:</p>
+		 *
+		 * <pre>
+		 * // Test 1
+		 * binder.maintainPlayerPositions = false;
+		 *
+		 * // Add controller XBOX1; List is [XBOX1]
+		 * // Add controller XBOX2; List is [XBOX1, XBOX2]
+		 * // Remove controller XBOX1; List is [XBOX2]
+		 * // Add controller XBOX1; List is [XBOX2, XBOX1]
+		 * // Remove controller XBOX2; List is [XBOX1]
+		 * // Remove controller XBOX1; List is []
+		 *
+		 * // Test 2
+		 * binder.maintainPlayerPositions = true;
+		 *
+		 * // Add controller XBOX1; List is [XBOX1]
+		 * // Add controller XBOX2; List is [XBOX1, XBOX2]
+		 * // Remove controller XBOX1; List is [null, XBOX2]
+		 * // Add controller XBOX1; List is [XBOX1, XBOX2]
+		 * // Remove controller XBOX2; List is [XBOX1]
+		 * // Remove controller XBOX1; List is []
+		 * </pre>
+		 *
+		 * @see #getNumDevices()
+		 * @see #getDeviceAt()
+		 * @see #getDeviceTypeAt()
+		 */
+		public function get maintainPlayerPositions():Boolean {
+			return _maintainPlayerPositions;
+		}
+		public function set maintainPlayerPositions(__value:Boolean):void {
+			if (_maintainPlayerPositions != __value) {
+				_maintainPlayerPositions = __value;
+				if (!_maintainPlayerPositions) refreshGameInputDeviceList();
+			}
+		}
+
+		/**
+		 * Whether this KeyActionBinder instance is running, or not. This property is read-only.
+		 *
+		 * @see #start()
+		 * @see #stop()
+		 */
 		public function get isRunning():Boolean {
 			return _isRunning;
 		}
 
+		/**
+		 * Whether to run <code>preventDefault()</code> on Keyboard events or not.
+		 *
+		 * <p>When this is set to <code>false</code>, KeyActionBinder doesn't try stopping the propagation of
+		 * standard Keyboard behavior. In general, this is a bad idea, as certain keys (such as A on the OUYA)
+		 * tend to trigger a <code>Keyboard.BACK</code> key event, potentially closing your application. Only
+		 * set this to <code>false</code> if you are handling Keyboard events in your own code.</p>
+		 *
+		 * <p>The default is <code>true</code>.</p>
+		 */
 		public function get alwaysPreventDefault():Boolean {
 			return _alwaysPreventDefault;
 		}
-
 		public function set alwaysPreventDefault(__value:Boolean):void {
 			// TODO: this is a dumb getter/setter just for ASDocs reasons
 			_alwaysPreventDefault = __value;
 		}
 
+		/**
+		 * Returns the number of devices currently connected, regardless of whether they're valid or not.
+		 *
+		 * @see #maintainPlayerPositions
+		 * @see #getDeviceAt()
+		 * @see #getDeviceTypeAt()
+		 */
 		public function getNumDevices():uint {
 			return gameInputDevices.length;
 		}
 
+		/**
+		 * Returns the <code>GameInputDevice</code> associated with a player index, if any.
+		 *
+		 * <p>The value returned from this function can be <code>null</code>, especially if <code>maintainPlayerPositions</code>
+		 * is set to <code>true</code> and the index refers to a gamepad that has been removed.</p>
+		 *
+		 * @see #maintainPlayerPositions
+		 * @see #getNumDevices()
+		 * @see #getDeviceTypeAt()
+		 */
 		public function getDeviceAt(__index:uint):GameInputDevice {
 			return gameInputDevices.length > __index && gameInputDevices[__index] != null ? gameInputDevices[__index] : null;
 		}
 
+		/**
+		 * Returns the built-in id of the gamepad type at a certain position.
+		 *
+		 * <p>The value returned from this function can be <code>null</code> if <code>maintainPlayerPositions</code>
+		 * is set to <code>true</code> and the index refers to a gamepad that has been removed, or if the gamepad at that
+		 * location has not been properly identified by KeyActionBinder.</p>
+		 *
+		 * <p>Check the controllers.json file for a list of supported gamepads, and their ids.</p>
+		 *
+		 * @see #maintainPlayerPositions
+		 * @see #getNumDevices()
+		 * @see #getDeviceAt()
+		 */
 		public function getDeviceTypeAt(__index:uint):String {
 			return gameInputDeviceDefinitions.length > __index && gameInputDeviceDefinitions[__index] != null ? gameInputDeviceDefinitions[__index].getType() : null;
 		}
 
+		/**
+		 * Returns the current identified platform. This is a list of strings that can contain more than one platform id.
+		 *
+		 * <p>Check the controllers.json file for a list of supported platforms, and their ids.</p>
+		 */
 		public function getPlatformTypes():Vector.<String> {
 			var platforms:Vector.<String> = new Vector.<String>();
 			for (var i:int = 0; i < knownGamepadPlatforms.length; i++) {

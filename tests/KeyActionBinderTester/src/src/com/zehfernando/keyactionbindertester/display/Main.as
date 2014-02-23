@@ -1,4 +1,5 @@
 package com.zehfernando.keyactionbindertester.display {
+	import com.zehfernando.display.debug.QuickButton;
 	import com.zehfernando.display.components.text.TextSprite;
 	import com.zehfernando.display.shapes.Box;
 	import com.zehfernando.input.binding.GamepadControls;
@@ -8,6 +9,7 @@ package com.zehfernando.keyactionbindertester.display {
 
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.system.Capabilities;
 	import flash.ui.GameInput;
 	import flash.ui.GameInputDevice;
@@ -204,6 +206,11 @@ package com.zehfernando.keyactionbindertester.display {
 			}
 		}
 
+		private function toggleMaintainPlayerPositions():void {
+			binder.maintainPlayerPositions = !binder.maintainPlayerPositions;
+			logText("binder.maintainPlayerPositions is now set to " + binder.maintainPlayerPositions);
+		}
+
 
 		// ================================================================================================================
 		// EVENT INTERFACE ------------------------------------------------------------------------------------------------
@@ -293,6 +300,10 @@ package com.zehfernando.keyactionbindertester.display {
 			binder.addGamepadActionBinding(CONTROL_MOPTIONS,  GamepadControls.OPTIONS);
 			binder.addGamepadActionBinding(CONTROL_MTRACKPAD, GamepadControls.TRACKPAD);
 			binder.addGamepadActionBinding(CONTROL_MSHARE,    GamepadControls.SHARE);
+
+			addChild(new QuickButton("TOGGLE .maintainPlayerPositions", 10, 10, function(__e:Event):void { toggleMaintainPlayerPositions(); }, 150, 36));
+			// This is for internal testing only; AS3 can't force a refresh
+			//addChild(new QuickButton("REFRESH DEVICE LIST", 10, 60, function(__e:Event):void { binder.debug_refreshGameInputDeviceList(); }, 150, 36));
 
 			// Events
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);

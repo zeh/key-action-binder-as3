@@ -15,6 +15,7 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 
 		// Instances
 		private var gamepads:Vector.<GamepadView>;
+		private var messageEmpty:MessageView;
 
 		// ================================================================================================================
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
@@ -22,6 +23,9 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 		public function GamepadViewList() {
 			_width = 100;
 			_height = 100;
+
+			messageEmpty = new MessageView("NO DEVICES DETECTED\n\nPlease connect a controller");
+			addChild(messageEmpty);
 
 			gamepads = new Vector.<GamepadView>();
 
@@ -36,10 +40,11 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 		// INTERNAL INTERFACE ---------------------------------------------------------------------------------------------
 
 		private function redrawGamepads():void {
-			var margin:Number = 60;
-			var gutter:Number = 50;
-			var desiredWidth:Number = (_width - margin * 2 - (gamepads.length-1) * gutter) / gamepads.length;
-			var desiredHeight:Number = _height - margin * 2;
+			var marginH:Number = 10;
+			var marginV:Number = 100;
+			var gutter:Number = 10;
+			var desiredWidth:Number = (_width - marginH * 2 - (gamepads.length-1) * gutter) / gamepads.length;
+			var desiredHeight:Number = _height - marginV * 2;
 
 			// Find scale to fit inside
 			var s:Number;
@@ -51,10 +56,20 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 				s = desiredHeight / GamepadView.HEIGHT;
 			}
 
-			for (var i:int = 0; i < gamepads.length; i++) {
-				gamepads[i].scale = s * 0.75;
-				gamepads[i].x = margin + (desiredWidth + gutter) * i + desiredWidth * 0.5 - gamepads[i].width * 0.5;
-				gamepads[i].y = margin + desiredHeight * 0.5 - gamepads[i].height * 0.5;
+			if (gamepads.length > 0) {
+				// Has gamepads to show
+				messageEmpty.visible = false;
+				for (var i:int = 0; i < gamepads.length; i++) {
+					gamepads[i].scale = s * 0.9;
+					gamepads[i].x = marginH + (desiredWidth + gutter) * i + desiredWidth * 0.5 - gamepads[i].width * 0.5;
+					gamepads[i].y = marginV + desiredHeight * 0.5 - gamepads[i].height * 0.5;
+				}
+			} else {
+				// No gamepads detected
+				messageEmpty.visible = true;
+				messageEmpty.x = _width * 0.5;
+				messageEmpty.y = _height * 0.5;
+				messageEmpty.scaleX = messageEmpty.scaleY = s * 0.6;
 			}
 		}
 
@@ -73,8 +88,8 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
 		public function addGamepad(__name:String, __type:String, __id:String):void {
-			var isSymmetric:Boolean = __type.indexOf("ps3") > -1 || __type.indexOf("ps4") > -1;
-			var gamepad:GamepadView = new GamepadView(isSymmetric ? GamepadView.LAYOUT_SYMMETRIC : GamepadView.LAYOUT_ASYMMETRIC, __name + "\n" + __type + "\n" + __id); // Update name
+			var isSymmetric:Boolean = __type != null && (__type.indexOf("ps3") > -1 || __type.indexOf("ps4") > -1);
+			var gamepad:GamepadView = new GamepadView(isSymmetric ? GamepadView.LAYOUT_SYMMETRIC : GamepadView.LAYOUT_ASYMMETRIC, __name == null ? null : (__name + "\n" + __type + "\n" + __id)); // Update name
 			addChild(gamepad);
 			gamepads.push(gamepad);
 			redrawGamepads();
