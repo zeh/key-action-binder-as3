@@ -344,6 +344,105 @@ When this is set to `false`, KeyActionBinder doesn't try stopping the propagatio
 
 The default is `true`.
 
-## <a name="GamepadControls"></a>Gamepad controls
+## <a name="GamepadControls"></a>GamepadControls static control references
+
+### <a name="STICK_LEFT_X"></a>STICK_LEFT_X:String = "stick_left_x"
 
 Todo...
+
+### <a name="STICK_LEFT_Y"></a>STICK_LEFT_Y:String = "stick_left_y"
+
+Todo...
+
+### <a name="STICK_LEFT_PRESS"></a>STICK_LEFT_PRESS:String = "stick_left_press"
+
+Todo...
+
+### <a name="STICK_RIGHT_X"></a>STICK_RIGHT_X:String = "stick_right_x"
+
+Todo...
+
+### <a name="STICK_RIGHT_Y"></a>STICK_RIGHT_Y:String = "stick_right_y"
+
+Todo...
+
+### <a name="STICK_RIGHT_PRESS"></a>STICK_RIGHT_PRESS:String = "stick_right_press"
+
+Todo...
+
+### <a name="LB"></a>LB:String = "left_button"
+
+Todo...
+
+### <a name="LT"></a>LT:String = "left_trigger"
+
+Todo...
+
+### <a name="RB"></a>RB:String = "right_button"
+
+Todo...
+
+### <a name="RT"></a>RT:String = "right_trigger"
+
+Todo...
+
+### <a name="DPAD_UP"></a>DPAD_UP:String = "dpad_up"
+
+Todo...
+
+### <a name="DPAD_DOWN"></a>DPAD_DOWN:String = "dpad_down"
+
+Todo...
+
+### <a name="DPAD_LEFT"></a>DPAD_LEFT:String = "dpad_left"
+
+Todo...
+
+### <a name="DPAD_RIGHT"></a>DPAD_RIGHT:String = "dpad_right"
+
+Todo...
+
+### <a name="ACTION_UP"></a>ACTION_UP:String = "action_up"
+
+Todo...
+
+### <a name="ACTION_DOWN"></a>ACTION_DOWN:String = "action_down"
+
+Todo...
+
+### <a name="ACTION_LEFT"></a>ACTION_LEFT:String = "action_left"
+
+Todo...
+
+### <a name="ACTION_RIGHT"></a>ACTION_RIGHT:String = "action_right"
+
+Todo...
+
+### <a name="BACK"></a>BACK:String = "meta_back"
+
+Todo...
+
+### <a name="SELECT"></a>SELECT:String = "meta_select"
+
+Todo...
+
+### <a name="START"></a>START:String = "meta_start"
+
+Todo...
+
+### <a name="MENU"></a>MENU:String = "meta_menu"
+
+Todo...
+
+### <a name="OPTIONS"></a>OPTIONS:String = "meta_options"
+
+Todo...
+
+### <a name="TRACKPAD"></a>TRACKPAD:String = "meta_trackpad"
+
+Todo...
+
+### <a name="SHARE"></a>SHARE:String = "meta_share"
+
+Todo...
+
