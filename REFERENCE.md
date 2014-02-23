@@ -281,21 +281,19 @@ Todo...
 
 ### <a name="maintainPlayerPositions"></a>maintainPlayerPositions:Boolean
 
-Toggles whether KeyActionBinder tries to maintain the player positions based on unique device ids.
+Toggles whether KeyActionBinder tries to maintain the player index positions based on unique device ids.
 
-When this is set to false, the list of connected devices (via `getNumDevices()` and others) will always reflect Flash's list of GameInput devices. This means that the connected gamepad devices can get shuffled around when a device is added or removed, and potentially cause players to have their gamepads swapped.
+When this is set to `false`, the list of connected devices (via `getNumDevices()` and others) will always reflect Flash's list of connected GameInput devices. This means that the connected gamepads can get shuffled around when a device is added or removed, potentially causing players to have their gamepads switched around.
 
-When this is true, the class uses device ids to try and maintain a consistent list of devices, without shuffling them around. This has several implications, both positive and negative:
+When this is set to `true`, the class uses the device ids to try and maintain a consistent list of devices (without shuffling them around). This has several implications, both positive and negative:
 
 * A removed device will continue to exist in the list (as a null device), unless it's the last device listed
-* An added will try to be re-added to its previously existing position, if one can be found
-* If a previously existing position cannot be found, the device takes the first available position (first
-null position, or at the end of the list if none is found)
+* An added device will try to be re-added to its previously existing position, if one can be found
+* If a previously existing position cannot be found, the device takes the first available position (first null position, or at the end of the list if none is found)
 
 In general, you should set this option before gameplay starts.
 
-If you set this to `false` after it was set to `true`, it will cause a gamepad refresh, potentially shuffling
-player positions around if a null device is currently listed.
+If you set this to `false` after it was set to `true`, it will cause a refresh of the gamepad order, potentially shuffling player positions around if a null device was listed before.
 
 The default is `false`.
 

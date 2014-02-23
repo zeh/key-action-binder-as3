@@ -17,7 +17,7 @@ While Adobe Flash already provides all the means for using keyboard and game inp
 
 ## Usage
 
-	private var binder:KeyActionBinder
+	private var binder:KeyActionBinder;
 
 	// Setup (first frame/root of SWF)
 	KeyActionBinder.init(stage);
