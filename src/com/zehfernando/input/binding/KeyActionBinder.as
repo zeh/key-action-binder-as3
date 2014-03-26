@@ -215,6 +215,10 @@ package com.zehfernando.input.binding {
 			_onActionValueChanged = new SimpleSignal();
 			_onDevicesChanged = new SimpleSignal();
 
+			gameInputDevices = new Vector.<GameInputDevice>();
+			gameInputDeviceIds = new Vector.<String>();
+			gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>();
+
 			start();
 		}
 
@@ -261,7 +265,7 @@ package com.zehfernando.input.binding {
 			var i:int;
 			var hasChanged:Boolean = false;
 
-			if ((gameInputDevices == null && GameInput.numDevices > 0) || (gameInputDevices != null && GameInput.numDevices != gameInputDevices.length)) {
+			if (GameInput.numDevices != gameInputDevices.length) {
 				hasChanged = true;
 			} else {
 				for (i = 0; i < GameInput.numDevices; i++) {
@@ -337,8 +341,8 @@ package com.zehfernando.input.binding {
 					}
 
 					// Now that gameInputDeviceIds is correct, just create the list of references
-					gameInputDevices = new Vector.<GameInputDevice>(gameInputDeviceIds.length);
-					gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>(gameInputDeviceIds.length);
+					gameInputDevices.length = gameInputDeviceIds.length;
+					gameInputDeviceDefinitions.length = gameInputDeviceIds.length;
 					for (i = 0; i < gameInputDeviceIds.length; i++) {
 						gamepadPosition = newGamepadIds.indexOf(gameInputDeviceIds[i]);
 						if (gamepadPosition < 0) {
@@ -353,17 +357,17 @@ package com.zehfernando.input.binding {
 					}
 				} else {
 					// Full refresh: create a new list of devices
-					gameInputDevices = new Vector.<GameInputDevice>();
-					gameInputDeviceIds = new Vector.<String>();
-					gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>();
+					gameInputDevices.length = GameInput.numDevices;
+					gameInputDeviceIds.length = GameInput.numDevices;
+					gameInputDeviceDefinitions.length = GameInput.numDevices;
 					for (i = 0; i < GameInput.numDevices; i++) {
-						gameInputDevices.push(GameInput.getDeviceAt(i));
+						gameInputDevices[i] = GameInput.getDeviceAt(i);
 						if (gameInputDevices[i] != null) {
-							gameInputDeviceIds.push(gameInputDevices[i].id);
-							gameInputDeviceDefinitions.push(findGamepadInfo(gameInputDevices[i]));
+							gameInputDeviceIds[i] = gameInputDevices[i].id;
+							gameInputDeviceDefinitions[i] = findGamepadInfo(gameInputDevices[i]);
 						} else {
-							gameInputDeviceIds.push(null);
-							gameInputDeviceDefinitions.push(null);
+							gameInputDeviceIds[i] = null;
+							gameInputDeviceDefinitions[i] = null;
 						}
 					}
 				}
@@ -660,8 +664,8 @@ package com.zehfernando.input.binding {
 					gameInput.removeEventListener(GameInputEvent.DEVICE_REMOVED, onGameInputDeviceRemoved);
 				}
 
-				gameInputDevices = null;
-				gameInputDeviceDefinitions = null;
+				gameInputDevices.length = 0;
+				gameInputDeviceDefinitions.length = 0;
 				removeGameInputDeviceEvents();
 
 				_isRunning = false;
