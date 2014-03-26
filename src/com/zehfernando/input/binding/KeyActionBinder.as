@@ -22,7 +22,7 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Constants
-		public static const VERSION:String = "1.8.6";
+		public static const VERSION:String = "1.8.7";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
