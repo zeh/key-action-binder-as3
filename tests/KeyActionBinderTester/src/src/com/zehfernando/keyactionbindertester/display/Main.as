@@ -1,6 +1,6 @@
 package com.zehfernando.keyactionbindertester.display {
-	import com.zehfernando.display.debug.QuickButton;
 	import com.zehfernando.display.components.text.TextSprite;
+	import com.zehfernando.display.debug.QuickButton;
 	import com.zehfernando.display.shapes.Box;
 	import com.zehfernando.input.binding.GamepadControls;
 	import com.zehfernando.input.binding.KeyActionBinder;
@@ -9,7 +9,6 @@ package com.zehfernando.keyactionbindertester.display {
 
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
 	import flash.system.Capabilities;
 	import flash.ui.GameInput;
 	import flash.ui.GameInputDevice;

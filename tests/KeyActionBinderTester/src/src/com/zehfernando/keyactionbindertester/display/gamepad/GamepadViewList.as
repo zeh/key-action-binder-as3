@@ -24,7 +24,7 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 			_width = 100;
 			_height = 100;
 
-			messageEmpty = new MessageView("NO DEVICES DETECTED\n\nPlease connect a controller");
+			messageEmpty = new MessageView("NO DEVICES DETECTED\n\nPlease connect a controller or push buttons");
 			addChild(messageEmpty);
 
 			gamepads = new Vector.<GamepadView>();
@@ -100,6 +100,7 @@ package com.zehfernando.keyactionbindertester.display.gamepad {
 				removeChild(gamepads[0]);
 				gamepads.splice(0, 1);
 			}
+			redrawGamepads();
 		}
 
 		public function getGamepadAt(__index:int):GamepadView {

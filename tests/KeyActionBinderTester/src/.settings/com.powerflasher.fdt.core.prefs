@@ -50,7 +50,7 @@ com.powerflasher.fdt.core.mobile.Android.ICON.PATH.48x48=
 com.powerflasher.fdt.core.mobile.Android.ICON.PATH.72x72=
 com.powerflasher.fdt.core.mobile.Android.ICON.PATH.96x96=
 com.powerflasher.fdt.core.mobile.Android.MOBILE.DESCRIPTOR=bin/KeyActionBinderTester-app.xml
-com.powerflasher.fdt.core.mobile.Android.PACKAGE.CONTENT=bin/KeyActionBinderTester-app.xml > KeyActionBinderTester-app.xml;bin/KeyActionBinderTester.swf > KeyActionBinderTester.swf
+com.powerflasher.fdt.core.mobile.Android.PACKAGE.CONTENT=bin/KeyActionBinderTester-app.xml > KeyActionBinderTester-app.xml;bin/KeyActionBinderTester.swf > KeyActionBinderTester.swf;
 com.powerflasher.fdt.core.mobile.Android.SIGNATURE.CERTIFICATE=certificates/ouya_certificate_password_ouya31337G.p12
 com.powerflasher.fdt.core.mobile.Android.SIGNATURE.PWD=xI/g4cN9Ub0CQLdXlIeXyg\=\=
 com.powerflasher.fdt.core.mobile.Android.SIGNATURE.REMEMBER.PWD=true
