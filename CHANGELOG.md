@@ -2,6 +2,7 @@
 
 Below is a list of all significant changes done to KeyActionBinder. Versions with links are assumed to be stable versions, and are [tagged in Git](https://github.com/zeh/key-action-binder/releases).
 
+ * 2014-02-25 - [1.8.7](http://github.com/zeh/key-action-binder/releases/tag/1.8.7) - Fixed keyboard-only support: no more crashes when no gamepads are present
  * 2014-02-23 - 1.8.6 - Fixed Keyboard input events when `null` controllers are present (when `maintainPlayerPositions` is set to `true`)
  * 2014-02-22 - [1.8.5](http://github.com/zeh/key-action-binder/releases/tag/1.8.5) - Added an option to maintain the "player" seat based on controller id (`maintainPlayerPositions`)
  * 2014-02-16 - 1.7.5 - Added support for device detection via signals (onDevicesChanged) and device info getters (getNumDevices(), getDeviceAt(), and getDeviceTypeAt())
