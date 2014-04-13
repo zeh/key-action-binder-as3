@@ -55,6 +55,7 @@ package com.zehfernando.input.binding {
 		// Properties to avoid allocations
 		private var mi:Number;											// Used in map()
 
+
 		// ================================================================================================================
 		// STATIC CONSTRUCTOR ---------------------------------------------------------------------------------------------
 
