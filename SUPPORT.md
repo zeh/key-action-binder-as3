@@ -4,7 +4,7 @@ Because KeyActionBinder tries to automatically support whatever platform and dev
 
 | Controller             | Win 7 (PL) | Win 7 (GP) | OSX (PL) | OSX (GP)   | OUYA  | Android |
 |------------------------|:----------:|:----------:|:--------:|:----------:|:-----:|:-------:|
-| XBox 360 controller    | **Y**      | **Y**      | Y ([E](http://forums.macrumors.com/showthread.php?p=17725790#post1772579))    | **Y** (\*1) | **Y** | -       |
+| XBox 360 controller    | **Y**      | **Y**      | **Y** ([E](http://forums.macrumors.com/showthread.php?p=17725790#post1772579))    | **Y** (\*1) | **Y** | -       |
 | PlayStation 3 DS3      | **Y** (E)  | **Y** (E)  | **Y**    | **Y**      | **Y** | **Y**   |
 | PlayStation 4 DS3      | **Y**      | **Y**      | **Y**    | **Y** (\*2) | **Y** | **Y**   |
 | OUYA Native controller | -          | -          | -        | -          | **Y** | -       |
@@ -21,7 +21,7 @@ Legend:
  * (PL): Standard Flash Player plugin (Firefox, Safari), ActiveX (MSIE) or Adobe AIR player
  * (GP): Google Pepper Flash Player (Chrome)
  * (E): Not natively supported by the system, but work when using drivers that emulate other devices
- * (\*1): May not work every time
+ * (\*1): May not work every time (has been confirmed as working, but may have changed)
  * (\*2): D-pad is not working properly; Flash/driver problems?
 
 Controllers that emulate other controllers (e.g. XBox 360 alternatives) should work as long as the original does.
