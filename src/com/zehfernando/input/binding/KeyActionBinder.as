@@ -514,7 +514,10 @@ package com.zehfernando.input.binding {
 					(actionsActivations[filteredKeys[i].action] as ActivationInfo).addActivation(filteredKeys[i]);
 
 					// Dispatches signal
-					if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 1) _onActionActivated.dispatch(filteredKeys[i].action);
+					if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 1) {
+						_onActionValueChanged.dispatch(filteredKeys[i].action, 1);
+						_onActionActivated.dispatch(filteredKeys[i].action);
+					}
 				}
 			}
 
@@ -546,7 +549,10 @@ package com.zehfernando.input.binding {
 				(actionsActivations[filteredKeys[i].action] as ActivationInfo).removeActivation(filteredKeys[i]);
 
 				// Dispatches signal
-				if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 0) _onActionDeactivated.dispatch(filteredKeys[i].action);
+				if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 0) {
+					_onActionValueChanged.dispatch(filteredKeys[i].action, 0);
+					_onActionDeactivated.dispatch(filteredKeys[i].action);
+				}
 			}
 
 			if (_alwaysPreventDefault) __e.preventDefault();
