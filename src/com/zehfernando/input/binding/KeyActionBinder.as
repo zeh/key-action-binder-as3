@@ -594,7 +594,7 @@ package com.zehfernando.input.binding {
 				}
 
 				// Find "split" controls, where one control has more than one binding
-				if (gameInputDeviceDefinitions[deviceIndex].controlsSplit.hasOwnProperty(control.id)) {
+				if (gameInputDeviceDefinitions.length && gameInputDeviceDefinitions[deviceIndex].controlsSplit.hasOwnProperty(control.id)) {
 					var deviceControlInfos:Vector.<AutoGamepadControlInfo> = gameInputDeviceDefinitions[deviceIndex].controlsSplit[control.id];
 					var i:uint;
 					for (i = 0; i < deviceControlInfos.length; i++) {
