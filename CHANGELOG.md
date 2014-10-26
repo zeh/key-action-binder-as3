@@ -2,6 +2,9 @@
 
 Below is a list of all significant changes done to KeyActionBinder. Versions with links are assumed to be stable versions, and are [tagged in Git](https://github.com/zeh/key-action-binder/releases).
 
+ * 2014-10-25 - 1.8.10 - Added/enabled support for XBox 360 controller on OSX (Plugin version of Flash Player)
+ * 2014-10-25 - 1.8.9 - The `onActionValueChanged` events are also dispatched on keyboard up/down events
+ * 2014-10-25 - 1.8.8 - Fixed propagation when stopped: avoid crash when `KeyActionBinder.stop()` called from action handler
  * 2014-03-25 - [1.8.7](http://github.com/zeh/key-action-binder/releases/tag/1.8.7) - Fixed keyboard-only support: no more crashes when no gamepads are present
  * 2014-02-23 - 1.8.6 - Fixed Keyboard input events when `null` controllers are present (when `maintainPlayerPositions` is set to `true`)
  * 2014-02-22 - [1.8.5](http://github.com/zeh/key-action-binder/releases/tag/1.8.5) - Added an option to maintain the "player" seat based on controller id (`maintainPlayerPositions`)

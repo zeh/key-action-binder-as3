@@ -80,6 +80,7 @@ I'll remove items from the list when they're fixed.
  * James Dean Palmer for the original idea about auto-mapping controls and many bindings
  * Patrick Bastiani for the NeoFlex controller mapping
  * Rusty Moyher for the Buffalo SNES mapping, and several other mappings for Windows and OSX
+ * Eric Socolofsky for testing, bug fixes, and OSX mappings for the XBox 360 controller
 
 
 ## License
