@@ -21,12 +21,12 @@ package com.zehfernando.input.binding {
 
 		// More info: https://github.com/zeh/key-action-binder
 
+		// Constants
+		public static const VERSION:String = "1.8.7";
+
 		public static const GAMEPAD_INDEX_ANY:uint = 81653811;
 		public static const KEY_CODE_ANY:uint = 81653812;
 		public static const KEY_LOCATION_ANY:uint = 81653813;
-
-		// Constants
-		public static const VERSION:String = "1.8.7";
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
