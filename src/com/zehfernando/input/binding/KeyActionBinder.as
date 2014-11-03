@@ -438,14 +438,26 @@ package com.zehfernando.input.binding {
 			}
 		}
 
-		private function interpretGameInputControlChanges(__mappedId:String, __mappedValue:Number, __mappedMin:Number, __mappedMax:Number, __gamepadIndex:int):void {
+		private function interpretGameInputControlChanges(__mappedId:String, __mappedValue:Number, __mappedMin:Number, __mappedMax:Number, __gamepadIndex:int, __checkDual:Boolean=true):void {
 			// Decides what to do once the value of a game input device control has changed
 
-			var filteredControls:Vector.<BindingInfo> = filterGamepadControls(__mappedId, __gamepadIndex);
+			var isDual:Boolean = __mappedMin < 0;
+
+			var controlId:String = isDual ? __mappedValue < 0 ? "-" : "+" : __mappedId;
+			var filteredControls:Vector.<BindingInfo> = filterGamepadControls(controlId, __gamepadIndex);
 			var activationInfo:ActivationInfo;
 
+			// PREVIOUSLY:
 			// Considers activated if past the middle threshold between min/max values (allows analog controls to be treated as digital)
-			var isActivated:Boolean = __mappedValue > __mappedMin + (__mappedMax - __mappedMin) / 2;
+			// var isActivated:Boolean = __mappedValue > __mappedMin + (__mappedMax - __mappedMin) / 2;
+
+			// CURRENTLY: simply detect if passed the dead zone threshold.  Should be enough since all values in controllers.json are from -1 to 1 or 0 to 1
+			var isActivated:Boolean = Math.abs(__mappedValue) > deadZone;
+
+			if(isDual && __checkDual) {
+				// 'fake' a deactivate on the other value by passing in a value below the threshold
+				interpretGameInputControlChanges(__mappedId, __mappedValue < 0 ? 0.13337 : -0.13337, __mappedMin, __mappedMax, __gamepadIndex, false);
+			}
 
 			for (var i:int = 0; i < filteredControls.length; i++) {
 				activationInfo = actionsActivations[filteredControls[i].action] as ActivationInfo;
@@ -469,7 +481,9 @@ package com.zehfernando.input.binding {
 						activationInfo.addActivation(filteredControls[i], __gamepadIndex);
 
 						// Dispatches signal
-						if (activationInfo.getNumActivations() == 1) _onActionActivated.dispatch(filteredControls[i].action);
+						if (activationInfo.getNumActivations() == 1) {
+							_onActionActivated.dispatch(filteredControls[i].action);
+						}
 					} else {
 						// Marks as released
 
@@ -861,6 +875,13 @@ package com.zehfernando.input.binding {
 
 		// ================================================================================================================
 		// ACCESSOR INTERFACE ---------------------------------------------------------------------------------------------
+
+		/**
+		 * Defines the thresholds for which analog values will trigger activate/deactive events.
+		 *
+		 * @see #interpretGameInputControlChanges()
+		 */
+		public var deadZone:Number = 0.5;
 
 		public function get onActionActivated():SimpleSignal {
 			return _onActionActivated;
