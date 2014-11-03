@@ -443,7 +443,7 @@ package com.zehfernando.input.binding {
 
 			var isDual:Boolean = __mappedMin < 0;
 
-			var controlId:String = isDual ? __mappedValue < 0 ? "-" : "+" : __mappedId;
+			var controlId:String = isDual ? __mappedId + (__mappedValue < 0 ? "-" : "+") : __mappedId;
 			var filteredControls:Vector.<BindingInfo> = filterGamepadControls(controlId, __gamepadIndex);
 			var activationInfo:ActivationInfo;
 
