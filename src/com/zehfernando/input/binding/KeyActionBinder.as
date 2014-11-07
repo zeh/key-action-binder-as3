@@ -441,10 +441,22 @@ package com.zehfernando.input.binding {
 		private function interpretGameInputControlChanges(__mappedId:String, __mappedValue:Number, __mappedMin:Number, __mappedMax:Number, __gamepadIndex:int, __checkDual:Boolean=true):void {
 			// Decides what to do once the value of a game input device control has changed
 
-			var isDual:Boolean = __mappedMin < 0;
+            if(__checkDual) {
 
-			var controlId:String = isDual ? __mappedId + (__mappedValue < 0 ? "-" : "+") : __mappedId;
-			var filteredControls:Vector.<BindingInfo> = filterGamepadControls(controlId, __gamepadIndex);
+                var isDual:Boolean = __mappedMin < 0;
+
+                if(isDual) {
+                    // make another call for ids +/-
+                    var controlId:String = __mappedId + (__mappedValue < 0 ? "-" : "+");
+                    interpretGameInputControlChanges(controlId, __mappedValue, __mappedMin, __mappedMax, __gamepadIndex, false);
+
+                    // 'fake' a deactivate on the other value by passing in a value below the threshold
+                    var otherControlId:String = __mappedId + (__mappedValue < 0 ? "+" : "-");
+    				interpretGameInputControlChanges(otherControlId, __mappedValue < 0 ? 0.13337 : -0.13337, __mappedMin, __mappedMax, __gamepadIndex, false);
+                }
+            }
+
+			var filteredControls:Vector.<BindingInfo> = filterGamepadControls(__mappedId, __gamepadIndex);
 			var activationInfo:ActivationInfo;
 
 			// PREVIOUSLY:
@@ -453,11 +465,6 @@ package com.zehfernando.input.binding {
 
 			// CURRENTLY: simply detect if passed the dead zone threshold.  Should be enough since all values in controllers.json are from -1 to 1 or 0 to 1
 			var isActivated:Boolean = Math.abs(__mappedValue) > deadZone;
-
-			if(isDual && __checkDual) {
-				// 'fake' a deactivate on the other value by passing in a value below the threshold
-				interpretGameInputControlChanges(__mappedId, __mappedValue < 0 ? 0.13337 : -0.13337, __mappedMin, __mappedMax, __gamepadIndex, false);
-			}
 
 			for (var i:int = 0; i < filteredControls.length; i++) {
 				activationInfo = actionsActivations[filteredControls[i].action] as ActivationInfo;
