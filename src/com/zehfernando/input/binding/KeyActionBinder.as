@@ -22,9 +22,9 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Constants
-		public static const VERSION:String = "1.8.7";
+		public static const VERSION:String = "2.9.11";
 
-		public static const KEYBOARD_DEVICE:GameInputDevice=null; // is set to null, since gamepads are non-null (and you can't create/subclass a GameInputDevice)
+		public static const KEYBOARD_DEVICE:GameInputDevice = null;		// Set to null by default, since gamepads are non-null (and you can't create/subclass a GameInputDevice)
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
@@ -38,7 +38,7 @@ package com.zehfernando.input.binding {
 		private var _isRunning:Boolean;
 		private var _alwaysPreventDefault:Boolean;						// If true, prevent action by other keys all the time (e.g. menu key)
 		private var _maintainPlayerPositions:Boolean;					// Whether it tries to keep player positions or not
-		private var _recentDevice:GameInputDevice;						// the most recent device that sent an event
+		private var _recentDevice:GameInputDevice;						// The most recent device that sent an event
 
 		// Instances
 		private var bindings:Vector.<BindingInfo>;						// Actual existing bindings, their action, and whether they're activated or not
@@ -47,8 +47,8 @@ package com.zehfernando.input.binding {
 		private var _onActionActivated:SimpleSignal;					// Receives: action:String
 		private var _onActionDeactivated:SimpleSignal;					// Receives: action:String
 		private var _onActionValueChanged:SimpleSignal;					// Receives: action:String, value:Number (0-1)
-		private var _onDevicesChanged:SimpleSignal;
-		private var _onRecentDevice:SimpleSignal;						//  Receives: recentDevice:GameInputDevice
+		private var _onDevicesChanged:SimpleSignal;						// Receives: (no parameters)
+		private var _onRecentDeviceChanged:SimpleSignal;				// Receives: recentDevice:GameInputDevice
 
 		private var gameInputDevices:Vector.<GameInputDevice>;
 		private var gameInputDeviceIds:Vector.<String>;
@@ -58,6 +58,7 @@ package com.zehfernando.input.binding {
 
 		// Properties to avoid allocations
 		private var mi:Number;											// Used in map()
+
 
 		// ================================================================================================================
 		// STATIC CONSTRUCTOR ---------------------------------------------------------------------------------------------
@@ -218,7 +219,7 @@ package com.zehfernando.input.binding {
 			_onActionDeactivated = new SimpleSignal();
 			_onActionValueChanged = new SimpleSignal();
 			_onDevicesChanged = new SimpleSignal();
-			_onRecentDevice = new SimpleSignal();
+			_onRecentDeviceChanged = new SimpleSignal();
 
 			gameInputDevices = new Vector.<GameInputDevice>();
 			gameInputDeviceIds = new Vector.<String>();
@@ -475,7 +476,7 @@ package com.zehfernando.input.binding {
 
 						// Dispatches signal
 						if (activationInfo.getNumActivations() == 1) {
-							recentDevice = gameInputDevices[__gamepadIndex]
+							recentDevice = gameInputDevices[__gamepadIndex];
 							_onActionActivated.dispatch(filteredControls[i].action);
 						}
 					} else {
@@ -624,9 +625,9 @@ package com.zehfernando.input.binding {
 		}
 
 		private function set recentDevice(value:GameInputDevice):void {
-			if(_recentDevice != value) {
+			if (_recentDevice != value) {
 				_recentDevice = value;
-				_onRecentDevice.dispatch(value);
+				_onRecentDeviceChanged.dispatch(value);
 			}
 		}
 
@@ -897,8 +898,8 @@ package com.zehfernando.input.binding {
 			return _onDevicesChanged;
 		}
 
-		public function get onRecentDevice():SimpleSignal {
-			return _onRecentDevice;
+		public function get onRecentDeviceChanged():SimpleSignal {
+			return _onRecentDeviceChanged;
 		}
 
 		/**
@@ -1051,7 +1052,6 @@ package com.zehfernando.input.binding {
 }
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
-
 /**
  * Information listing all activated bindings of a given action
  */
@@ -1322,3 +1322,4 @@ class AutoGamepadControlKeyInfo {
 	public function AutoGamepadControlKeyInfo() {
 	}
 }
+
