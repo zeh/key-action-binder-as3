@@ -81,6 +81,7 @@ I'll remove items from the list when they're fixed.
  * Patrick Bastiani for the NeoFlex controller mapping
  * Rusty Moyher for the Buffalo SNES mapping, and several other mappings for Windows and OSX
  * Eric Socolofsky for testing, bug fixes, and OSX mappings for the XBox 360 controller
+ * [mwgray](https://github.com/mwgray) for important bug fixes and features
 
 
 ## License

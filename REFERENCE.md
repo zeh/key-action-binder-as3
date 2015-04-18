@@ -65,7 +65,7 @@ Calling this method when this a KeyActionBinder instance is already stopped has 
  * [start()](#start)
 
 
-### <a name="addKeyboardActionBinding"></a>addKeyboardActionBinding(action:String, keyCode:int = -1, keyLocation:int = -1):void
+### <a name="addKeyboardActionBinding"></a>addKeyboardActionBinding(action:String, keyCode:int = KeyActionBinder.KEY_CODE_ANY, keyLocation:int = KeyActionBinder.KEY_LOCATION_ANY):void
 
 Adds an action bound to a keyboard key. When a key with the given `keyCode` is pressed, the desired action is activated. Optionally, keys can be restricted to a specific `keyLocation`.
 
@@ -73,7 +73,7 @@ Adds an action bound to a keyboard key. When a key with the given `keyCode` is p
 
  * **action**: An arbitrary String id identifying the action that should be dispatched once this key combination is detected.
  * **keyCode**: The code of a key, as expressed in AS3's Keyboard constants.
- * **keyLocation**: The code of a key's location, as expressed in AS3's KeyLocation constants. If a value of -1 or `NaN` is passed, the key location is never taken into consideration when detecting whether the passed action should be fired.
+ * **keyLocation**: The code of a key's location, as expressed in AS3's KeyLocation constants. If the default value is passed, the key location is never taken into consideration when detecting whether the passed action should be fired.
 
 #### Examples
 
@@ -89,17 +89,45 @@ myBinder.addKeyboardActionBinding("boost", Keyboard.SHIFT, KeyLocation.LEFT);
 
 #### See also
  * [flash.ui.Keyboard](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/ui/Keyboard.html)
+ * [isActionActivated()](#isActionActivated)
+ * [removeGamepadActionBinding()](#removeGamepadActionBinding)
+
+### <a name="removeKeyboardActionBinding"></a>removeKeyboardActionBinding(action:String, keyCode:int = KeyActionBinder.KEY_CODE_ANY, keyLocation:int = KeyActionBinder.KEY_LOCATION_ANY):void
+
+Removes an action bound to a keyboard key.
+
+#### Parameters
+
+ * **action**: An arbitrary String id identifying the action that should be dispatched once this key combination is detected.
+ * **keyCode**: The code of a key, as expressed in AS3's Keyboard constants.
+ * **keyLocation**: The code of a key's location, as expressed in AS3's KeyLocation constants. If the default value is passed, the key location is never taken into consideration when detecting whether the passed action should be fired.
+
+#### Examples
+
+<pre>// Left arrow key to move left
+myBinder.addKeyboardActionBinding("move-left", Keyboard.LEFT);
+// SPACE key to jump
+myBinder.addKeyboardActionBinding("jump", Keyboard.SPACE);
+// Any SHIFT key to shoot
+myBinder.addKeyboardActionBinding("shoot", Keyboard.SHIFT);
+// Left SHIFT key to boost
+myBinder.addKeyboardActionBinding("boost", Keyboard.SHIFT, KeyLocation.LEFT);
+</pre>
+
+#### See also
+ * [flash.ui.Keyboard](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/ui/Keyboard.html)
+ * [addGamepadActionBinding()](#addGamepadActionBinding)
 
 
-### <a name="addGamepadActionBinding"></a>addGamepadActionBinding(action:String, controlId:String, gamepadIndex:int = -1):void
+### <a name="addGamepadActionBinding"></a>addGamepadActionBinding(action:String, controlId:String, gamepadIndex:int = KeyActionBinder.GAMEPAD_INDEX_ANY):void
 
 Adds an action bound to a game controller button, trigger, or axis. When a control of id `controlId` is pressed, the desired action can be activated, and its value changes. Optionally, keys can be restricted to a specific game controller location.
 
 #### Parameters
 
  * **action**: An arbitrary String id identifying the action that should be dispatched once this input combination is detected.
- * **controlId**: The id code of a GameInput contol, as an String. Use one of the constants from `GamepadControls`.
- * **gamepadIndex**: The int of the gamepad that you want to restrict this action to. Use 0 for the first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or `NaN` is passed, the gamepad index is never taken into consideration when detecting whether the passed action should be fired.
+ * **controlId**: The id code of a GameInput control, as an String. Use one of the constants from `GamepadControls`.
+ * **gamepadIndex**: The int of the gamepad that you want to restrict this action to. Use 0 for the first gamepad (player 1), 1 for the second one, and so on. If the default value is passed, the gamepad index is never taken into consideration when detecting whether the passed action should be fired.
 
 #### Examples
 
@@ -123,17 +151,31 @@ myBinder.addGamepadActionBinding("move-sides", GamepadControls.STICK_LEFT_X);
  * [GamepadControls](#GamepadControls)
  * [isActionActivated()](#isActionActivated)
  * [getActionValue()](#getActionValue)
+ * [removeGamepadActionBinding()](#removeGamepadActionBinding)
+ 
+### <a name="removeGamepadActionBinding"></a>removeGamepadActionBinding(action:String, controlId:String, gamepadIndex:int = KeyActionBinder.GAMEPAD_INDEX_ANY):void
 
+Removes an action bound to a game controller button, trigger, or axis.
 
-### <a name="getActionValue"></a>getActionValue(action:String, gamepadIndex:int = -1):Number
+#### Parameters
+
+ * **action**: An arbitrary String id identifying the action that should be dispatched once this input combination is detected.
+ * **controlId**: The id code of a GameInput control, as an String. Use one of the constants from `GamepadControls`.
+ * **gamepadIndex**: The int of the gamepad that you want to restrict this action to. Use 0 for the first gamepad (player 1), 1 for the second one, and so on. If the default value is passed, the gamepad index is never taken into consideration when detecting whether the passed action should be fired.
+
+#### See also
+ * [GamepadControls](#GamepadControls)
+ * [addGamepadActionBinding()](#addGamepadActionBinding)
+
+### <a name="getActionValue"></a>getActionValue(action:String, gamepadIndex:int = KeyActionBinder.GAMEPAD_INDEX_ANY):Number
 
 Reads the current value of an action.
 
 #### Parameters
 
  * **action**: The id of the action you want to read the value of.
- * **controlId**: The id code of a GameInput contol, as an String. Use one of the constants from `GamepadControls`.
- * **gamepadIndex**: The int of the gamepad that you want to restrict this action to. Use 0 for the first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or `NaN` is passed, the gamepad index is never taken into consideration when detecting whether the passed action should be fired.
+ * **controlId**: The id code of a GameInput control, as an String. Use one of the constants from `GamepadControls`.
+ * **gamepadIndex**: The int of the gamepad that you want to restrict this action to. Use 0 for the first gamepad (player 1), 1 for the second one, and so on. If the default value is passed, the gamepad index is never taken into consideration when detecting whether the passed action should be fired.
 
 #### Returns
 A numeric value based on the bindings that might have activated this action. The maximum and minimum values returned depend on the kind of control passed via `addGamepadActionBinding()`.

@@ -2,6 +2,8 @@
 
 Below is a list of all significant changes done to KeyActionBinder. Versions with links are assumed to be stable versions, and are [tagged in Git](https://github.com/zeh/key-action-binder/releases).
 
+ * 2015-04-17 - 3.10.11 - Fewer magic numbers being used as parameters: using constants instead of -1 to mean "any" in methods
+ * 2015-04-17 - 2.10.11 - Added the removeKeyboardActionBinding() & removeGamepadActionBinding() methods
  * 2015-04-17 - 2.9.11 - onRecentDevice() changed to onMostRecentDevice()
  * 2015-04-17 - 1.9.11 - SimpleSignal is simpler and safer
  * 2015-04-17 - 1.9.10 - Added the ability to get the most recent device via an onRecentDevice() signal
