@@ -730,12 +730,47 @@ package com.zehfernando.input.binding {
 		 * </pre>
 		 *
 		 * @see flash.ui.Keyboard
+		 * @see #removeKeyboardActionBinding()
 		 */
 		public function addKeyboardActionBinding(__action:String, __keyCode:int = KEY_CODE_ANY, __keyLocation:int = KEY_LOCATION_ANY):void {
 
 			// Create a binding to be verified later
 			bindings.push(new BindingInfo(__action, new KeyboardBinding(__keyCode, __keyLocation)));
 			prepareAction(__action);
+		}
+
+		/**
+		 * Removes an action bound to a keyboard key.
+		 *
+		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
+		 *						key combination is detected.
+		 * @param keyCode		The code of a key, as expressed in AS3's Keyboard constants.
+		 * @param keyLocation	The code of a key's location, as expressed in AS3's KeyLocation constants. If a
+		 *						value of -1 or <code>NaN</code> is passed, the key location is never taken into
+		 *						consideration when detecting whether the passed action should be fired.
+		 *
+		 * @see flash.ui.Keyboard
+		 * @see #addGamepadActionBinding()
+		 */
+		public function removeKeyboardActionBinding(__action:String, __keyCode:int = KEY_CODE_ANY, __keyLocation:int = KEY_LOCATION_ANY):void {
+			var bindingsToRemove:Vector.<BindingInfo> = new <BindingInfo>[];
+
+			for each(var binding:BindingInfo in bindings) {
+				if(binding.action == __action) {
+					var keyboardBinding:KeyboardBinding = binding.binding as KeyboardBinding;
+					if(keyboardBinding && keyboardBinding.keyCode == __keyCode && keyboardBinding.keyLocation == __keyLocation) {
+						// store the binding to remove later, and fake a deactivate event
+						bindingsToRemove[bindingsToRemove.length] = binding;
+						onKeyUp(new KeyboardEvent(KeyboardEvent.KEY_UP, true, false, 0, __keyCode, __keyLocation));
+					}
+				}
+			}
+
+			for each(binding in bindingsToRemove) {
+				bindings.splice(bindings.indexOf(binding), 1);
+			}
+
+			consumeAction(__action);
 		}
 
 		/**
@@ -780,11 +815,49 @@ package com.zehfernando.input.binding {
 		 * @see GamepadControls
 		 * @see #isActionActivated()
 		 * @see #getActionValue()
+		 * @see #removeGamepadActionBinding()
 		 */
 		public function addGamepadActionBinding(__action:String, __controlId:String, __gamepadIndex:int = GAMEPAD_INDEX_ANY):void {
 			// Create a binding to be verified later
 			bindings.push(new BindingInfo(__action, new GamepadBinding(__controlId, __gamepadIndex)));
 			prepareAction(__action);
+		}
+
+		/**
+		 * Removes an action bound to a game controller button, trigger, or axis.
+		 *
+		 * @param action		An arbitrary String id identifying the action that should be no longer bound.
+		 * @param controlId		The id code of a GameInput contol, as an String. Use one of the constants from
+		 *						<code>GamepadControls</code>.
+		 * @param gamepadIndex	The int of the gamepad that you want to restrict this action to. Use 0 for the
+		 *						first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or
+		 *						<code>NaN</code> is passed, the gamepad index is never taken into consideration
+		 *						when detecting whether the passed action should be fired.
+		 *
+		 * @see GamepadControls
+		 * @see #addGamepadActionBinding()
+		 * @see #isActionActivated()
+		 * @see #getActionValue()
+		 */
+		public function removeGamepadActionBinding(__action:String, __controlId:String, __gamepadIndex:int = GAMEPAD_INDEX_ANY):void {
+			var bindingsToRemove:Vector.<BindingInfo> = new <BindingInfo>[];
+			for each(var binding:BindingInfo in bindings) {
+				if(binding.action == __action) {
+					var gamepadBinding:GamepadBinding = binding.binding as GamepadBinding;
+
+					if(gamepadBinding && gamepadBinding.controlId == __controlId && gamepadBinding.gamepadIndex == __gamepadIndex) {
+						// store the binding to remove later, and fake a deactivate event
+						bindingsToRemove[bindingsToRemove.length] = binding;
+						interpretGameInputControlChanges(gamepadBinding.controlId, 0, 0, 1, 0);
+					}
+				}
+			}
+
+			for each(binding in bindingsToRemove) {
+				bindings.splice(bindings.indexOf(binding), 1);
+			}
+
+			consumeAction(__action);
 		}
 
 		/**
