@@ -22,7 +22,13 @@ package com.zehfernando.input.binding {
 		// More info: https://github.com/zeh/key-action-binder
 
 		// Constants
-		public static const VERSION:String = "1.8.7";
+		public static const VERSION:String = "2.9.11";
+
+		public static const KEYBOARD_DEVICE:GameInputDevice = null;		// Set to null by default, since gamepads are non-null (and you can't create/subclass a GameInputDevice)
+
+		public static const GAMEPAD_INDEX_ANY:int = 81653811;
+		public static const KEY_CODE_ANY:int = 81653812;
+		public static const KEY_LOCATION_ANY:int = 81653813;
 
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
@@ -36,6 +42,7 @@ package com.zehfernando.input.binding {
 		private var _isRunning:Boolean;
 		private var _alwaysPreventDefault:Boolean;						// If true, prevent action by other keys all the time (e.g. menu key)
 		private var _maintainPlayerPositions:Boolean;					// Whether it tries to keep player positions or not
+		private var _recentDevice:GameInputDevice;						// The most recent device that sent an event
 
 		// Instances
 		private var bindings:Vector.<BindingInfo>;						// Actual existing bindings, their action, and whether they're activated or not
@@ -44,7 +51,8 @@ package com.zehfernando.input.binding {
 		private var _onActionActivated:SimpleSignal;					// Receives: action:String
 		private var _onActionDeactivated:SimpleSignal;					// Receives: action:String
 		private var _onActionValueChanged:SimpleSignal;					// Receives: action:String, value:Number (0-1)
-		private var _onDevicesChanged:SimpleSignal;
+		private var _onDevicesChanged:SimpleSignal;						// Receives: (no parameters)
+		private var _onRecentDeviceChanged:SimpleSignal;				// Receives: recentDevice:GameInputDevice
 
 		private var gameInputDevices:Vector.<GameInputDevice>;
 		private var gameInputDeviceIds:Vector.<String>;
@@ -215,6 +223,7 @@ package com.zehfernando.input.binding {
 			_onActionDeactivated = new SimpleSignal();
 			_onActionValueChanged = new SimpleSignal();
 			_onDevicesChanged = new SimpleSignal();
+			_onRecentDeviceChanged = new SimpleSignal();
 
 			gameInputDevices = new Vector.<GameInputDevice>();
 			gameInputDeviceIds = new Vector.<String>();
@@ -470,7 +479,10 @@ package com.zehfernando.input.binding {
 						activationInfo.addActivation(filteredControls[i], __gamepadIndex);
 
 						// Dispatches signal
-						if (activationInfo.getNumActivations() == 1) _onActionActivated.dispatch(filteredControls[i].action);
+						if (activationInfo.getNumActivations() == 1) {
+							recentDevice = gameInputDevices[__gamepadIndex];
+							_onActionActivated.dispatch(filteredControls[i].action);
+						}
 					} else {
 						// Marks as released
 
@@ -478,9 +490,12 @@ package com.zehfernando.input.binding {
 						activationInfo.removeActivation(filteredControls[i]);
 
 						// Dispatches signal
-						if (activationInfo.getNumActivations() == 0) _onActionDeactivated.dispatch(filteredControls[i].action);
+						if (activationInfo.getNumActivations() == 0) {
+							recentDevice = gameInputDevices[__gamepadIndex];
+							_onActionDeactivated.dispatch(filteredControls[i].action);
 						}
 					}
+				}
 			}
 		}
 
@@ -515,7 +530,11 @@ package com.zehfernando.input.binding {
 					(actionsActivations[filteredKeys[i].action] as ActivationInfo).addActivation(filteredKeys[i]);
 
 					// Dispatches signal
-					if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 1) _onActionActivated.dispatch(filteredKeys[i].action);
+					if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 1) {
+						recentDevice = KEYBOARD_DEVICE;
+						_onActionValueChanged.dispatch(filteredKeys[i].action, 1);
+						_onActionActivated.dispatch(filteredKeys[i].action);
+					}
 				}
 			}
 
@@ -525,7 +544,7 @@ package com.zehfernando.input.binding {
 			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
 				if (gameInputDeviceDefinitions[i] != null) {
 					for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
-						if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
+						if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == KEY_LOCATION_ANY || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
 							// This key's code and location matches the pressed key, inject the press event
 							interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].max, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
 							return;
@@ -547,7 +566,11 @@ package com.zehfernando.input.binding {
 				(actionsActivations[filteredKeys[i].action] as ActivationInfo).removeActivation(filteredKeys[i]);
 
 				// Dispatches signal
-				if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 0) _onActionDeactivated.dispatch(filteredKeys[i].action);
+				if ((actionsActivations[filteredKeys[i].action] as ActivationInfo).getNumActivations() == 0) {
+					recentDevice = KEYBOARD_DEVICE;
+					_onActionValueChanged.dispatch(filteredKeys[i].action, 0);
+					_onActionDeactivated.dispatch(filteredKeys[i].action);
+				}
 			}
 
 			if (_alwaysPreventDefault) __e.preventDefault();
@@ -556,7 +579,7 @@ package com.zehfernando.input.binding {
 			for (i = 0; i < gameInputDeviceDefinitions.length; i++) {
 				if (gameInputDeviceDefinitions[i] != null) {
 					for (j = 0; j < gameInputDeviceDefinitions[i].keys.length; j++) {
-						if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == -1 || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
+						if (gameInputDeviceDefinitions[i].keys[j].keyCode == __e.keyCode && (gameInputDeviceDefinitions[i].keys[j].keyLocation == KEY_LOCATION_ANY || gameInputDeviceDefinitions[i].keys[j].keyLocation == __e.keyLocation)) {
 							// This key's code and location matches the pressed key, inject the release event
 							interpretGameInputControlChanges(gameInputDeviceDefinitions[i].keys[j].id, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].min, gameInputDeviceDefinitions[i].keys[j].max, i);
 							return;
@@ -595,7 +618,7 @@ package com.zehfernando.input.binding {
 				}
 
 				// Find "split" controls, where one control has more than one binding
-				if (gameInputDeviceDefinitions[deviceIndex].controlsSplit.hasOwnProperty(control.id)) {
+				if (gameInputDeviceDefinitions.length && gameInputDeviceDefinitions[deviceIndex].controlsSplit.hasOwnProperty(control.id)) {
 					var deviceControlInfos:Vector.<AutoGamepadControlInfo> = gameInputDeviceDefinitions[deviceIndex].controlsSplit[control.id];
 					var i:uint;
 					for (i = 0; i < deviceControlInfos.length; i++) {
@@ -605,6 +628,12 @@ package com.zehfernando.input.binding {
 			}
 		}
 
+		private function set recentDevice(value:GameInputDevice):void {
+			if (_recentDevice != value) {
+				_recentDevice = value;
+				_onRecentDeviceChanged.dispatch(value);
+			}
+		}
 
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
@@ -680,8 +709,8 @@ package com.zehfernando.input.binding {
 		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
 		 *						key combination is detected.
 		 * @param keyCode		The code of a key, as expressed in AS3's Keyboard constants.
-		 * @param keyLocation	The code of a key's location, as expressed in AS3's KeyLocation constants. If a
-		 *						value of -1 or <code>NaN</code> is passed, the key location is never taken into
+		 * @param keyLocation	The code of a key's location, as expressed in AS3's KeyLocation constants. If the
+		 *						default value is passed, the key location is never taken into
 		 *						consideration when detecting whether the passed action should be fired.
 		 *
 		 * <p>Examples:</p>
@@ -701,13 +730,47 @@ package com.zehfernando.input.binding {
 		 * </pre>
 		 *
 		 * @see flash.ui.Keyboard
+		 * @see #isActionActivated()
+		 * @see #removeKeyboardActionBinding()
 		 */
-		public function addKeyboardActionBinding(__action:String, __keyCode:int = -1, __keyLocation:int = -1):void {
-			// TODO: use KeyActionBinder.KEY_LOCATION_ANY as default param? The compiler doesn't like constants.
-
+		public function addKeyboardActionBinding(__action:String, __keyCode:int = KEY_CODE_ANY, __keyLocation:int = KEY_LOCATION_ANY):void {
 			// Create a binding to be verified later
-			bindings.push(new BindingInfo(__action, new KeyboardBinding(__keyCode >= 0 ? __keyCode : KeyboardBinding.KEY_CODE_ANY, __keyLocation >= 0 ? __keyLocation : KeyboardBinding.KEY_LOCATION_ANY)));
+			bindings.push(new BindingInfo(__action, new KeyboardBinding(__keyCode, __keyLocation)));
 			prepareAction(__action);
+		}
+
+		/**
+		 * Removes an action bound to a keyboard key.
+		 *
+		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
+		 *						key combination is detected.
+		 * @param keyCode		The code of a key, as expressed in AS3's Keyboard constants.
+		 * @param keyLocation	The code of a key's location, as expressed in AS3's KeyLocation constants. If the
+		 *						default value is passed, the key location is never taken into
+		 *						consideration when detecting whether the passed action should be fired.
+		 *
+		 * @see flash.ui.Keyboard
+		 * @see #addGamepadActionBinding()
+		 */
+		public function removeKeyboardActionBinding(__action:String, __keyCode:int = KEY_CODE_ANY, __keyLocation:int = KEY_LOCATION_ANY):void {
+			var bindingsToRemove:Vector.<BindingInfo> = new <BindingInfo>[];
+
+			for each(var binding:BindingInfo in bindings) {
+				if(binding.action == __action) {
+					var keyboardBinding:KeyboardBinding = binding.binding as KeyboardBinding;
+					if(keyboardBinding && keyboardBinding.keyCode == __keyCode && keyboardBinding.keyLocation == __keyLocation) {
+						// store the binding to remove later, and fake a deactivate event
+						bindingsToRemove[bindingsToRemove.length] = binding;
+						onKeyUp(new KeyboardEvent(KeyboardEvent.KEY_UP, true, false, 0, __keyCode, __keyLocation));
+					}
+				}
+			}
+
+			for each(binding in bindingsToRemove) {
+				bindings.splice(bindings.indexOf(binding), 1);
+			}
+
+			consumeAction(__action);
 		}
 
 		/**
@@ -717,12 +780,12 @@ package com.zehfernando.input.binding {
 		 *
 		 * @param action		An arbitrary String id identifying the action that should be dispatched once this
 		 *						input combination is detected.
-		 * @param controlId		The id code of a GameInput contol, as an String. Use one of the constants from
+		 * @param controlId		The id code of a GameInput control, as an String. Use one of the constants from
 		 *						<code>GamepadControls</code>.
 		 * @param gamepadIndex	The int of the gamepad that you want to restrict this action to. Use 0 for the
-		 *						first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or
-		 *						<code>NaN</code> is passed, the gamepad index is never taken into consideration
-		 *						when detecting whether the passed action should be fired.
+		 *						first gamepad (player 1), 1 for the second one, and so on. If the default value
+		 *						is passed, the gamepad index is never taken into consideration when detecting
+		 *						whether the passed action should be fired.
 		 *
 		 * <p>Examples:</p>
 		 *
@@ -752,23 +815,59 @@ package com.zehfernando.input.binding {
 		 * @see GamepadControls
 		 * @see #isActionActivated()
 		 * @see #getActionValue()
+		 * @see #removeGamepadActionBinding()
 		 */
-		public function addGamepadActionBinding(__action:String, __controlId:String, __gamepadIndex:int = -1):void {
+		public function addGamepadActionBinding(__action:String, __controlId:String, __gamepadIndex:int = GAMEPAD_INDEX_ANY):void {
 			// Create a binding to be verified later
-			bindings.push(new BindingInfo(__action, new GamepadBinding(__controlId, __gamepadIndex >= 0 ? __gamepadIndex : GamepadBinding.GAMEPAD_INDEX_ANY)));
+			bindings.push(new BindingInfo(__action, new GamepadBinding(__controlId, __gamepadIndex)));
 			prepareAction(__action);
+		}
+
+		/**
+		 * Removes an action bound to a game controller button, trigger, or axis.
+		 *
+		 * @param action		An arbitrary String id identifying the action that should be no longer bound.
+		 * @param controlId		The id code of a GameInput control, as an String. Use one of the constants from
+		 *						<code>GamepadControls</code>.
+		 * @param gamepadIndex	The int of the gamepad that you want to restrict this action to. Use 0 for the
+		 *						first gamepad (player 1), 1 for the second one, and so on. If the default value
+		 *						is passed, the gamepad index is never taken into consideration when detecting
+		 *						whether the passed action should be fired.
+		 *
+		 * @see GamepadControls
+		 * @see #addGamepadActionBinding()
+		 */
+		public function removeGamepadActionBinding(__action:String, __controlId:String, __gamepadIndex:int = GAMEPAD_INDEX_ANY):void {
+			var bindingsToRemove:Vector.<BindingInfo> = new <BindingInfo>[];
+			for each(var binding:BindingInfo in bindings) {
+				if(binding.action == __action) {
+					var gamepadBinding:GamepadBinding = binding.binding as GamepadBinding;
+
+					if(gamepadBinding && gamepadBinding.controlId == __controlId && gamepadBinding.gamepadIndex == __gamepadIndex) {
+						// store the binding to remove later, and fake a deactivate event
+						bindingsToRemove[bindingsToRemove.length] = binding;
+						interpretGameInputControlChanges(gamepadBinding.controlId, 0, 0, 1, 0);
+					}
+				}
+			}
+
+			for each(binding in bindingsToRemove) {
+				bindings.splice(bindings.indexOf(binding), 1);
+			}
+
+			consumeAction(__action);
 		}
 
 		/**
 		 * Reads the current value of an action.
 		 *
 		 * @param action		The id of the action you want to read the value of.
-		 * @param controlId		The id code of a GameInput contol, as an String. Use one of the constants from
+		 * @param controlId		The id code of a GameInput control, as an String. Use one of the constants from
 		 *						<code>GamepadControls</code>.
 		 * @param gamepadIndex	The int of the gamepad that you want to restrict this action to. Use 0 for the
-		 *						first gamepad (player 1), 1 for the second one, and so on. If a value of -1 or
-		 *						<code>NaN</code> is passed, the gamepad index is never taken into consideration
-		 *						when detecting whether the passed action should be fired.
+		 *						first gamepad (player 1), 1 for the second one, and so on. If the default value
+		 *						is passed, the gamepad index is never taken into consideration when detecting
+		 *						whether the passed action should be fired.
 		 * @return				A numeric value based on the bindings that might have activated this action.
 		 *						The maximum and minimum values returned depend on the kind of control passed
 		 *						via <code>addGamepadActionBinding()</code>.
@@ -787,7 +886,7 @@ package com.zehfernando.input.binding {
 		 * @see #addGamepadActionBinding()
 		 * @see #isActionActivated()
 		 */
-		public function getActionValue(__action:String, __gamepadIndex:int = -1):Number {
+		public function getActionValue(__action:String, __gamepadIndex:int = GAMEPAD_INDEX_ANY):Number {
 			return actionsActivations.hasOwnProperty(__action) ? (actionsActivations[__action] as ActivationInfo).getValue(__gamepadIndex) : 0;
 		}
 
@@ -823,7 +922,7 @@ package com.zehfernando.input.binding {
 		 * @see #getActionValue()
 		 * @see http://zehfernando.com/2013/keyactionbinder-updates-time-sensitive-activations-new-constants/
 		 */
-		public function isActionActivated(__action:String, __timeToleranceSeconds:Number = 0, __gamepadIndex:int = -1):Boolean {
+		public function isActionActivated(__action:String, __timeToleranceSeconds:Number = 0, __gamepadIndex:int = GAMEPAD_INDEX_ANY):Boolean {
 			return actionsActivations.hasOwnProperty(__action) && (actionsActivations[__action] as ActivationInfo).getNumActivations(__timeToleranceSeconds, __gamepadIndex) > 0;
 		}
 
@@ -871,6 +970,10 @@ package com.zehfernando.input.binding {
 
 		public function get onDevicesChanged():SimpleSignal {
 			return _onDevicesChanged;
+		}
+
+		public function get onRecentDeviceChanged():SimpleSignal {
+			return _onRecentDeviceChanged;
 		}
 
 		/**
@@ -1021,6 +1124,7 @@ package com.zehfernando.input.binding {
 		}
 	}
 }
+import com.zehfernando.input.binding.KeyActionBinder;
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 /**
@@ -1054,7 +1158,7 @@ class ActivationInfo {
 	// ================================================================================================================
 	// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-	public function addActivation(__bindingInfo:BindingInfo, __gamepadIndex:int = -1):void {
+	public function addActivation(__bindingInfo:BindingInfo, __gamepadIndex:int = KeyActionBinder.GAMEPAD_INDEX_ANY):void {
 		activations.push(__bindingInfo);
 		activationGamepadIndexes.push(__gamepadIndex);
 	}
@@ -1067,7 +1171,7 @@ class ActivationInfo {
 		}
 	}
 
-	public function getNumActivations(__timeToleranceSeconds:Number = 0, __gamepadIndex:int = -1):int {
+	public function getNumActivations(__timeToleranceSeconds:Number = 0, __gamepadIndex:int = KeyActionBinder.GAMEPAD_INDEX_ANY):int {
 		// If not time-sensitive, just return it
 		if ((__timeToleranceSeconds <= 0 && __gamepadIndex < 0) || activations.length == 0) return activations.length;
 		// Otherwise, actually check for activation time and gamepad index
@@ -1084,12 +1188,12 @@ class ActivationInfo {
 		activationGamepadIndexes.length = 0;
 	}
 
-	public function addSensitiveValue(__actionId:String, __value:Number, __gamepadIndex:int = -1):void {
+	public function addSensitiveValue(__actionId:String, __value:Number, __gamepadIndex:int = KeyActionBinder.GAMEPAD_INDEX_ANY):void {
 		sensitiveValues[__actionId] = __value;
 		sensitiveValuesGamepadIndexes[__actionId] = __gamepadIndex;
 	}
 
-	public function getValue(__gamepadIndex:int = -1):Number {
+	public function getValue(__gamepadIndex:int = KeyActionBinder.GAMEPAD_INDEX_ANY):Number {
 		iiv = NaN;
 		for (iis in sensitiveValues) {
 			// NOTE: this may be a problem if two different axis control the same action, since -1 is not necessarily better than +0.5
@@ -1132,10 +1236,6 @@ interface IBinding {
  */
 class KeyboardBinding implements IBinding {
 
-	// Constants
-	public static var KEY_CODE_ANY:uint = 81653812;
-	public static var KEY_LOCATION_ANY:uint = 8165381;
-
 	// Properties
 	public var keyCode:uint;
 	public var keyLocation:uint;
@@ -1154,7 +1254,7 @@ class KeyboardBinding implements IBinding {
 	// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
 	public function matchesKeyboardKey(__keyCode:uint, __keyLocation:uint):Boolean {
-		return (keyCode == __keyCode || keyCode == KEY_CODE_ANY) && (keyLocation == __keyLocation || keyLocation == KEY_LOCATION_ANY);
+		return (keyCode == __keyCode || keyCode == KeyActionBinder.KEY_CODE_ANY) && (keyLocation == __keyLocation || keyLocation == KeyActionBinder.KEY_LOCATION_ANY);
 	}
 
 	// TODO: add modifiers?
@@ -1168,9 +1268,6 @@ class KeyboardBinding implements IBinding {
  * Information on a gamepad event filter
  */
 class GamepadBinding implements IBinding {
-
-	// Constants
-	public static var GAMEPAD_INDEX_ANY:uint = 8165381;
 
 	// Properties
 	public var controlId:String;
@@ -1190,7 +1287,7 @@ class GamepadBinding implements IBinding {
 	// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
 	public function matchesGamepadControl(__controlId:String, __gamepadIndex:uint):Boolean {
-		return controlId == __controlId && (gamepadIndex == __gamepadIndex || gamepadIndex == GAMEPAD_INDEX_ANY);
+		return controlId == __controlId && (gamepadIndex == __gamepadIndex || gamepadIndex == KeyActionBinder.GAMEPAD_INDEX_ANY);
 	}
 
 	public function matchesKeyboardKey(__keyCode:uint, __keyLocation:uint):Boolean {
