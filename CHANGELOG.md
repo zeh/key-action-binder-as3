@@ -2,6 +2,9 @@
 
 Below is a list of all significant changes done to KeyActionBinder. Versions with links are assumed to be stable versions, and are [tagged in Git](https://github.com/zeh/key-action-binder/releases).
 
+ * 2015-04-17 - 2.9.11 - onRecentDevice() changed to onMostRecentDevice()
+ * 2015-04-17 - 1.9.11 - SimpleSignal is simpler and safer
+ * 2015-04-17 - 1.9.10 - Added the ability to get the most recent device via an onRecentDevice() signal
  * 2014-10-25 - 1.8.10 - Added/enabled support for XBox 360 controller on OSX (Plugin version of Flash Player)
  * 2014-10-25 - 1.8.9 - The `onActionValueChanged` events are also dispatched on keyboard up/down events
  * 2014-10-25 - 1.8.8 - Fixed propagation when stopped: avoid crash when `KeyActionBinder.stop()` called from action handler

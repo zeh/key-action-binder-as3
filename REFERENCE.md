@@ -254,7 +254,7 @@ Check the controllers.json file for a list of supported gamepads, and their ids.
  * [getDeviceAt()](#getDeviceAt)
 
 
-### <a name="getPlatformTypes"></a>getPlatformTypes():Vector.<String>
+### <a name="getPlatformTypes"></a>getPlatformTypes():Vector.&lt;String&gt;
 
 Returns the current identified platform. This is a list of strings that can contain more than one platform id.
 
@@ -265,17 +265,57 @@ Check the controllers.json file for a list of supported platforms, and their ids
 
 ### <a name="onActionActivated"></a>onActionActivated:SimpleSignal
 
-Todo...
+A signal-like event/callback that gets dispatched when an action is assumed to be activated. You `add()` or `remove()` listening functions to this property.
+
+Notice that the function added must receive a single `String` parameter.
+
+<pre>
+// Create a function to handle action activations
+private function myOnActionActivated(__action:String):void {
+    trace("The user activated the " + __action + " action by pressing a key or button.");
+}
+
+// Add that function to the signals list
+binder.onActionActivated.add(myOnActionActivated);
+</pre>
 
 ### <a name="onActionDeactivated"></a>onActionDeactivated:SimpleSignal
 
+A signal-like event/callback that gets dispatched when an action is assumed to be deactivated. You `add()` or `remove()` listening functions to this property.
+
+Notice that the function added must receive a single `String` parameter.
+
+<pre>
+// Create a function to handle action deactivations
+private function myOnActionDeactivated(__action:String):void {
+    trace("The user deactivated the " + __action + " action by releasing a key or button.");
+}
+
+// Add that function to the signals list
+binder.onActionDeactivated.add(myOnActionDeactivated);
+</pre>
+
+### <a name="onActionValueChanged"></a>onActionValueChanged:SimpleSignal
+
+A signal-like event/callback that gets dispatched when the activation value of an action changes. You `add()` or `remove()` listening functions to this property.
+
+Notice that the function added must receive a `String` parameter and a 'Number' parameter.
+
+<pre>
+// Create a function to handle action value changes
+private function myOnActionValueChanged(__action:String, __value:Number):void {
+    trace("The user activated the " + __action + " action's value. The new value is " + __value);
+}
+
+// Add that function to the signals list
+binder.onActionValueChanged.add(myOnActionValueChanged);
+</pre>
+
+### <a name="onDevicesChanged"></a>onDevicesChanged:SimpleSignal
+
 Todo...
 
-### <a name="get"></a>get onActionValueChanged:SimpleSignal
-
-Todo...
-
-### <a name="get"></a>get onDevicesChanged:SimpleSignal
+### <a name="onRecentDeviceChanged"></a>onRecentDeviceChanged:SimpleSignal
 
 Todo...
 
