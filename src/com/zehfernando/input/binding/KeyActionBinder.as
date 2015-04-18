@@ -26,6 +26,10 @@ package com.zehfernando.input.binding {
 
 		public static const KEYBOARD_DEVICE:GameInputDevice = null;		// Set to null by default, since gamepads are non-null (and you can't create/subclass a GameInputDevice)
 
+		public static const GAMEPAD_INDEX_ANY:uint = 81653811;
+		public static const KEY_CODE_ANY:uint = 81653812;
+		public static const KEY_LOCATION_ANY:uint = 81653813;
+
 		[Embed(source = "controllers.json", mimeType='application/octet-stream')]
 		private static const JSON_CONTROLLERS:Class;
 
@@ -727,11 +731,10 @@ package com.zehfernando.input.binding {
 		 *
 		 * @see flash.ui.Keyboard
 		 */
-		public function addKeyboardActionBinding(__action:String, __keyCode:int = -1, __keyLocation:int = -1):void {
-			// TODO: use KeyActionBinder.KEY_LOCATION_ANY as default param? The compiler doesn't like constants.
+		public function addKeyboardActionBinding(__action:String, __keyCode:int = KEY_CODE_ANY, __keyLocation:int = KEY_LOCATION_ANY):void {
 
 			// Create a binding to be verified later
-			bindings.push(new BindingInfo(__action, new KeyboardBinding(__keyCode >= 0 ? __keyCode : KeyboardBinding.KEY_CODE_ANY, __keyLocation >= 0 ? __keyLocation : KeyboardBinding.KEY_LOCATION_ANY)));
+			bindings.push(new BindingInfo(__action, new KeyboardBinding(__keyCode, __keyLocation)));
 			prepareAction(__action);
 		}
 
@@ -778,9 +781,9 @@ package com.zehfernando.input.binding {
 		 * @see #isActionActivated()
 		 * @see #getActionValue()
 		 */
-		public function addGamepadActionBinding(__action:String, __controlId:String, __gamepadIndex:int = -1):void {
+		public function addGamepadActionBinding(__action:String, __controlId:String, __gamepadIndex:int = GAMEPAD_INDEX_ANY):void {
 			// Create a binding to be verified later
-			bindings.push(new BindingInfo(__action, new GamepadBinding(__controlId, __gamepadIndex >= 0 ? __gamepadIndex : GamepadBinding.GAMEPAD_INDEX_ANY)));
+			bindings.push(new BindingInfo(__action, new GamepadBinding(__controlId, __gamepadIndex)));
 			prepareAction(__action);
 		}
 
@@ -1050,6 +1053,7 @@ package com.zehfernando.input.binding {
 		}
 	}
 }
+import com.zehfernando.input.binding.KeyActionBinder;
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 /**
@@ -1161,10 +1165,6 @@ interface IBinding {
  */
 class KeyboardBinding implements IBinding {
 
-	// Constants
-	public static var KEY_CODE_ANY:uint = 81653812;
-	public static var KEY_LOCATION_ANY:uint = 8165381;
-
 	// Properties
 	public var keyCode:uint;
 	public var keyLocation:uint;
@@ -1183,7 +1183,7 @@ class KeyboardBinding implements IBinding {
 	// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
 	public function matchesKeyboardKey(__keyCode:uint, __keyLocation:uint):Boolean {
-		return (keyCode == __keyCode || keyCode == KEY_CODE_ANY) && (keyLocation == __keyLocation || keyLocation == KEY_LOCATION_ANY);
+		return (keyCode == __keyCode || keyCode == KeyActionBinder.KEY_CODE_ANY) && (keyLocation == __keyLocation || keyLocation == KeyActionBinder.KEY_LOCATION_ANY);
 	}
 
 	// TODO: add modifiers?
@@ -1197,9 +1197,6 @@ class KeyboardBinding implements IBinding {
  * Information on a gamepad event filter
  */
 class GamepadBinding implements IBinding {
-
-	// Constants
-	public static var GAMEPAD_INDEX_ANY:uint = 8165381;
 
 	// Properties
 	public var controlId:String;
@@ -1219,7 +1216,7 @@ class GamepadBinding implements IBinding {
 	// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
 	public function matchesGamepadControl(__controlId:String, __gamepadIndex:uint):Boolean {
-		return controlId == __controlId && (gamepadIndex == __gamepadIndex || gamepadIndex == GAMEPAD_INDEX_ANY);
+		return controlId == __controlId && (gamepadIndex == __gamepadIndex || gamepadIndex == KeyActionBinder.GAMEPAD_INDEX_ANY);
 	}
 
 	public function matchesKeyboardKey(__keyCode:uint, __keyLocation:uint):Boolean {
