@@ -74,7 +74,7 @@ You can also check actions based on the time they were activated. This is especi
 	binder.addGamepadActionBinding("jump", GamepadControls.ACTION_DOWN);
 
 	// During the loop
-	if (isPlayerOnTheGround && binder.isActionActivated("jump"), 0.03) {
+	if (isPlayerOnTheGround && binder.isActionActivated("jump", 0.03) {
 		binder.consumeAction("jump");
 
 		// Perform jump...

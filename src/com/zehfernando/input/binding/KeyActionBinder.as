@@ -912,7 +912,7 @@ package com.zehfernando.input.binding {
 		 * // Setup:
 		 * myBinder.addGamepadActionBinding("jump", GamepadControls.ACTION_DOWN);
 		 * // In the game loop:
-		 * if (isTouchingSurface && myBinder.isActionActivated("jump"), 0.1) {
+		 * if (isTouchingSurface && myBinder.isActionActivated("jump", 0.1) {
 		 *     player.performJump();
 		 * }
 		 * </pre>
