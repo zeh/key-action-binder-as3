@@ -135,12 +135,8 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 	// Add callbacks to the event signals
 	binder.onActionActivated.add(onActionActivated);
-	binder.onActionDeactivated.add(onActionReleased);
+	binder.onActionDeactivated.add(onActionDeactivated);
 	binder.onActionValueChanged.add(onActionValueChanged);
-
-	private function onActionValueChanged(__action:String, __value:Number):void {
-		trace("The user activated the " + __action + " action's value. The new value is " + __value);
-	}
 
 	private function onActionActivated(__action:String):void {
 		trace("The user activated the " + __action + " action by pressing a key or button.");
@@ -148,4 +144,8 @@ If you'd rather use events (especially useful for user interfaces), KeyActionBin
 
 	private function onActionDeactivated(__action:String):void {
 		trace("The user deactivated the " + __action + " action by releasing a key or button.");
+	}
+
+	private function onActionValueChanged(__action:String, __value:Number):void {
+		trace("The user activated the " + __action + " action's value. The new value is " + __value);
 	}
