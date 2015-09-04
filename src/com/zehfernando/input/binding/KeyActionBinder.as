@@ -671,6 +671,9 @@ package com.zehfernando.input.binding {
 		/**
 		 * Stops listening for input events.
 		 *
+		 * @param deactivateBindings	An optional flag to deactivate all bindings (i.e. release all controls)
+		 * 								without firing events.
+		 * 
 		 * <p>Action bindings are not lost when a KeyActionBinder instance is stopped; it merely starts ignoring
 		 * all input events, until <code>start()<code> is called again.</p>
 		 *
@@ -682,7 +685,7 @@ package com.zehfernando.input.binding {
 		 * @see #isRunning
 		 * @see #start()
 		 */
-		public function stop():void {
+		public function stop(deactivateBindings:Boolean = true):void {
 			if (_isRunning) {
 				// Stops listening to keyboard events
 				stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
@@ -692,6 +695,14 @@ package com.zehfernando.input.binding {
 				if (gameInput != null) {
 					gameInput.removeEventListener(GameInputEvent.DEVICE_ADDED, onGameInputDeviceAdded);
 					gameInput.removeEventListener(GameInputEvent.DEVICE_REMOVED, onGameInputDeviceRemoved);
+				}
+				
+				if (deactivateBindings) {
+					for (var i:int = 0; i < bindings.length; i++) {
+						bindings[i].isActivated = false;
+						bindings[i].lastActivatedTime = 0;
+						(actionsActivations[bindings[i].action] as ActivationInfo).removeActivation(bindings[i]);
+					}
 				}
 
 				gameInputDevices.length = 0;
