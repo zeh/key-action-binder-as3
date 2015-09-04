@@ -655,7 +655,7 @@ package com.zehfernando.input.binding {
 		 * @see #isRunning
 		 * @see #start()
 		 */
-		public function stop(deactivateBindings:Boolean=false):void {
+		public function stop(deactivateBindings:Boolean = true):void {
 			if (_isRunning) {
 				// Stops listening to keyboard events
 				stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
