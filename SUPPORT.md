@@ -1,4 +1,4 @@
-# Supportted platforms/devices
+# Supported platforms/devices
 
 Because KeyActionBinder tries to automatically support whatever platform and devices one is using, it depends on having code that targets each specific platform/device combination. These are the platforms currently supported, and their respective supported devices:
 
